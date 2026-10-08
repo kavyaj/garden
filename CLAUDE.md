@@ -44,7 +44,7 @@ Do the migration as one commit ("Migrate to V2: remove scenes, new tokens") befo
 
 - **Astro**, static output. Content collections for everything Kavya writes.
 - **Plain CSS** with custom properties from the design system's `tokens.json`. Class names follow the V2 mockup (`ul`, `tl`, `row`, `card`, `vine`). The design system's `components/bundle.css` has the same rules with a `kw-` prefix.
-- **No client framework.** Small vanilla JS only for: the turntable, relative dates, and starting the tendril draw when it scrolls into view.
+- **No client framework.** Small vanilla JS only for: the turntable (and its Spotify player), relative dates, and starting the tendril draw when it scrolls into view.
 - **Hosting:** not chosen yet (moving off Replit). Ask Kavya before picking one. Output is a plain static folder.
 - **Commands:** `npm run dev` to preview, `npm run build` to build and check, `npm run export` for a one-file preview to share (`exports/`, not committed).
 - **Fonts** (Google Fonts): Fraunces, DM Sans, Shantell Sans, and Tiro Devanagari Hindi on pages that show Devanagari: in full on Quotes, subset to the featured quote's characters on Home. Preload Fraunces.
@@ -126,7 +126,7 @@ Body is markdown. Links to other notes are plain links to `/notes/<slug>`; backl
   added: 2026-10-01
 ```
 
-**Records:** `src/content/records.yaml` (title, artist, note, listen_url, sleeve, added). `sleeve` picks a drawn two-colour sleeve (`ink` + `spot`) from `src/sleeves.ts`. Never real album art, never hosted audio.
+**Records:** `src/content/records.yaml` (title, artist, note, listen_url, spotify, sleeve, added). `listen_url` is the full song (YouTube preferred). `spotify` is the track's `open.spotify.com/track/...` link, played in the turntable. `sleeve` picks a drawn two-colour sleeve (`ink` + `spot`) from `src/sleeves.ts`. Never real album art, never hosted audio.
 
 **Things I've made:** `src/content/projects.yaml` with `kind: run` (StoryCV, Resumey.Pro, Red Thread Careers, The Brave Rocketeers: shown as a list with a "Since 2019" style note) or `kind: small` (weekend projects: shown as cards with a 16:10 screenshot).
 
@@ -179,7 +179,8 @@ Nothing else moves. The logo is static. `prefers-reduced-motion`: everything sho
 
 ## Interactions
 
-- **Turntable** (`/on-repeat`): picking a sleeve gives it a 2px pink outline and puts the record on the platter with its title on the pink label. "Drop the needle" is a real `<button>`: the arm swings 24deg, the record spins, and a soft crackle fades in (WebAudio noise through a 700Hz highpass, created on first click). "Lift the needle" reverses it. "Listen on Spotify" links out.
+- **Turntable** (`/on-repeat`): picking a sleeve gives it a 2px pink outline and puts the record on the platter with its title on the pink label. "Drop the needle" is a real `<button>`: the arm swings 24deg, the record spins, and a soft crackle fades in (WebAudio noise through a 700Hz highpass, created on first click). About 1.5s later the song starts in Spotify's embedded player and the crackle sinks to a faint bed under it. "Lift the needle" pauses both; pausing in Spotify's player or the song ending lifts the needle. "Listen on YouTube" links out to the full song.
+- **Spotify is the one third-party embed.** Its script and player load only on the first needle drop, never on page load. Visitors without Spotify hear a 30-second preview. Never host audio files.
 - **Quote reasons:** native `<details>`; the `+` rotates into an `×`.
 - **Map:** each planted bed is one link. Unplanted plots aren't links.
 
@@ -190,7 +191,7 @@ Nothing else moves. The logo is static. `prefers-reduced-motion`: everything sho
 - Decorative SVG is `aria-hidden`. The gate link has `aria-label="Through the gate: a map of the whole site"`.
 - Works at 360px wide: the nav wraps, the margin note drops inline, the shelf stays 3 across or drops to 2, no horizontal scroll.
 - Under 150KB transferred per page on first load, fonts excluded.
-- No dark mode, no trackers, no cookie banner.
+- No dark mode, no trackers, no cookie banner. Nothing third-party loads before a click (the Spotify player waits for the needle).
 
 ## Copy and voice
 

@@ -29,6 +29,7 @@ const data = records.map((r) => ({
   note: r.data.note,
   url: r.data.listen_url,
   listen: listenLabel(r.data.listen_url),
+  spotify: r.data.spotify ?? '',
 }));
 const n = records.length;
 ---
@@ -67,6 +68,7 @@ const n = records.length;
           <p class="now-title" data-title></p>
           <p class="now-artist"><span data-artist></span><span class="playing" data-playing hidden> · playing</span></p>
           <p class="now-note" data-note></p>
+          <div class="embed" data-embed hidden><div data-embed-slot></div></div>
           <a class="kw-tl" data-listen href="#"
             ><span class="kw-lbl" data-listen-label></span><svg viewBox="0 0 20 16" aria-hidden="true"
               ><path pathLength="1" d="M0 14 C6 14 12 13 14 9 C16 5 12 2 9.5 4.5 C7.5 6.5 10 10 12.5 8"></path></svg
@@ -99,9 +101,22 @@ const n = records.length;
 </Base>
 
 <script>
-  // The turntable. Pick a sleeve, then "Drop the needle". The only sound the site makes is this crackle,
-  // generated in WebAudio through a 700Hz highpass, and the audio context only exists after the first click.
-  type Rec = { title: string; artist: string; label: string; note: string; url: string; listen: string };
+  // The turntable. Pick a sleeve, then "Drop the needle": the crackle fades in (WebAudio noise through a 700Hz
+  // highpass), and after a moment the song starts in Spotify's player, with the crackle sinking under it.
+  // Nothing from Spotify loads until the first needle drop. The audio context only exists after the first click.
+  type Rec = { title: string; artist: string; label: string; note: string; url: string; listen: string; spotify: string };
+  type Controller = {
+    loadUri(uri: string): void;
+    play(): void;
+    pause(): void;
+    resume(): void;
+    addListener(event: string, cb: (e: { data: { isPaused?: boolean; position?: number } }) => void): void;
+  };
+  type SpotifyAPI = { createController(el: Element, opts: Record<string, unknown>, cb: (c: Controller) => void): void };
+
+  const SONG_DELAY = 1500; // ms of crackle before the song comes in
+  const CRACKLE = 0.35; // crackle on its own
+  const UNDER = 0.07; // crackle under the song
 
   const root = document.querySelector<HTMLElement>('[data-turntable]');
   if (root) {
@@ -114,7 +129,7 @@ const n = records.length;
 
     let ctx: AudioContext | null = null;
     let gain: GainNode | null = null;
-    function crackle(on: boolean) {
+    function crackle(on: boolean | number) {
       try {
         if (!ctx) {
           ctx = new AudioContext();
@@ -134,10 +149,83 @@ const n = records.length;
           src.start();
         }
         if (ctx.state === 'suspended') ctx.resume();
-        gain!.gain.setTargetAtTime(on ? 0.35 : 0, ctx.currentTime, on ? 0.25 : 0.12);
+        gain!.gain.setTargetAtTime(on === true ? CRACKLE : on === false ? 0 : on, ctx.currentTime, on === false ? 0.12 : 0.25);
       } catch {
         // No sound is fine. The record still spins.
       }
+    }
+
+    // Spotify's player, loaded on the first needle drop and reused after that.
+    const trackUri = (url: string) => 'spotify:track:' + (url.match(/track\/([A-Za-z0-9]+)/)?.[1] ?? '');
+    let api: Promise<SpotifyAPI> | null = null;
+    let player: Promise<Controller> | null = null;
+    let loadedUri = '';
+    let songTimer = 0;
+    let songStarted = false;
+
+    function loadApi(): Promise<SpotifyAPI> {
+      api ??= new Promise((resolve) => {
+        (window as unknown as { onSpotifyIframeApiReady: (a: SpotifyAPI) => void }).onSpotifyIframeApiReady = resolve;
+        const tag = document.createElement('script');
+        tag.src = 'https://open.spotify.com/embed/iframe-api/v1';
+        tag.async = true;
+        document.head.appendChild(tag);
+      });
+      return api;
+    }
+
+    function getPlayer(uri: string): Promise<Controller> {
+      player ??= loadApi().then(
+        (a) =>
+          new Promise<Controller>((resolve) => {
+            a.createController($('[data-embed-slot]'), { uri, width: '100%', height: 80 }, (c) => {
+              loadedUri = uri;
+              // If the visitor pauses in Spotify's player, or the song ends, the needle lifts too.
+              c.addListener('playback_update', (e) => {
+                if (e.data.isPaused === false) songStarted = true;
+                if (songStarted && e.data.isPaused && playing) {
+                  songStarted = false;
+                  play(false);
+                }
+              });
+              resolve(c);
+            });
+          })
+      );
+      return player;
+    }
+
+    function startSong(r: Rec) {
+      clearTimeout(songTimer);
+      if (!r.spotify) return;
+      const uri = trackUri(r.spotify);
+      $('[data-embed]').hidden = false;
+      const ready = getPlayer(uri);
+      songTimer = window.setTimeout(async () => {
+        const c = await ready;
+        if (!playing || cur === null || records[cur] !== r) return;
+        if (loadedUri !== uri) {
+          c.loadUri(uri);
+          loadedUri = uri;
+        }
+        c.play();
+        crackle(UNDER);
+      }, SONG_DELAY);
+    }
+
+    function stopSong() {
+      clearTimeout(songTimer);
+      songStarted = false;
+      player?.then((c) => c.pause());
+    }
+
+    function play(on: boolean) {
+      if (cur === null) return;
+      playing = on;
+      crackle(on);
+      if (on) startSong(records[cur]);
+      else stopSong();
+      render();
     }
 
     function render() {
@@ -158,6 +246,7 @@ const n = records.length;
         const note = $('[data-note]');
         note.textContent = r.note;
         note.hidden = !r.note;
+        if (!r.spotify) $('[data-embed]').hidden = true;
         $<HTMLAnchorElement>('[data-listen]').href = r.url;
         $('[data-listen-label]').textContent = r.listen;
       }
@@ -165,18 +254,14 @@ const n = records.length;
 
     sleeves.forEach((s, i) =>
       s.addEventListener('click', () => {
+        if (playing) stopSong();
         crackle(false);
         cur = i;
         playing = false;
         render();
       })
     );
-    toggle.addEventListener('click', () => {
-      if (cur === null) return;
-      playing = !playing;
-      crackle(playing);
-      render();
-    });
+    toggle.addEventListener('click', () => play(!playing));
   }
 </script>
 
@@ -336,6 +421,16 @@ const n = records.length;
     margin-bottom: 14px;
     font-size: 17px;
     line-height: 1.6;
+  }
+  /* Spotify's player sits on the paper under the record's details. Loaded on the first needle drop. */
+  .embed {
+    margin: 0 0 14px;
+  }
+  .embed :global(iframe) {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: 12px;
   }
   .now :global(.kw-tl) {
     font-size: 15px;

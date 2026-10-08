@@ -51,6 +51,8 @@ const records = defineCollection({
     artist: z.string(),
     note: z.string().default(''),
     listen_url: z.url(),
+    /** The track on Spotify (open.spotify.com/track/...). Plays in the turntable's player after the needle drops. */
+    spotify: z.url().regex(/^https:\/\/open\.spotify\.com\/track\/[A-Za-z0-9]+/).optional(),
     sleeve: z.string(),
     added: z.coerce.date(),
   }),
