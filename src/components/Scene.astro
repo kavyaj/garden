@@ -1,0 +1,19 @@
+---
+// Renders one painted scene from src/scene/generated/ (made by `npm run gen`):
+// the moving parts inline, the static layers as cached <image>s.
+interface Props {
+  scene: { viewBox: string; preserveAspectRatio: string; height: number; inner: string };
+  class?: string;
+}
+const { scene, class: cls } = Astro.props;
+---
+
+<svg
+  class:list={['scene', cls]}
+  viewBox={scene.viewBox}
+  preserveAspectRatio={scene.preserveAspectRatio}
+  style={`height:${scene.height}px`}
+  aria-hidden="true"
+  focusable="false"
+  set:html={scene.inner}
+/>

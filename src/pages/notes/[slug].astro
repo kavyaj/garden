@@ -1,0 +1,169 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import RelTime from '../../components/RelTime.astro';
+import Backlinks from '../../components/Backlinks.astro';
+import TendrilButton from '../../components/TendrilButton.astro';
+import { notesByTended, recentlyTended, readingTime, backlinks } from '../../lib/garden';
+
+export async function getStaticPaths() {
+  const notes = await notesByTended();
+  const links = await backlinks();
+  return notes.map((note, i) => ({
+    params: { slug: note.id },
+    // "Next note" walks down the list: the next one tended before this.
+    props: { note, next: notes[i + 1], mentionedIn: links.get(note.id) ?? [] },
+  }));
+}
+const { note, next, mentionedIn } = Astro.props;
+const { Content } = await render(note);
+---
+
+<Base title={note.data.title} description={note.data.summary} strip="note">
+  <article class="note">
+    <a class="back" href="/notes">Back to notes</a>
+    <h1 class="kw-display">{note.data.title}</h1>
+    <p class="kw-meta meta">
+      {recentlyTended(note.data.tended) && <span class="kw-dot" title="Tended in the last two weeks" />}
+      <span><b>Planted</b> <RelTime date={note.data.planted} older="month" /></span>
+      <span><b>Tended</b> <RelTime date={note.data.tended} /></span>
+      <span>{readingTime(note.body)}</span>
+    </p>
+
+    <div class="body"><Content /></div>
+
+    <Backlinks notes={mentionedIn} />
+
+    <nav class="more" aria-label="More notes">
+      <TendrilButton href="/notes" variant="secondary">All notes</TendrilButton>
+      {
+        next && (
+          <a class="next" href={`/notes/${next.id}`}>
+            <span class="next-label">Next note</span>
+            <span class="kw-subheading next-title">{next.data.title}</span>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .note {
+    padding-top: clamp(24px, 5vw, 56px);
+  }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-bottom: var(--space-2);
+    font-size: 14px;
+    color: var(--moss);
+    text-decoration: none;
+  }
+  .back:hover {
+    color: var(--ink);
+  }
+  h1 {
+    max-width: 13em;
+    margin-bottom: 18px;
+    font-size: clamp(40px, 7vw, 72px);
+    line-height: 0.95;
+  }
+  .meta {
+    margin: 0 0 40px;
+  }
+
+  /* Running text at 34em. Marginalia float into a column on the right on wide screens. */
+  .body {
+    max-width: 34em;
+    font-size: 17px;
+    line-height: 1.72;
+  }
+  .body :global(p),
+  .body :global(ul),
+  .body :global(ol),
+  .body :global(blockquote) {
+    margin: 0 0 20px;
+  }
+  .body :global(h2) {
+    margin: 36px 0 12px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 60, 'SOFT' 48, 'WONK' 1;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .body :global(h3) {
+    margin: 28px 0 8px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 24, 'SOFT' 30, 'WONK' 0;
+    font-weight: 600;
+    font-size: 21px;
+  }
+  .body :global(a) {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 2px solid var(--spot);
+  }
+  .body :global(blockquote) {
+    padding-left: var(--space-4);
+    border-left: 2px solid var(--ink);
+  }
+  .body :global(mark) {
+    background: linear-gradient(var(--sun-wash), var(--sun-wash)) 0 0.74em / 100% 0.72em no-repeat;
+    color: inherit;
+    padding: 0 0.1em;
+  }
+  .body :global(img) {
+    display: block;
+    height: auto;
+    border: 1px solid var(--ink-hair);
+  }
+  .body :global(.note-aside) {
+    margin: 8px 0 24px;
+    max-width: 18rem;
+  }
+  @media (min-width: 960px) {
+    .body :global(.note-aside) {
+      float: right;
+      clear: right;
+      width: 16rem;
+      margin: 4px calc(-16rem - 56px) 20px 0;
+    }
+  }
+
+  .more {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-4) var(--space-6);
+    margin-top: var(--space-8);
+    padding-top: 20px;
+    border-top: 2px solid var(--ink);
+  }
+  .next {
+    display: inline-flex;
+    flex-direction: column;
+    max-width: 24rem;
+    padding: 6px 0;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .next-label {
+    font-size: 12.5px;
+    color: var(--moss);
+  }
+  .next-title {
+    font-size: 19px;
+    line-height: 1.25;
+  }
+  .next:hover .next-title {
+    text-decoration: underline;
+    text-decoration-color: var(--spot);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+</style>

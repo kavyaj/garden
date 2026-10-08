@@ -1,0 +1,115 @@
+---
+// A collected quote as a ticket stub: the quote, a perforated tear-line, and Kavya's note peeking out below.
+// It's a button that unfolds the note in place (script on the Quotes page). Without JS the note shows in full.
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  quote: CollectionEntry<'quotes'>;
+}
+const { quote } = Astro.props;
+const q = quote.data;
+const [before, after] = q.highlight && q.translation.includes(q.highlight) ? q.translation.split(q.highlight) : [q.translation, undefined];
+const peekId = `peek-${quote.id}`;
+---
+
+<button class:list={['kw-quote', 'quote-tile', { 'kw-quote--ink': q.ink }]} type="button" aria-expanded="false" aria-controls={q.reflection ? peekId : undefined}>
+  {!q.ink && <span class="kw-q-mark" aria-hidden="true">&ldquo;</span>}
+  <span class="kw-q-top">
+    {
+      q.script === 'deva' ? (
+        <span class="kw-deva" lang="hi">
+          {q.original}
+        </span>
+      ) : (
+        <span class="q-latin">{q.original}</span>
+      )
+    }
+    {q.translit && <span class="type-translit q-translit">{q.translit}</span>}
+    {
+      q.translation && (
+        <span class="kw-trans">
+          {before}
+          {after !== undefined && <span class="kw-hl">{q.highlight}</span>}
+          {after}
+        </span>
+      )
+    }
+    <span class="kw-cite">{q.source}{q.when && `, ${q.when}`}</span>
+  </span>
+  {
+    q.reflection && (
+      <>
+        <span class="kw-perf" aria-hidden="true" />
+        <span class="kw-peek" id={peekId}>
+          <span>{q.reflection}</span>
+        </span>
+        <span class="kw-unfold">
+          <span class="when-folded">Unfold my note</span>
+          <span class="when-open">Fold it back</span>
+        </span>
+      </>
+    )
+  }
+</button>
+
+<style>
+  .q-latin {
+    display: block;
+    margin: 0 0 6px;
+    padding-right: 44px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40, 'WONK' 1;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+  .kw-quote--ink .q-latin {
+    color: var(--sun);
+    font-size: 26px;
+    padding-right: 0;
+  }
+  .q-translit {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--moss);
+  }
+  .kw-quote--ink .q-translit,
+  .kw-quote--ink .kw-trans {
+    color: rgba(240, 240, 240, 0.86);
+  }
+  .kw-quote {
+    min-height: 44px;
+  }
+  .kw-quote--ink .kw-deva {
+    line-height: 1.7;
+  }
+
+  /* Folded only when JS can unfold it. */
+  .when-open {
+    display: none;
+  }
+  :global(.js) .kw-quote[aria-expanded='false'] .kw-peek {
+    max-height: 4.2em;
+  }
+  :global(.js) .kw-quote[aria-expanded='true'] .kw-peek,
+  :global(html:not(.js)) .kw-quote .kw-peek {
+    max-height: none;
+  }
+  :global(.js) .kw-quote[aria-expanded='true'] .kw-peek span,
+  :global(html:not(.js)) .kw-quote .kw-peek span {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  :global(html:not(.js)) .kw-unfold {
+    display: none;
+  }
+  .kw-quote[aria-expanded='true'] {
+    transform: rotate(var(--tilt-s));
+  }
+  .kw-quote[aria-expanded='true'] .when-open {
+    display: inline;
+  }
+  .kw-quote[aria-expanded='true'] .when-folded {
+    display: none;
+  }
+</style>

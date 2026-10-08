@@ -1,0 +1,54 @@
+---
+// The 210px sky on every inner page: two bands, one cloud, one bird, then the cloud bank.
+// Each page has its own painted strip so the cloud sits somewhere slightly different.
+import Scene from './Scene.astro';
+import SiteHeader from './SiteHeader.astro';
+import notes from '../scene/generated/sky-strip-notes.json';
+import note from '../scene/generated/sky-strip-note.json';
+import quotes from '../scene/generated/sky-strip-quotes.json';
+import gardener from '../scene/generated/sky-strip-gardener.json';
+import onrepeat from '../scene/generated/sky-strip-onrepeat.json';
+
+const strips = { notes, note, quotes, gardener, onrepeat };
+export type StripVariant = keyof typeof strips;
+
+interface Props {
+  variant?: StripVariant;
+}
+const { variant = 'notes' } = Astro.props;
+---
+
+<div class="sky sky--strip">
+  <Scene scene={strips[variant]} />
+  <div class="wrap sky-inner">
+    <SiteHeader />
+  </div>
+</div>
+
+<style>
+  .sky--strip {
+    position: relative;
+    height: 210px;
+    background: var(--sky);
+    overflow: hidden;
+  }
+  .sky-inner {
+    position: relative;
+    padding-top: var(--space-5);
+  }
+  .sky--strip :global(.scene) {
+    top: 0;
+  }
+  /* When the nav wraps on a phone, let the strip grow rather than cut the header off. */
+  @media (max-width: 560px) {
+    .sky--strip {
+      height: auto;
+      min-height: 210px;
+      padding-bottom: 72px;
+    }
+    .sky--strip :global(.scene) {
+      top: auto;
+      bottom: 0;
+    }
+  }
+</style>

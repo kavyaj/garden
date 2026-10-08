@@ -1,0 +1,402 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import TendrilButton from '../components/TendrilButton.astro';
+import NoteCard from '../components/NoteCard.astro';
+import { notesByTended, count } from '../lib/garden';
+import heroCloud from '../scene/hero-cloud.svg?raw';
+
+const recent = (await notesByTended()).slice(0, 3);
+const records = (await getCollection('records')).sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
+const quotes = (await getCollection('quotes')).sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
+const record = records[0];
+const quote = quotes[0];
+
+// The quote's highlighted phrase gets the sun-wash.
+const [before, after] = quote?.data.highlight
+  ? quote.data.translation.split(quote.data.highlight)
+  : [quote?.data.translation ?? '', undefined];
+
+// Card tilts and tape spots, straight from the mockup.
+const pins = [
+  { tilt: -1, tape: 'left', tapeTilt: -4 },
+  { tilt: 1.2, tape: 'right', tapeTilt: 5 },
+  { tilt: -0.6, tape: 'centre', tapeTilt: -2 },
+] as const;
+---
+
+<Base description="Kavya Jahagirdar's digital garden: notes that get planted and tended, a shelf of quotes, and the records on repeat." sky="home"
+  devanagariText={quote?.data.script === 'deva' ? quote.data.original : undefined}
+>
+  <section slot="sky" class="hero">
+    <div class="hero-text">
+      <p class="kicker">hello, you found the garden</p>
+      <h1 class="kw-display hero-title">A garden I tend in <em>public.</em></h1>
+      <p class="intro">
+        I'm Kavya. I build tools that help people tell their career story, and I write here about the things I'm <span
+          class="kw-hl">still figuring out</span
+        >.
+      </p>
+      <div class="actions">
+        <TendrilButton href="/notes">Start reading</TendrilButton>
+        <TendrilButton href="/map" variant="secondary">See the whole garden</TendrilButton>
+      </div>
+    </div>
+    <div class="hero-cloud" aria-hidden="true" set:html={heroCloud} />
+  </section>
+
+  <section class="recent" aria-labelledby="recent-h">
+    <div class="section-head">
+      <h2 id="recent-h" class="kw-heading">Recently tended</h2>
+      <a class="kw-link" href="/notes">All notes</a>
+    </div>
+    {
+      recent.length ? (
+        <div class="cards">
+          {recent.map((note, i) => (
+            <NoteCard note={note} {...pins[i]} />
+          ))}
+        </div>
+      ) : (
+        <p class="empty">Nothing's planted yet. The beds are dug, though.</p>
+      )
+    }
+  </section>
+
+  <section class="pair">
+    {
+      record && (
+        <a class="paper-card turntable-card" href="/on-repeat" style="--tilt:-1.2deg">
+          <span class="tape" style="left:30px" aria-hidden="true" />
+          <span class="vinyl" aria-hidden="true">
+            <span class="vinyl-label" />
+            <span class="vinyl-hole" />
+            <span class="vinyl-shine" />
+          </span>
+          <span class="tt-text">
+            <span class="hand-label">on the turntable</span>
+            <span class="kw-subheading tt-title">
+              {record.data.title}, {record.data.artist}
+            </span>
+            <span class="tt-sub">
+              {count(records.length, 'record')} I keep going back to{records.every((r) => r.data.note) ? `, ${records.length === 1 ? 'with' : 'each with'} a note on why.` : '.'}
+            </span>
+            <span class="tt-cta">Drop the needle</span>
+          </span>
+        </a>
+      )
+    }
+    {
+      quote && (
+        <a class="paper-card quote-card" href="/quotes" style="--tilt:1.5deg">
+          <span class="tape" style="left:50%;margin-left:-39px;width:78px;height:22px;z-index:1;--tape-tilt:-3deg" aria-hidden="true" />
+          <span class="q-mark" aria-hidden="true">
+            &#8220;
+          </span>
+          <span class="q-top">
+            <span class:list={['q-original', { 'q-deva': quote.data.script === 'deva' }]} lang={quote.data.script === 'deva' ? 'hi' : undefined}>
+              {quote.data.original}
+            </span>
+            {quote.data.translation && (
+              <span class="q-trans">
+                {before}
+                {after !== undefined && <span class="kw-hl">{quote.data.highlight}</span>}
+                {after}
+              </span>
+            )}
+            <span class="q-cite">
+              {quote.data.source}
+              {quote.data.when && `, ${quote.data.when}`}
+            </span>
+          </span>
+          <span class="q-perf" aria-hidden="true" />
+          {quote.data.reflection && (
+            <span class="q-peek">
+              <span>{quote.data.reflection}</span>
+            </span>
+          )}
+          <span class="q-unfold">Unfold my note</span>
+        </a>
+      )
+    }
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: flex-start;
+    padding-top: clamp(40px, 7vw, 88px);
+  }
+  .hero-text {
+    flex: 999 1 26rem;
+    min-width: 0;
+  }
+  .kicker {
+    margin-bottom: var(--space-2);
+    font-family: var(--font-hand);
+    font-size: 19px;
+    transform: rotate(var(--tilt-m));
+    transform-origin: left;
+  }
+  .hero-title {
+    margin-bottom: var(--space-5);
+    font-size: clamp(50px, 8.5vw, 100px);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+  }
+  .hero-title em {
+    display: inline-block;
+    font-weight: 400;
+    padding: 0 0.08em;
+  }
+  .intro {
+    max-width: 30em;
+    margin-bottom: 30px;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px 40px;
+  }
+  /* On the sky, focus rings go spot. */
+  .hero :global(:focus-visible) {
+    outline-color: var(--spot);
+  }
+  .hero-cloud {
+    flex: 1 1 300px;
+    max-width: 340px;
+    position: relative;
+    height: 210px;
+    margin-top: 40px;
+  }
+  .hero-cloud :global(svg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  @media (max-width: 640px) {
+    .hero-cloud {
+      display: none;
+    }
+  }
+
+  .recent {
+    margin-top: var(--space-2);
+  }
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-5);
+    margin-bottom: 22px;
+  }
+  .section-head h2 {
+    font-size: clamp(28px, 3.6vw, 40px);
+  }
+  .section-head .kw-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 14px;
+    border-bottom: 0;
+    text-decoration: underline;
+    text-decoration-color: var(--spot);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 28px var(--space-5);
+    align-items: start;
+  }
+  .cards > :global(:nth-child(2)) {
+    margin-top: 14px;
+  }
+  .empty {
+    color: var(--moss);
+  }
+
+  .pair {
+    margin-top: clamp(64px, 9vw, 104px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px 48px;
+    align-items: stretch;
+  }
+
+  .turntable-card {
+    flex: 1 1 20rem;
+    max-width: 460px;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-5);
+    padding: 26px;
+  }
+  .vinyl {
+    flex: none;
+    position: relative;
+    width: 112px;
+    height: 112px;
+    border-radius: var(--radius-full);
+    background: var(--ink) repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.07) 0 1px, rgba(255, 255, 255, 0) 1px 4px);
+    animation: spin 3.2s linear infinite;
+  }
+  .vinyl-label,
+  .vinyl-hole,
+  .vinyl-shine {
+    position: absolute;
+    border-radius: var(--radius-full);
+  }
+  .vinyl-label {
+    left: 50%;
+    top: 50%;
+    width: 38px;
+    height: 38px;
+    margin: -19px 0 0 -19px;
+    background: var(--spot);
+  }
+  .vinyl-hole {
+    left: 50%;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background: var(--paper);
+  }
+  .vinyl-shine {
+    left: 58%;
+    top: 22%;
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.35);
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .tt-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .hand-label {
+    font-family: var(--font-hand);
+    font-size: 15px;
+    color: var(--moss);
+  }
+  .tt-title {
+    font-size: 23px;
+    line-height: 1.15;
+    font-variation-settings: 'opsz' 36, 'SOFT' 40, 'WONK' 1;
+  }
+  .tt-sub {
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--moss);
+  }
+  .tt-cta,
+  .q-unfold {
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .tt-cta {
+    margin-top: 4px;
+  }
+
+  .quote-card {
+    flex: 1 1 20rem;
+    max-width: 430px;
+  }
+  .q-mark {
+    position: absolute;
+    right: 16px;
+    top: 4px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100, 'WONK' 1;
+    font-size: 84px;
+    line-height: 1;
+    color: var(--spot-soft);
+  }
+  .q-top {
+    display: block;
+    padding: 26px var(--space-5) 18px;
+  }
+  .q-original {
+    display: block;
+    margin-bottom: 6px;
+    padding-right: 44px;
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: 1.5;
+  }
+  .q-deva {
+    font-family: var(--font-deva);
+    font-size: 22px;
+    line-height: 1.85;
+  }
+  .q-trans {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .q-cite {
+    display: block;
+    font-size: 12.5px;
+    color: var(--moss);
+  }
+  .q-perf {
+    display: block;
+    height: 14px;
+    position: relative;
+    margin: 0 -1px;
+    background:
+      radial-gradient(circle at 0 50%, var(--paper) 7px, transparent 7.5px),
+      radial-gradient(circle at 100% 50%, var(--paper) 7px, transparent 7.5px);
+  }
+  .q-perf::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 50%;
+    border-top: 2px dotted rgba(19, 19, 19, 0.28);
+  }
+  .q-peek {
+    display: block;
+    padding: 12px var(--space-5) 0;
+    max-height: 4.2em;
+    overflow: hidden;
+  }
+  .q-peek span {
+    display: block;
+    font-family: var(--font-hand);
+    font-size: 15.5px;
+    line-height: 1.45;
+    color: var(--moss);
+    -webkit-mask-image: linear-gradient(#000 40%, transparent);
+    mask-image: linear-gradient(#000 40%, transparent);
+  }
+  .q-unfold {
+    display: block;
+    padding: var(--space-2) var(--space-5) 14px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vinyl {
+      animation: none;
+    }
+  }
+</style>

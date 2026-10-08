@@ -1,0 +1,10 @@
+# The shelf on /on-repeat. Never host audio: listen_url links out.
+# Pick a sleeve that isn't already on the shelf (see src/scene/sleeves.ts).
+# note is optional: leave it out and the turntable shows no note.
+
+- title: Chasing Cars
+  artist: Snow Patrol
+  label: CHASING CARS
+  listen_url: https://open.spotify.com/search/Chasing%20Cars%20Snow%20Patrol
+  sleeve: sunset
+  added: 2026-10-08

@@ -1,0 +1,62 @@
+---
+// A note pinned to the page: taped paper with its tended date, title and summary.
+import type { CollectionEntry } from 'astro:content';
+import RelTime from './RelTime.astro';
+import { recentlyTended } from '../lib/garden';
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+  /** Rotation in degrees, inside ±tilt-max. */
+  tilt?: number;
+  /** Where the tape sits: left, centre or right. */
+  tape?: 'left' | 'centre' | 'right';
+  tapeTilt?: number;
+}
+const { note, tilt = 0, tape = 'left', tapeTilt = -4 } = Astro.props;
+const fresh = recentlyTended(note.data.tended);
+---
+
+<a class="paper-card note-card" href={`/notes/${note.id}`} style={`--tilt:${tilt}deg`}>
+  <span class:list={['tape', `tape--${tape}`]} style={`--tape-tilt:${tapeTilt}deg`} aria-hidden="true"></span>
+  <span class="when">
+    {fresh && <span class="kw-dot" title="Tended in the last two weeks" />}
+    <RelTime date={note.data.tended} prefix="Tended " />
+  </span>
+  <span class="title kw-subheading">{note.data.title}</span>
+  <span class="summary">{note.data.summary}</span>
+</a>
+
+<style>
+  .note-card {
+    gap: 10px;
+    padding: 26px 22px 20px;
+  }
+  .tape--left {
+    left: 24px;
+  }
+  .tape--right {
+    right: 28px;
+  }
+  .tape--centre {
+    left: 50%;
+    margin-left: -35px;
+  }
+  .when {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--leaf);
+  }
+  .title {
+    font-size: 23px;
+    line-height: 1.15;
+    font-variation-settings: 'opsz' 36, 'SOFT' 40, 'WONK' 1;
+  }
+  .summary {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--moss);
+  }
+</style>

@@ -1,0 +1,13 @@
+# The shelf of quotes. See CLAUDE.md for every field. `ink: true` on two at most.
+
+- id: kabir-mali
+  original: "माली सींचे सौ घड़ा, ऋतु आए फल होय।"
+  script: deva
+  translit: ""
+  translation: "The gardener pours a hundred pots of water, but fruit comes in its season."
+  highlight: "but fruit comes in its season."
+  source: Kabir
+  when: 15th century
+  reflection: "The whole reason this site is a garden, in one line."
+  ink: false
+  added: 2026-10-01

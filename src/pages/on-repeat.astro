@@ -1,0 +1,599 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { sleeve } from '../scene/sleeves';
+
+const records = (await getCollection('records')).sort((a, b) => a.data.order - b.data.order);
+
+// Every sleeve on the shelf is different.
+const seen = new Map<string, string>();
+for (const r of records) {
+  const other = seen.get(r.data.sleeve);
+  if (other) throw new Error(`records.yaml: "${r.data.title}" and "${other}" both use the "${r.data.sleeve}" sleeve.`);
+  seen.set(r.data.sleeve, r.data.title);
+}
+
+const listenLabel = (url: string) => {
+  const host = new URL(url).hostname;
+  if (host.includes('spotify')) return 'Listen on Spotify';
+  if (host.includes('youtube') || host.includes('youtu.be')) return 'Listen on YouTube';
+  if (host.includes('apple')) return 'Listen on Apple Music';
+  return 'Listen';
+};
+const data = records.map((r) => ({
+  title: r.data.title,
+  artist: r.data.artist,
+  label: r.data.label,
+  note: r.data.note,
+  url: r.data.listen_url,
+  listen: listenLabel(r.data.listen_url),
+}));
+---
+
+<Base title="On repeat" description="The records I keep going back to, and a turntable to drop the needle on." strip="onrepeat" width="wide">
+  <section class="intro">
+    <p class="kicker">on repeat</p>
+    <h1 class="kw-display">Drop the needle.</h1>
+    <p class="lede">
+      Pick a sleeve, then swing the arm across. Every record comes with the reason it's still in the rotation. Covers are
+      drawn, not borrowed.
+    </p>
+  </section>
+
+  <section class="deck" data-turntable>
+    <div class="table-wrap">
+      <svg class="plant" viewBox="0 0 160 170" aria-hidden="true">
+        <path class="draw" pathLength="1" d="M74 168 C70 130 52 112 40 92 C30 74 40 56 56 60 C68 64 64 80 54 78" fill="none" stroke="#131313" stroke-width="2.6" stroke-linecap="round"></path>
+        <path class="draw" pathLength="1" d="M76 168 C80 128 98 104 104 70 C108 48 96 36 86 44" fill="none" stroke="#131313" stroke-width="2.6" stroke-linecap="round"></path>
+        <path class="pop" d="M44 104 c-20 -4 -30 -20 -26 -30 c16 2 26 14 26 30z" fill="#167A45"></path>
+        <path class="pop p2" d="M100 96 c18 -10 34 -6 38 4 c-12 10 -28 10 -38 -4z" fill="#167A45"></path>
+        <g class="pop p3"><circle cx="113.9" cy="62" r="6.8" fill="#fd5183"></circle><circle cx="107.1" cy="71.4" r="6.8" fill="#fd5183"></circle><circle cx="96" cy="67.8" r="6.8" fill="#fd5183"></circle><circle cx="96" cy="56.2" r="6.8" fill="#fd5183"></circle><circle cx="107.1" cy="52.6" r="6.8" fill="#fd5183"></circle><circle cx="104" cy="62" r="5.5" fill="#FDE837"></circle></g>
+        <g class="pop p4"><circle cx="53.2" cy="64" r="5" fill="#FFADC4"></circle><circle cx="48.2" cy="70.8" r="5" fill="#FFADC4"></circle><circle cx="40.2" cy="68.2" r="5" fill="#FFADC4"></circle><circle cx="40.2" cy="59.8" r="5" fill="#FFADC4"></circle><circle cx="48.2" cy="57.2" r="5" fill="#FFADC4"></circle><circle cx="46" cy="64" r="4" fill="#FDE837"></circle></g>
+        <g class="pop p5"><circle cx="128.3" cy="124" r="4.3" fill="#ffffff"></circle><circle cx="123.9" cy="130" r="4.3" fill="#ffffff"></circle><circle cx="116.9" cy="127.7" r="4.3" fill="#ffffff"></circle><circle cx="116.9" cy="120.3" r="4.3" fill="#ffffff"></circle><circle cx="123.9" cy="118" r="4.3" fill="#ffffff"></circle><circle cx="122" cy="124" r="3.5" fill="#FDE837"></circle></g>
+      </svg>
+      <div class="plinth">
+        <div class="platter">
+          <div class="vinyl" data-vinyl>
+            <div class="vinyl-label"><b data-label></b></div>
+            <span class="vinyl-shine"></span>
+          </div>
+          <div class="spindle"></div>
+        </div>
+        <div
+          class="arm"
+          data-arm
+          role="slider"
+          tabindex="0"
+          aria-label="Tone arm"
+          aria-valuemin="0"
+          aria-valuemax="1"
+          aria-valuenow="0"
+          aria-valuetext="lifted"
+          aria-disabled="true"
+        >
+          <svg viewBox="0 0 120 190" aria-hidden="true">
+            <rect x="96" y="6" width="18" height="46" rx="5" fill="#686957"></rect>
+            <path d="M105 44 L105 150 Q105 166 88 170" fill="none" stroke="#686957" stroke-width="7" stroke-linecap="round"></path>
+            <rect x="70" y="160" width="26" height="15" rx="3" fill="#131313" transform="rotate(-14 83 167)"></rect>
+          </svg>
+        </div>
+        <span class="pivot" aria-hidden="true"></span>
+        <button type="button" class="armbtn" data-toggle disabled>
+          <span data-toggle-label>pick a sleeve first</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="shelf-col">
+      <h2 class="shelf-h">The shelf</h2>
+      <div class="shelf">
+        {
+          records.map((r, i) => (
+            <button type="button" class="sleeve" data-pick={i} aria-pressed="false" aria-label={`${r.data.title}, ${r.data.artist}`}>
+              <svg viewBox="0 0 100 100" aria-hidden="true" set:html={sleeve(r.data.sleeve)} />
+            </button>
+          ))
+        }
+      </div>
+      <div class="now" aria-live="polite">
+        <p class="nothing" data-empty>nothing on yet. pick a sleeve.</p>
+        <div data-info hidden>
+          <p class="now-title" data-title></p>
+          <p class="now-artist"><span data-artist></span><span class="playing" data-playing hidden> · playing</span></p>
+          <p class="now-note" data-note></p>
+          <a class="kw-link listen" data-listen href="#"></a>
+        </div>
+      </div>
+    </div>
+    <script type="application/json" data-records set:html={JSON.stringify(data)} />
+  </section>
+</Base>
+
+<script>
+  // The turntable. Pick a sleeve, then drop the needle: the button, dragging the arm past halfway,
+  // or arrow keys on the arm. The only sound the site makes is this crackle, made in WebAudio,
+  // and the audio context only exists after the first click.
+  type Rec = { title: string; artist: string; label: string; note: string; url: string; listen: string };
+
+  const root = document.querySelector<HTMLElement>('[data-turntable]');
+  if (root) {
+    const records: Rec[] = JSON.parse(root.querySelector('[data-records]')!.textContent || '[]');
+    const $ = <T extends Element = HTMLElement>(sel: string) => root.querySelector(sel) as unknown as T;
+    const vinyl = $('[data-vinyl]');
+    const arm = $('[data-arm]');
+    const toggleBtn = $<HTMLButtonElement>('[data-toggle]');
+    const toggleLabel = $('[data-toggle-label]');
+    const plant = $('.plant');
+    const sleeves = [...root.querySelectorAll<HTMLButtonElement>('[data-pick]')];
+
+    const DOWN = 26; // degrees the arm swings onto the record
+    let cur: number | null = null;
+    let playing = false;
+
+    let ctx: AudioContext | null = null;
+    let gain: GainNode | null = null;
+    function crackle(on: boolean) {
+      try {
+        if (!ctx) {
+          ctx = new AudioContext();
+          const len = ctx.sampleRate * 2;
+          const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+          const d = buf.getChannelData(0);
+          for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (Math.random() < 0.0009 ? 1 : 0.035);
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+          src.loop = true;
+          const hp = ctx.createBiquadFilter();
+          hp.type = 'highpass';
+          hp.frequency.value = 700;
+          gain = ctx.createGain();
+          gain.gain.value = 0;
+          src.connect(hp).connect(gain).connect(ctx.destination);
+          src.start();
+        }
+        if (ctx.state === 'suspended') ctx.resume();
+        gain!.gain.setTargetAtTime(on ? 0.45 : 0, ctx.currentTime, on ? 0.25 : 0.12);
+      } catch {
+        // No sound is fine. The record still spins.
+      }
+    }
+
+    function setArm(deg: number, animate = true) {
+      arm.style.transition = animate ? '' : 'none';
+      arm.style.transform = `rotate(${deg}deg)`;
+    }
+
+    function render() {
+      const r = cur === null ? null : records[cur];
+      sleeves.forEach((s, i) => s.setAttribute('aria-pressed', String(i === cur)));
+      vinyl.classList.toggle('on', !!r);
+      vinyl.classList.toggle('spin', playing);
+      plant.classList.toggle('playing', playing);
+      setArm(playing ? DOWN : 0);
+      arm.setAttribute('aria-valuenow', playing ? '1' : '0');
+      arm.setAttribute('aria-valuetext', playing ? 'on the record' : 'lifted');
+      arm.setAttribute('aria-disabled', String(!r));
+      toggleBtn.disabled = !r;
+      toggleLabel.textContent = !r ? 'pick a sleeve first' : playing ? 'lift the needle' : 'drop the needle';
+      $('[data-empty]').hidden = !!r;
+      $('[data-info]').hidden = !r;
+      if (r) {
+        $('[data-label]').textContent = r.label;
+        $('[data-title]').textContent = r.title;
+        $('[data-artist]').textContent = r.artist;
+        const note = $('[data-note]');
+        note.textContent = r.note;
+        note.hidden = !r.note;
+        $('[data-playing]').hidden = !playing;
+        const a = $<HTMLAnchorElement>('[data-listen]');
+        a.href = r.url;
+        a.textContent = r.listen;
+      }
+    }
+
+    function play(on: boolean) {
+      if (cur === null) return;
+      playing = on;
+      crackle(on);
+      render();
+    }
+
+    sleeves.forEach((s, i) =>
+      s.addEventListener('click', () => {
+        crackle(false);
+        cur = i;
+        playing = false;
+        render();
+      })
+    );
+    toggleBtn.addEventListener('click', () => play(!playing));
+
+    arm.addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'ArrowDown'].includes(e.key)) play(true);
+      else if (['ArrowLeft', 'ArrowUp'].includes(e.key)) play(false);
+      else if (e.key === 'Enter' || e.key === ' ') play(!playing);
+      else return;
+      e.preventDefault();
+    });
+
+    // Dragging: the arm turns round its pivot (top right). Let go past halfway and the needle drops.
+    let drag: { cx: number; cy: number; start: number; from: number } | null = null;
+    let angle = 0;
+    const pointerAngle = (e: PointerEvent) => Math.atan2(e.clientY - drag!.cy, e.clientX - drag!.cx) * (180 / Math.PI);
+    arm.addEventListener('pointerdown', (e) => {
+      if (cur === null) return;
+      const box = arm.getBoundingClientRect();
+      drag = { cx: box.left + box.width * 0.88, cy: box.top + box.height * 0.12, start: 0, from: playing ? DOWN : 0 };
+      drag.start = pointerAngle(e);
+      angle = drag.from;
+      arm.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    arm.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      // Pulling the head left and down swings it onto the record: the angle grows.
+      angle = Math.min(DOWN, Math.max(0, drag.from + (pointerAngle(e) - drag.start)));
+      setArm(angle, false);
+    });
+    const release = () => {
+      if (!drag) return;
+      drag = null;
+      play(angle > DOWN / 2);
+    };
+    arm.addEventListener('pointerup', release);
+    arm.addEventListener('pointercancel', release);
+  }
+</script>
+
+<style>
+  .intro {
+    max-width: 40rem;
+    padding: clamp(32px, 5vw, 56px) 0 clamp(36px, 5vw, 56px);
+  }
+  .kicker {
+    margin-bottom: var(--space-2);
+    font-family: var(--font-hand);
+    font-size: 19px;
+    color: var(--moss);
+    transform: rotate(var(--tilt-m));
+    transform-origin: left;
+  }
+  h1 {
+    margin-bottom: 18px;
+    font-size: clamp(44px, 7vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+  .lede {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--moss);
+  }
+
+  .deck {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px 56px;
+    align-items: flex-start;
+  }
+  .table-wrap {
+    flex: 1 1 26rem;
+    min-width: 0;
+    position: relative;
+    margin-top: 70px;
+  }
+  .plant {
+    position: absolute;
+    left: -46px;
+    top: -128px;
+    z-index: 3;
+    width: 160px;
+    height: 170px;
+    overflow: visible;
+    pointer-events: none;
+  }
+  @media (max-width: 560px) {
+    .plant {
+      left: -10px;
+    }
+  }
+  .plinth {
+    position: relative;
+    aspect-ratio: 1 / 0.9;
+    background: var(--paper-lift);
+    border: 1px solid var(--ink-hair);
+    box-shadow: var(--shadow-lift);
+  }
+  .platter {
+    position: absolute;
+    left: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-full);
+    background: #dcdcda;
+    box-shadow: inset 0 0 0 1px rgba(19, 19, 19, 0.1);
+  }
+  .vinyl {
+    position: absolute;
+    inset: 3%;
+    border-radius: var(--radius-full);
+    background: var(--ink) repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 0 1px, rgba(255, 255, 255, 0) 1px 4px);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .vinyl:global(.on) {
+    opacity: 1;
+  }
+  .vinyl:global(.spin) {
+    animation: rev 1.8s linear infinite;
+  }
+  @keyframes rev {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .vinyl-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    width: 34%;
+    aspect-ratio: 1;
+    padding: 6px;
+    border-radius: var(--radius-full);
+    background: var(--spot);
+    text-align: center;
+  }
+  .vinyl-label b {
+    font-family: var(--font-display);
+    font-size: 10px;
+    line-height: 1.15;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--on-spot);
+  }
+  .vinyl-shine {
+    position: absolute;
+    left: 62%;
+    top: 18%;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .spindle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 3.5%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-full);
+    background: var(--paper);
+  }
+  .arm {
+    position: absolute;
+    right: 9%;
+    top: 11%;
+    width: 36%;
+    height: 58%;
+    transform-origin: 88% 12%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
+    cursor: grab;
+    touch-action: none;
+  }
+  .arm[aria-disabled='true'] {
+    cursor: default;
+  }
+  .arm:active {
+    cursor: grabbing;
+  }
+  .arm svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .arm:focus-visible,
+  .armbtn:focus-visible,
+  .sleeve:focus-visible {
+    outline: 2px solid var(--spot);
+    outline-offset: 4px;
+  }
+  .pivot {
+    position: absolute;
+    right: 5%;
+    top: 4%;
+    width: 15%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-full);
+    background: var(--moss);
+    pointer-events: none;
+  }
+  .armbtn {
+    position: absolute;
+    right: 18px;
+    bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 2px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-family: var(--font-hand);
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--ink);
+  }
+  .armbtn span {
+    padding-bottom: 1px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .armbtn:disabled {
+    cursor: default;
+    color: var(--moss);
+  }
+  .armbtn:disabled span {
+    border-bottom-color: var(--moss);
+  }
+  .armbtn:not(:disabled):hover span {
+    border-bottom-color: var(--spot);
+  }
+
+  .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: dr 2s cubic-bezier(0.35, 0.1, 0.25, 1) 0.3s forwards;
+  }
+  @keyframes dr {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .pop {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transform: scale(0);
+    animation: pp 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) 1.8s forwards;
+  }
+  .pop.p2 {
+    animation-delay: 2s;
+  }
+  .pop.p3 {
+    animation-delay: 2.2s;
+    transform-origin: 50% 50%;
+  }
+  .pop.p4 {
+    animation-delay: 2.35s;
+    transform-origin: 50% 50%;
+  }
+  .pop.p5 {
+    animation-delay: 2.5s;
+    transform-origin: 50% 50%;
+  }
+  @keyframes pp {
+    to {
+      transform: scale(1);
+    }
+  }
+  .plant:global(.playing) {
+    animation: dance 0.9s ease-in-out infinite alternate;
+    transform-origin: 47% 100%;
+  }
+  @keyframes dance {
+    from {
+      transform: rotate(-2deg);
+    }
+    to {
+      transform: rotate(2.5deg);
+    }
+  }
+
+  .shelf-col {
+    flex: 1 1 20rem;
+    min-width: 0;
+  }
+  .shelf-h {
+    margin-bottom: var(--space-4);
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 40, 'SOFT' 45, 'WONK' 1;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.1;
+  }
+  .shelf {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .sleeve {
+    position: relative;
+    aspect-ratio: 1;
+    padding: 0;
+    background: var(--paper-lift);
+    border: 1px solid var(--ink-hair);
+    box-shadow: 3px 4px 0 rgba(19, 19, 19, 0.07);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .sleeve:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-lift);
+  }
+  .sleeve svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .sleeve[aria-pressed='true']::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border: 2.5px solid var(--spot);
+    pointer-events: none;
+  }
+  .now {
+    min-height: 11rem;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ink-hair);
+  }
+  .nothing {
+    font-family: var(--font-hand);
+    font-size: 18px;
+    color: var(--moss);
+  }
+  .now-title {
+    margin-bottom: 2px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 48, 'SOFT' 48, 'WONK' 1;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.1;
+  }
+  .now-artist {
+    margin-bottom: 14px;
+    font-size: 14.5px;
+    color: var(--moss);
+  }
+  .playing {
+    color: var(--leaf);
+    font-weight: 600;
+  }
+  .now-note {
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--spot);
+    font-family: var(--font-hand);
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .listen {
+    display: inline-block;
+    margin-top: var(--space-4);
+    font-size: 14px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vinyl:global(.spin),
+    .plant:global(.playing) {
+      animation: none;
+    }
+    .draw {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+    .pop {
+      animation: none;
+      transform: none;
+    }
+    .arm,
+    .sleeve {
+      transition: none;
+    }
+  }
+</style>

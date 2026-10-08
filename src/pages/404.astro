@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import TendrilButton from '../components/TendrilButton.astro';
+import { tendril, stemPath, leafAt } from '../lib/tendril';
+
+// The page's one tendril: it wanders out and stops short. No coil, no bud. It hasn't grown yet either.
+const p = tendril({ x: 10, y: 120, h: -0.08, len: 520, wobble: 0.014, freq: 0.03, coilStart: 1, seed: 3 });
+const art = `<path class="stem" pathLength="1" d="${stemPath(p)}"/>` + leafAt(p, 0.35, -1, 22, 'leaf-soft') + leafAt(p, 0.7, 1, 20, 'leaf');
+---
+
+<Base title="Not grown yet" description="This page hasn't grown yet." strip="note">
+  <section class="lost">
+    <h1 class="kw-display">This one hasn't grown yet.</h1>
+    <svg class="kw-tendril short" viewBox="0 0 560 200" aria-hidden="true" set:html={art} />
+    <p>Either the link's wrong or I haven't planted it. The map shows what's actually here.</p>
+    <TendrilButton href="/map">Find it on the map</TendrilButton>
+  </section>
+</Base>
+
+<style>
+  .lost {
+    padding-top: var(--space-8);
+    max-width: var(--measure-text);
+  }
+  h1 {
+    font-size: clamp(44px, 7vw, 64px);
+    margin-bottom: var(--space-4);
+  }
+  .short {
+    max-width: 30rem;
+    margin-bottom: var(--space-4);
+  }
+  .short :global(.stem) {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: grow 1.9s cubic-bezier(0.35, 0.1, 0.25, 1) 0.3s forwards;
+  }
+  @keyframes grow {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  p {
+    margin-bottom: var(--space-5);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .short :global(.stem) {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

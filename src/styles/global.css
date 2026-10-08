@@ -1,0 +1,116 @@
+@import './tokens.css';
+@import './components.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+/* Page containers. Inner pages use measure-page; Home and the map get more room for the scene. */
+.wrap {
+  width: 100%;
+  max-width: var(--measure-page);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+.wrap--home {
+  max-width: 66rem;
+}
+.wrap--map {
+  max-width: 74rem;
+}
+@media (max-width: 480px) {
+  .wrap {
+    padding: 0 var(--space-4);
+  }
+}
+
+.skip {
+  position: absolute;
+  left: var(--space-4);
+  top: -100px;
+  z-index: 10;
+  background: var(--paper-lift);
+  padding: var(--space-2) var(--space-4);
+  font: var(--text-label);
+}
+.skip:focus {
+  top: var(--space-4);
+}
+
+/* Scenes: the painted SVGs fill their box and crop to the centre. */
+.scene {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* Under 900px the nav wraps across the top of the sky; the high clouds step aside so no text sits on one. */
+@media (max-width: 900px) {
+  .scene .high {
+    display: none;
+  }
+}
+
+/* Clickable paper: 2px nudge up-left, shadow-press to shadow-lift. Tilt lives in --tilt. */
+.paper-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper-lift);
+  border: 1px solid var(--ink-hair);
+  border-radius: var(--radius-0);
+  box-shadow: var(--shadow-press);
+  text-decoration: none;
+  color: var(--ink);
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.paper-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-lift);
+}
+.tape {
+  position: absolute;
+  top: -10px;
+  width: 70px;
+  height: 20px;
+  background: var(--moss-tape);
+  transform: rotate(var(--tape-tilt, -4deg));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper-card {
+    transition: none;
+  }
+}

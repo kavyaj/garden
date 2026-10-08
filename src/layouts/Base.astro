@@ -1,0 +1,130 @@
+---
+// Every page is three layers: sky, paper, garden. A page only supplies its middle
+// (and, on Home and the map, what sits on the sky).
+import '../styles/global.css';
+import SkyHome from '../components/SkyHome.astro';
+import SkyMap from '../components/SkyMap.astro';
+import SkyStrip, { type StripVariant } from '../components/SkyStrip.astro';
+import GardenFooter from '../components/GardenFooter.astro';
+import { site } from '../site';
+
+interface Props {
+  /** Page title. Home passes nothing and gets the bare site name. */
+  title?: string;
+  description: string;
+  sky?: 'home' | 'map' | 'strip';
+  strip?: StripVariant;
+  /** Page width: inner pages use measure-page; "wide" gives Home's 66rem (On repeat). */
+  width?: 'page' | 'wide';
+  /** Load Tiro Devanagari Hindi in full. Quotes only. */
+  devanagari?: boolean;
+  /** Load Tiro Devanagari Hindi subset to just these characters (Home's one quote). */
+  devanagariText?: string;
+}
+const { title, description, sky = 'strip', strip, width = 'page', devanagari = false, devanagariText } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name}, a digital garden`;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+
+const fonts =
+  'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1' +
+  '&family=DM+Sans:opsz,wght@9..40,300..700&family=Shantell+Sans:wght@300..700' +
+  (devanagari ? '&family=Tiro+Devanagari+Hindi' : '') +
+  '&display=swap';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/kj-logo-512.png', site.url).href} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="/kj-logo-small.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#98CEEA" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href={fonts} />
+    <link rel="stylesheet" href={fonts} />
+    {
+      devanagariText && !devanagari && (
+        <link
+          rel="stylesheet"
+          href={`https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&display=swap&text=${encodeURIComponent(devanagariText)}`}
+        />
+      )
+    }
+  </head>
+  <body class="kw-root">
+    <a class="skip" href="#main">Skip to the content</a>
+
+    {
+      sky === 'home' ? (
+        <SkyHome>
+          <slot name="sky" />
+        </SkyHome>
+      ) : sky === 'map' ? (
+        <SkyMap>
+          <slot name="sky" />
+        </SkyMap>
+      ) : (
+        <SkyStrip variant={strip} />
+      )
+    }
+
+    <main id="main" class:list={['wrap', { 'wrap--home': sky === 'home' || width === 'wide', 'wrap--map': sky === 'map' }]}>
+      <slot />
+    </main>
+
+    <GardenFooter atMap={sky === 'map'} />
+
+    <script is:inline>
+      // Relative dates: <time datetime="2026-10-04" data-rel="Tended "> reads "Tended 3 days ago".
+      // Without JS it stays the plain date the build wrote.
+      (function () {
+        var DAY = 864e5;
+        var now = new Date();
+        var today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        document.querySelectorAll('time[data-rel]').forEach(function (el) {
+          var d = new Date(el.getAttribute('datetime') + 'T00:00:00Z');
+          if (isNaN(d)) return;
+          var days = Math.round((today - d.getTime()) / DAY);
+          var text;
+          if (days <= 0) text = 'today';
+          else if (days === 1) text = 'yesterday';
+          else if (days < 7) text = days + ' days ago';
+          else if (days < 14) text = 'last week';
+          else if (days < 31) text = Math.floor(days / 7) + ' weeks ago';
+          else if (el.getAttribute('data-older') === 'month') text = months[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+          else text = 'in ' + months[d.getUTCMonth()] + (d.getUTCFullYear() === now.getFullYear() ? '' : ' ' + d.getUTCFullYear());
+          el.textContent = (el.getAttribute('data-rel') || '') + text;
+        });
+      })();
+
+      // The logo's arrival: once per visit, never under reduced motion.
+      (function () {
+        var ix = document.querySelector('.kw-ix');
+        if (!ix || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        try {
+          if (sessionStorage.getItem('kw-intro')) return;
+          sessionStorage.setItem('kw-intro', '1');
+        } catch (e) {
+          return;
+        }
+        ix.classList.add('play');
+      })();
+    </script>
+  </body>
+</html>

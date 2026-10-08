@@ -1,0 +1,99 @@
+---
+// "Mentioned in": the notes that link here, held together by one tendril vine with a coil
+// reaching toward each entry. Renders nothing when there are none.
+import type { CollectionEntry } from 'astro:content';
+import RelTime from './RelTime.astro';
+
+interface Props {
+  notes: CollectionEntry<'notes'>[];
+}
+const { notes } = Astro.props;
+
+// The vine: a gentle wave down the left, one counter-clockwise coil per entry, one leaf.
+const ROW = 72;
+const TOP = 30;
+const h = TOP + notes.length * ROW;
+let stem = `M25 0`;
+for (let y = 0; y < h; y += 100) {
+  const end = Math.min(y + 100, h);
+  stem += ` C18 ${y + 36} 32 ${y + 64} 25 ${end}`;
+}
+const coils = notes.map((_, i) => {
+  const y = TOP + i * ROW + ROW / 2 - 6;
+  return `M25 ${y} C35 ${y - 2} 44 ${y + 2} 44 ${y + 8} C44 ${y + 14} 37 ${y + 14} 37 ${y + 9}`;
+});
+const leafY = TOP + ROW * 0.15;
+---
+
+{
+  notes.length > 0 && (
+    <section class="backlinks" aria-labelledby="backlinks-h">
+      <svg class="kw-tendril vine" viewBox={`0 0 50 ${h}`} style={`height:${h}px`} aria-hidden="true">
+        <path class="stem" d={stem} />
+        {coils.map((d) => (
+          <path class="stem" d={d} />
+        ))}
+        <path class="leaf" transform={`translate(25 ${leafY}) rotate(-120)`} d="M0 0 C5 -7 12 -6 16 0 C12 6 5 7 0 0Z" />
+      </svg>
+      <div>
+        <h2 id="backlinks-h" class="kw-meta label">
+          Mentioned in
+        </h2>
+        <ul>
+          {notes.map((n) => (
+            <li>
+              <a class="kw-link" href={`/notes/${n.id}`}>
+                {n.data.title}
+              </a>
+              <span class="kw-meta">
+                <RelTime date={n.data.tended} prefix="Note · tended " />
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .backlinks {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 0 10px;
+    max-width: 34rem;
+    margin-top: var(--space-8);
+  }
+  .vine {
+    width: 50px;
+  }
+  .label {
+    display: block;
+    height: 30px;
+    margin: 0;
+    font-weight: 400;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-height: 72px;
+    border-bottom: 1px solid var(--ink-hair);
+  }
+  li:last-child {
+    border-bottom: 0;
+  }
+  li .kw-link {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: flex-end;
+    min-height: 44px;
+    margin-top: -14px;
+  }
+</style>
