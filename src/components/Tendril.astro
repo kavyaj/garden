@@ -1,0 +1,45 @@
+---
+// The page's one tendril: a thin ink line that coils counter-clockwise, with two small leaves.
+// Its job is a divider, or the end of a list. It draws in once when it scrolls into view.
+interface Props {
+  /** Max width in px. */
+  width?: number;
+  /** Grow from the right instead (Things I've made). */
+  flip?: boolean;
+  /** Stop short, with no coil (the 404). */
+  short?: boolean;
+  class?: string;
+}
+const { width = 560, flip = false, short = false, class: cls } = Astro.props;
+const stem = short
+  ? 'M0 30 C70 30 110 18 190 22 C270 26 300 38 380 32'
+  : 'M0 30 C70 30 110 18 190 22 C270 26 300 38 380 32 C450 27 500 12 540 18 C566 22 572 40 556 41 C543 42 541 28 552 27 C559 26 561 33 556 34';
+---
+
+<div class:list={['kw-vine', cls]} aria-hidden="true" style={`max-width:${width}px`}>
+  <svg viewBox="0 0 600 46">
+    <g transform={flip ? 'scale(-1 1) translate(-600 0)' : undefined}>
+      <path class="kw-stem" pathLength="1" d={stem}></path>
+      <path class="kw-lf" d="M232 24 C238 10 252 6 260 9 C256 20 246 26 232 24Z" fill="var(--green)"></path>
+      {!short && <path class="kw-lf lf2" d="M440 28 C446 38 458 42 464 39 C460 30 452 26 440 28Z" fill="var(--green-soft)"></path>}
+    </g>
+  </svg>
+</div>
+
+<style>
+  .kw-vine svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .kw-stem {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+  .lf2 {
+    animation-delay: 2s !important;
+  }
+</style>

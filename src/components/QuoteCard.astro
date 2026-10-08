@@ -1,0 +1,87 @@
+---
+// A quote as an object: original, translation, source, and "Why I keep it" in a native <details>.
+import type { CollectionEntry } from 'astro:content';
+import { isDevanagari } from '../lib/garden';
+
+interface Props {
+  quote: CollectionEntry<'quotes'>;
+}
+const q = Astro.props.quote.data;
+const deva = isDevanagari(q.original);
+---
+
+<article class="kw-card quote-card">
+  <p class:list={['original', { deva }]} lang={deva ? 'hi' : undefined}>{q.original}</p>
+  {q.translit && <p class="type-translit translit">{q.translit}</p>}
+  {q.translation && <p class="translation">{q.translation}</p>}
+  <p class="source">{q.source}</p>
+  {
+    q.why && (
+      <details>
+        <summary>
+          Why I keep it <span class="kw-plus" aria-hidden="true">+</span>
+        </summary>
+        <p>{q.why}</p>
+      </details>
+    )
+  }
+</article>
+
+<style>
+  .quote-card {
+    display: flex;
+    flex-direction: column;
+    padding: 26px 26px 18px;
+    background: var(--paper-lift);
+    border: 1px solid var(--hair);
+  }
+  .original {
+    margin-bottom: 10px;
+    font-family: var(--font-display);
+    font-size: 20px;
+    line-height: 1.45;
+  }
+  .original.deva {
+    font-family: var(--font-deva);
+    font-size: 21px;
+    line-height: 1.75;
+  }
+  .translit {
+    margin-bottom: 10px;
+    color: var(--muted);
+  }
+  .translation {
+    margin-bottom: 12px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 24, 'SOFT' 40;
+    font-size: 18px;
+    line-height: 1.45;
+  }
+  .source {
+    margin-bottom: 14px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  details {
+    margin-top: auto;
+    padding-top: 4px;
+    border-top: 1px solid var(--hair);
+  }
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .kw-plus {
+    font-size: 18px;
+    line-height: 1;
+  }
+  details p {
+    margin: 0 0 8px;
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+</style>

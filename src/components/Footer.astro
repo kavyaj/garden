@@ -1,0 +1,108 @@
+---
+// The small dark green band. The sentence does the work. The map lives here, never in the header.
+import { nav, site } from '../site';
+---
+
+<footer class="site-footer">
+  <div class="wrap inner">
+    <div>
+      <p class="signoff">
+        <svg viewBox="0 0 30 16" aria-hidden="true"><path d="M1 12 C8 12 12 4 19 5 C25 6 24 13 19 12 C16 11 17 7 20 8"></path></svg>
+        thanks for wandering in
+      </p>
+      <p class="line">Come back. It'll have grown.</p>
+    </div>
+    <div class="right">
+      <nav aria-label="Footer">
+        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        <a class="map" href="/map">The map</a>
+      </nav>
+      <div class="small">
+        <span>{site.place}</span>
+        {site.socials.map((s) => <a href={s.href} rel="me">{s.label}</a>)}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: clamp(80px, 12vw, 140px);
+    background: var(--green-deep);
+    color: var(--paper);
+  }
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 28px 40px;
+    padding-top: 40px;
+    padding-bottom: 32px;
+  }
+  .signoff {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-family: var(--font-hand);
+    font-size: 16px;
+    color: rgba(244, 241, 234, 0.75);
+  }
+  .signoff svg {
+    width: 28px;
+    height: 15px;
+    overflow: visible;
+  }
+  .signoff path {
+    fill: none;
+    stroke: rgba(244, 241, 234, 0.75);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+  .line {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 60, 'SOFT' 50;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.1;
+  }
+  .right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 20px;
+  }
+  .site-footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--paper);
+  }
+  nav a:not(.map) {
+    text-decoration: none;
+  }
+  nav a:hover {
+    text-decoration: underline;
+  }
+  .small {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 20px;
+    font-size: 13px;
+    color: rgba(244, 241, 234, 0.7);
+  }
+  .small a {
+    color: rgba(244, 241, 234, 0.85);
+  }
+  .site-footer :focus-visible {
+    outline-color: var(--paper);
+  }
+</style>

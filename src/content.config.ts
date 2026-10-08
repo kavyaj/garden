@@ -11,7 +11,7 @@ const slug = (s: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
-/** YAML lists without an `id`: give each entry one from its title. */
+/** YAML lists: give each entry an id from its title (unless it has one) and its position in the file. */
 const listWithIds = (text: string) =>
   ((parseYaml(text) as Record<string, unknown>[] | null) ?? []).map((e, order) => ({ id: slug(String(e.title)), order, ...e }));
 
@@ -22,6 +22,10 @@ const notes = defineCollection({
     summary: z.string(),
     planted: z.coerce.date(),
     tended: z.coerce.date(),
+    /** One margin note, in Kavya's hand. Optional. */
+    margin: z.string().optional(),
+    /** An exact phrase from the body that gets the highlighter. Optional. */
+    highlight: z.string().optional(),
   }),
 });
 
@@ -29,14 +33,12 @@ const quotes = defineCollection({
   loader: file('src/content/quotes.yaml'),
   schema: z.object({
     original: z.string(),
-    script: z.enum(['deva', 'latin']),
-    translit: z.string().default(''),
+    translit: z.string().optional(),
     translation: z.string().default(''),
-    highlight: z.string().default(''),
     source: z.string(),
-    when: z.string().default(''),
-    reflection: z.string().default(''),
-    ink: z.boolean().default(false),
+    why: z.string().default(''),
+    /** Exactly one: big at the top of /quotes and on Home. */
+    featured: z.boolean().default(false),
     added: z.coerce.date(),
   }),
 });
@@ -47,7 +49,6 @@ const records = defineCollection({
     order: z.number(),
     title: z.string(),
     artist: z.string(),
-    label: z.string(),
     note: z.string().default(''),
     listen_url: z.url(),
     sleeve: z.string(),
@@ -57,26 +58,22 @@ const records = defineCollection({
 
 const projects = defineCollection({
   loader: file('src/content/projects.yaml', { parser: listWithIds }),
-  schema: ({ image }) => z.object({
-    order: z.number(),
-    title: z.string(),
-    url: z.url(),
-    blurb: z.string(),
-    image: image().optional(),
-    alt: z.string().default(''),
-    cta: z.string().default('Have a look'),
-    added: z.coerce.date(),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      order: z.number(),
+      /** run: the bigger things, as a list. small: weekend projects, as cards with a screenshot. */
+      kind: z.enum(['run', 'small']),
+      title: z.string(),
+      url: z.url().optional(),
+      blurb: z.string(),
+      /** A shorter line for Home's "Things I've made". */
+      short: z.string().optional(),
+      /** run only: "Since 2019", "Ongoing". */
+      since: z.string().optional(),
+      /** small only: a screenshot next to projects.yaml, shown 16:10. */
+      image: image().optional(),
+      added: z.coerce.date(),
+    }),
 });
 
-const growing = defineCollection({
-  loader: file('src/content/growing.yaml', { parser: listWithIds }),
-  schema: z.object({
-    order: z.number(),
-    title: z.string(),
-    url: z.url().optional(),
-    blurb: z.string(),
-  }),
-});
-
-export const collections = { notes, quotes, records, projects, growing };
+export const collections = { notes, quotes, records, projects };

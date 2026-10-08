@@ -1,0 +1,154 @@
+---
+// The garden from above: a flat drawn plan, plain labels with a count, a dashed outline on hover.
+// Every planted bed is one link. Empty plots are dashed, labelled "later", and aren't links.
+import { mapUnder, mapOver } from '../lib/map-drawing';
+import { plots, type Plot } from '../site';
+
+interface Props {
+  counts: Record<string, number>;
+  /** How many notes were tended lately: those plants get a sun halo. */
+  fresh: number;
+  /** The line under each planted plot's name. */
+  subs: Record<string, string>;
+}
+const { counts, fresh, subs } = Astro.props;
+
+const countOf = (p: Plot) => (p.collection ? (counts[p.collection] ?? 0) : 1);
+
+// One plant per note in the Notes bed, newest tended first, up to the bed's eight spots.
+const spots = [
+  [210, 375], [270, 378], [330, 372], [390, 380],
+  [210, 432], [290, 436], [370, 430], [330, 404],
+];
+const plant = ([x, y]: number[], halo: boolean) =>
+  (halo ? `<circle cx="${x}" cy="${y}" r="16" fill="#FDE837" opacity="0.55"/>` : '') +
+  `<circle cx="${x}" cy="${y}" r="9" fill="#3F6B52"/><circle cx="${x - 2}" cy="${y - 2}" r="4" fill="#86A487"/>`;
+const notesBed =
+  '<rect x="170" y="340" width="260" height="128" fill="#C9D6C2" stroke="#1A1916" stroke-width="2"/>' +
+  spots
+    .slice(0, counts.notes ?? 0)
+    .map((s, i) => plant(s, i < fresh))
+    .join('');
+
+// Plots with no drawing of their own: dashed while empty, a simple bed once planted.
+const extra = plots
+  .filter((p) => p.bed)
+  .map((p) => {
+    const { x, y, w, h } = p.bed!;
+    const n = countOf(p);
+    if (!n) return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="none" stroke="#6B675E" stroke-width="1.6" stroke-dasharray="6 6"/>`;
+    const cols = Math.max(1, Math.round(w / 45));
+    const rows = Math.max(1, Math.round(h / 45));
+    const shown = Math.min(n, cols * rows);
+    let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#C9D6C2" stroke="#1A1916" stroke-width="2"/>`;
+    for (let i = 0; i < shown; i++) s += plant([x + (w / cols) * ((i % cols) + 0.5), y + (h / rows) * (Math.floor(i / cols) + 0.5)], false);
+    return s;
+  })
+  .join('');
+
+const drawing = mapUnder + notesBed + mapOver + extra;
+---
+
+<div class="plan">
+  <svg viewBox="0 0 1200 760" aria-hidden="true" focusable="false" set:html={drawing} />
+  {
+    plots.map((p) => {
+      const [l, t, w, h] = p.area;
+      const style = `left:${l}%;top:${t}%;width:${w}%;height:${h}%`;
+      return countOf(p) > 0 ? (
+        <a class="spot" href={p.href} style={style} aria-label={`${p.label}: ${subs[p.key]}`}>
+          <span class:list={['tag', p.labelAt]}>
+            {p.label}
+            <span class="sub">{subs[p.key]}</span>
+          </span>
+        </a>
+      ) : (
+        <span class="spot spot--later" style={style}>
+          <span class="later">
+            {p.label}
+            <span class="sub">later</span>
+          </span>
+        </span>
+      );
+    })
+  }
+</div>
+
+<style>
+  .plan {
+    position: relative;
+    aspect-ratio: 1200 / 760;
+  }
+  svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .spot {
+    position: absolute;
+    border-radius: 10px;
+    outline: 2px dashed transparent;
+    outline-offset: 4px;
+    text-decoration: none;
+    transition: outline-color 0.2s;
+  }
+  a.spot:hover,
+  a.spot:focus-visible {
+    outline: 2px dashed var(--ink);
+  }
+  /* Small plots still get a 44px target. */
+  a.spot::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+  .tag {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 9px 4px;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.25;
+    background: var(--paper);
+    border: 1px solid var(--hair);
+  }
+  .above {
+    bottom: calc(100% + 6px);
+  }
+  .below {
+    top: calc(100% + 6px);
+  }
+  .sub {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .spot--later {
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+  .later {
+    font-size: 13px;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--muted);
+  }
+  /* On a phone the labels crowd the drawing; the list below carries the words. */
+  @media (max-width: 640px) {
+    .tag,
+    .later {
+      display: none;
+    }
+  }
+</style>

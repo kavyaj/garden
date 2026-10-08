@@ -1,0 +1,51 @@
+---
+// A small weekend project: a 16:10 screenshot, the name, one sentence.
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+const p = Astro.props.project.data;
+---
+
+<a class="kw-card project-card" href={p.url}>
+  {p.image && <Image src={p.image} alt="" width={640} widths={[320, 640]} sizes="(max-width: 640px) 100vw, 320px" format="webp" quality={78} loading="lazy" />}
+  <span class="text">
+    <span class="name">{p.title}</span>
+    <span class="blurb">{p.blurb}</span>
+  </span>
+</a>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    background: var(--paper-lift);
+    border: 1px solid var(--hair);
+  }
+  .project-card :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: top;
+    border-bottom: 1px solid var(--hair);
+  }
+  .text {
+    padding: 18px 20px 20px;
+  }
+  .name {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .blurb {
+    display: block;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+</style>

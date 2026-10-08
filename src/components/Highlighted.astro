@@ -1,0 +1,20 @@
+---
+// Wraps a note body and puts the highlighter behind its first match of `phrase` (text only, never inside a tag).
+interface Props {
+  phrase?: string;
+}
+const { phrase } = Astro.props;
+let html = await Astro.slots.render('default');
+if (phrase) {
+  const esc = phrase.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  // Split into tags and text, and mark the first text run that contains the phrase.
+  let done = false;
+  html = html.replace(/(<[^>]+>)|([^<]+)/g, (m, tag, text) => {
+    if (tag || done || !text.includes(esc)) return m;
+    done = true;
+    return text.replace(esc, `<span class="hl">${esc}</span>`);
+  });
+}
+---
+
+<Fragment set:html={html} />

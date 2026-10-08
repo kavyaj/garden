@@ -1,46 +1,56 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import RelTime from '../../components/RelTime.astro';
 import Backlinks from '../../components/Backlinks.astro';
-import TendrilButton from '../../components/TendrilButton.astro';
-import { notesByTended, recentlyTended, readingTime, backlinks } from '../../lib/garden';
+import TendrilLink from '../../components/TendrilLink.astro';
+import Highlighted from '../../components/Highlighted.astro';
+import { notesByTended, recentlyTended, readingTime, backlinks, iso, fullDate, monthYear } from '../../lib/garden';
 
 export async function getStaticPaths() {
   const notes = await notesByTended();
   const links = await backlinks();
   return notes.map((note, i) => ({
     params: { slug: note.id },
-    // "Next note" walks down the list: the next one tended before this.
+    // "Next" walks down the list: the next one tended before this.
     props: { note, next: notes[i + 1], mentionedIn: links.get(note.id) ?? [] },
   }));
 }
 const { note, next, mentionedIn } = Astro.props;
 const { Content } = await render(note);
+const d = note.data;
 ---
 
-<Base title={note.data.title} description={note.data.summary} strip="note">
-  <article class="note">
-    <a class="back" href="/notes">Back to notes</a>
-    <h1 class="kw-display">{note.data.title}</h1>
-    <p class="kw-meta meta">
-      {recentlyTended(note.data.tended) && <span class="kw-dot" title="Tended in the last two weeks" />}
-      <span><b>Planted</b> <RelTime date={note.data.planted} older="month" /></span>
-      <span><b>Tended</b> <RelTime date={note.data.tended} /></span>
-      <span>{readingTime(note.body)}</span>
+<Base title={d.title} description={d.summary}>
+  <article class="page-top">
+    <p class="crumb"><a class="kw-ul" href="/notes">Notes</a></p>
+    <h1 class="h1 title">{d.title}</h1>
+    <p class="meta">
+      Planted {monthYear(d.planted)} ·{' '}
+      {recentlyTended(d.tended) && <span class="dot" />}Last tended <time datetime={iso(d.tended)}>{fullDate(d.tended)}</time> · {readingTime(note.body)}
     </p>
 
-    <div class="body"><Content /></div>
+    <div class="cols">
+      <div class="body">
+        <Highlighted phrase={d.highlight}><Content /></Highlighted>
+      </div>
+      {
+        d.margin && (
+          <aside class="margin">
+            <p>{d.margin}</p>
+          </aside>
+        )
+      }
+    </div>
 
     <Backlinks notes={mentionedIn} />
 
     <nav class="more" aria-label="More notes">
-      <TendrilButton href="/notes" variant="secondary">All notes</TendrilButton>
+      <TendrilLink href="/notes">All notes</TendrilLink>
       {
         next && (
-          <a class="next" href={`/notes/${next.id}`}>
-            <span class="next-label">Next note</span>
-            <span class="kw-subheading next-title">{next.data.title}</span>
+          <a class="kw-row next" href={`/notes/${next.id}`}>
+            <span class="muted next-label">Next</span>
+            <span class="kw-t">{next.data.title}</span>
           </a>
         )
       }
@@ -49,121 +59,106 @@ const { Content } = await render(note);
 </Base>
 
 <style>
-  .note {
-    padding-top: clamp(24px, 5vw, 56px);
-  }
-  .back {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    margin-bottom: var(--space-2);
+  .crumb {
+    margin-bottom: 20px;
     font-size: 14px;
-    color: var(--moss);
-    text-decoration: none;
   }
-  .back:hover {
-    color: var(--ink);
+  .crumb a {
+    display: inline-block;
+    padding: 12px 0;
+    background-position: 0 calc(100% - 12px);
   }
-  h1 {
-    max-width: 13em;
-    margin-bottom: 18px;
-    font-size: clamp(40px, 7vw, 72px);
-    line-height: 0.95;
+  .title {
+    max-width: 15em;
+    font-size: clamp(40px, 5.6vw, 60px);
+    line-height: 1.02;
   }
   .meta {
-    margin: 0 0 40px;
+    margin-bottom: 48px;
+    font-size: 14px;
+    color: var(--muted);
   }
-
-  /* Running text at 34em. Marginalia float into a column on the right on wide screens. */
+  .cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px 56px;
+    align-items: flex-start;
+  }
   .body {
-    max-width: 34em;
-    font-size: 17px;
-    line-height: 1.72;
+    flex: 1 1 34rem;
+    max-width: var(--measure-text);
+    min-width: 0;
+    font-size: 18.5px;
+    line-height: 1.7;
   }
   .body :global(p),
   .body :global(ul),
   .body :global(ol),
   .body :global(blockquote) {
-    margin: 0 0 20px;
+    margin: 0 0 22px;
   }
   .body :global(h2) {
-    margin: 36px 0 12px;
+    margin: 44px 0 14px;
     font-family: var(--font-display);
-    font-variation-settings: 'opsz' 60, 'SOFT' 48, 'WONK' 1;
+    font-variation-settings: 'opsz' 48, 'SOFT' 40;
     font-weight: 600;
-    font-size: 28px;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
+    font-size: 26px;
   }
   .body :global(h3) {
-    margin: 28px 0 8px;
+    margin: 32px 0 10px;
     font-family: var(--font-display);
-    font-variation-settings: 'opsz' 24, 'SOFT' 30, 'WONK' 0;
     font-weight: 600;
     font-size: 21px;
   }
   .body :global(a) {
     color: var(--ink);
     text-decoration: none;
-    border-bottom: 2px solid var(--spot);
+    background: linear-gradient(var(--spot), var(--spot)) 0 100% / 100% 2px no-repeat;
+    padding-bottom: 2px;
   }
   .body :global(blockquote) {
     padding-left: var(--space-4);
-    border-left: 2px solid var(--ink);
-  }
-  .body :global(mark) {
-    background: linear-gradient(var(--sun-wash), var(--sun-wash)) 0 0.74em / 100% 0.72em no-repeat;
-    color: inherit;
-    padding: 0 0.1em;
+    border-left: 2px solid var(--hair);
+    color: var(--muted);
   }
   .body :global(img) {
     display: block;
     height: auto;
-    border: 1px solid var(--ink-hair);
   }
-  .body :global(.note-aside) {
-    margin: 8px 0 24px;
-    max-width: 18rem;
+  /* The one margin note: in the margin on wide screens, after the body on phones. */
+  .margin {
+    flex: 0 1 13rem;
+    min-width: 0;
+    padding-top: 196px;
   }
-  @media (min-width: 960px) {
-    .body :global(.note-aside) {
-      float: right;
-      clear: right;
-      width: 16rem;
-      margin: 4px calc(-16rem - 56px) 20px 0;
+  .margin p {
+    font-family: var(--font-hand);
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  @media (max-width: 860px) {
+    .margin {
+      flex-basis: 100%;
+      padding-top: 0;
+      max-width: var(--measure-text);
     }
   }
-
   .more {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-end;
-    gap: var(--space-4) var(--space-6);
-    margin-top: var(--space-8);
-    padding-top: 20px;
-    border-top: 2px solid var(--ink);
+    gap: 24px;
+    max-width: var(--measure-text);
+    margin-top: 48px;
+    font-size: 15px;
   }
   .next {
-    display: inline-flex;
-    flex-direction: column;
-    max-width: 24rem;
-    padding: 6px 0;
-    color: var(--ink);
-    text-decoration: none;
+    text-align: right;
   }
   .next-label {
-    font-size: 12.5px;
-    color: var(--moss);
-  }
-  .next-title {
-    font-size: 19px;
-    line-height: 1.25;
-  }
-  .next:hover .next-title {
-    text-decoration: underline;
-    text-decoration-color: var(--spot);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 4px;
+    display: block;
+    font-size: 13px;
   }
 </style>

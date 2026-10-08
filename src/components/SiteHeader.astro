@@ -1,14 +1,17 @@
 ---
-import LogoIntro from './LogoIntro.astro';
-import { nav } from '../site';
+// Logo disc (34px, static) and the name, then five plain-word links. The map isn't here.
+import { nav, site } from '../site';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const current = (href: string) => path === href || path.startsWith(href + '/');
 ---
 
-<header class="site-header">
-  <a class="logo" href="/" aria-label="Kavya Jahagirdar, home"><LogoIntro /></a>
-  <nav aria-label="Main">
+<header class="wrap site-header">
+  <a class="home" href="/">
+    <img src="/kj-logo.svg" alt="" width="34" height="34" />
+    <span>{site.name}</span>
+  </a>
+  <nav class="kw-nav" aria-label="Main">
     {
       nav.map((item) => (
         <a href={item.href} aria-current={current(item.href) ? 'page' : undefined}>
@@ -21,50 +24,36 @@ const current = (href: string) => path === href || path.startsWith(href + '/');
 
 <style>
   .site-header {
-    position: relative;
-    z-index: 2;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-4);
-    padding: var(--space-2) 0 var(--space-4);
+    gap: 12px 24px;
+    padding-top: 22px;
   }
-  .logo {
+  .home {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .home img {
     display: block;
-    width: 52px;
-    height: 52px;
-    padding: 6px;
+    width: 34px;
+    height: 34px;
   }
   nav {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2) 28px;
-    font-family: var(--font-text);
+    gap: 4px 24px;
     font-size: 15px;
-    font-weight: 500;
   }
   nav a {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
-    color: var(--ink);
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.2s;
-  }
-  nav a:hover,
-  nav a[aria-current='page'] {
-    border-bottom-color: var(--ink);
-  }
-  /* The header sits on the sky: focus rings go spot there. */
-  .site-header :focus-visible {
-    outline: 2px solid var(--spot);
-    outline-offset: 3px;
-  }
-  @media (max-width: 480px) {
-    nav {
-      gap: 0 var(--space-5);
-    }
   }
 </style>

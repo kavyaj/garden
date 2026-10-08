@@ -1,0 +1,121 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Tendril from '../components/Tendril.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const run = projects.filter((p) => p.data.kind === 'run');
+const small = projects.filter((p) => p.data.kind === 'small');
+---
+
+<Base title="Things I've made" description="The things I run, and the ones I built on a weekend for people I like.">
+  <section class="page-top intro">
+    <h1 class="h1">Things I've made</h1>
+    <p class="lede">The ones I run, and the ones I built on a weekend for people I like.</p>
+  </section>
+
+  {
+    run.length > 0 && (
+      <section class="run" aria-labelledby="run-h">
+        <h2 class="label" id="run-h">
+          The ones I run
+        </h2>
+        <ul>
+          {run.map((p) => {
+            const inner = (
+              <>
+                <span class="text">
+                  <span class="kw-t title">{p.data.title}</span>
+                  <span class="blurb">{p.data.blurb}</span>
+                </span>
+                {p.data.since && <span class="since">{p.data.since}</span>}
+              </>
+            );
+            return <li>{p.data.url ? <a class="kw-row row" href={p.data.url}>{inner}</a> : <div class="row">{inner}</div>}</li>;
+          })}
+        </ul>
+      </section>
+    )
+  }
+
+  {run.length > 0 && small.length > 0 && <Tendril width={520} flip class="divider" />}
+
+  {
+    small.length > 0 && (
+      <section class="small" aria-labelledby="small-h">
+        <h2 class="label" id="small-h">
+          Small things
+        </h2>
+        <div class="grid">
+          {small.map((p) => (
+            <ProjectCard project={p} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .intro {
+    max-width: 40rem;
+  }
+  .run {
+    max-width: var(--measure-list);
+    margin-top: 56px;
+  }
+  .run .label {
+    margin-bottom: 8px;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  li {
+    border-top: 1px solid var(--hair);
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 32px;
+    padding: 18px 0 20px;
+  }
+  .text {
+    flex: 1 1 24rem;
+    min-width: 0;
+  }
+  .title {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-weight: 500;
+    font-size: 23px;
+  }
+  .blurb {
+    display: block;
+    margin-top: 2px;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .since {
+    flex: 0 0 8rem;
+    padding-top: 6px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .divider {
+    margin-top: 64px;
+  }
+  .small {
+    margin-top: 48px;
+  }
+  .small .label {
+    margin-bottom: 16px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 20px;
+  }
+</style>

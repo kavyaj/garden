@@ -1,140 +1,28 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=DM+Sans:opsz,wght@9..40,300..700&family=Shantell+Sans:wght@300..700&family=Tiro+Devanagari+Hindi&display=swap");
-
-/* Kavya Wiki component styles. Every colour, space and radius comes from tokens.css. */
-
-.kw-root{background:var(--paper);color:var(--ink);font-family:var(--font-text);font-size:16px;line-height:1.68;letter-spacing:-.005em}
-
-/* type voices */
-.kw-display{font-family:var(--font-display);font-variation-settings:"opsz" 144,"SOFT" 60,"WONK" 1;font-weight:700;letter-spacing:-.03em;line-height:.92}
-.kw-heading{font-family:var(--font-display);font-variation-settings:"opsz" 60,"SOFT" 48,"WONK" 1;font-weight:600;letter-spacing:-.02em;line-height:1.05}
-.kw-subheading{font-family:var(--font-display);font-variation-settings:"opsz" 24,"SOFT" 30,"WONK" 0;font-weight:600;line-height:1.2}
-.kw-hand{font-family:var(--font-hand);color:var(--moss)}
-.kw-kicker{font-family:var(--font-hand);color:var(--moss);font-size:16px;display:inline-block;transform:rotate(var(--tilt-m));transform-origin:left}
-
-/* paper objects */
-.kw-paper{background:var(--paper-lift);border:1px solid var(--ink-hair);border-radius:var(--radius-0);box-shadow:var(--shadow-press)}
-.kw-paper--interactive{transition:transform .22s ease,box-shadow .22s ease;cursor:pointer}
-.kw-paper--interactive:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-lift)}
-
-/* focus: always ink, always visible */
-.kw-root :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-
-/* button: tendril link. No box; an underline that ends in a coil. */
-.kw-btn{position:relative;display:inline-flex;align-items:flex-end;font-family:var(--font-text);color:var(--ink);text-decoration:none;
-  background:none;border:0;padding:10px 0;margin-right:22px;cursor:pointer;line-height:1.3}
-.kw-btn-label{padding-bottom:3px;border-bottom:2px solid var(--ink);transition:border-color .25s}
-.kw-btn-coil{width:22px;height:20px;margin-left:-1px;flex:none;overflow:visible;transform:translateY(9px)}
-.kw-btn-coil path{fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0;transition:stroke .25s}
-.kw-btn-coil .kw-btn-leaf{fill:var(--leaf);stroke:none;opacity:0;transform-box:fill-box;transform-origin:0 100%;transform:scale(.3);transition:opacity .25s .1s,transform .3s .1s}
-@keyframes kw-coil{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
-/* primary: bold, coil always there; hover turns it green and sprouts a leaf */
-.kw-btn--primary .kw-btn-label{font-size:15px;font-weight:600}
-.kw-btn--primary:hover .kw-btn-label{border-color:var(--leaf)}
-.kw-btn--primary:hover .kw-btn-coil path{stroke:var(--leaf);animation:kw-coil .5s ease}
-.kw-btn--primary:hover .kw-btn-leaf{opacity:1;transform:scale(1)}
-/* secondary: lighter, thin moss line, the coil only grows on hover */
-.kw-btn--secondary .kw-btn-label{font-size:14px;font-weight:500;border-bottom-width:1.5px;border-color:var(--moss)}
-.kw-btn--secondary .kw-btn-coil path{stroke-width:1.5;stroke-dashoffset:1;transition:stroke-dashoffset .45s ease}
-.kw-btn--secondary:hover .kw-btn-label{border-color:var(--ink)}
-.kw-btn--secondary:hover .kw-btn-coil path{stroke-dashoffset:0}
-.kw-btn:active .kw-btn-label{transform:translateY(1px)}
-/* inline link inside running text */
-.kw-link{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--spot);padding-bottom:1px}
-
-/* topic tag: hanging plant tag, tied on with a tiny tendril */
-.kw-topic{display:inline-flex;align-items:center;text-decoration:none;color:var(--leaf);font-family:var(--font-text);font-size:13px;font-weight:600;line-height:1;
-  filter:drop-shadow(2px 3px 0 rgba(19,19,19,.10));transition:transform .2s ease}
-.kw-topic:hover{transform:translate(-1px,-2px) rotate(-2deg)}
-.kw-topic-string{width:26px;height:20px;margin-right:-3px;overflow:visible;flex:none}
-.kw-topic-string path{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
-.kw-topic-tag{position:relative;background:var(--paper-lift);padding:6px 13px 6px 22px;
-  clip-path:polygon(9px 0,100% 0,100% 100%,9px 100%,0 calc(100% - 9px),0 9px)}
-.kw-topic-tag::before{content:"";position:absolute;left:9px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:var(--radius-full);background:var(--paper)}
-
-/* note meta */
-.kw-meta{font-family:var(--font-text);font-size:13px;line-height:1.4;color:var(--moss);display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
-.kw-meta b{color:var(--leaf);font-weight:600}
-.kw-dot{display:inline-block;width:8px;height:8px;border-radius:var(--radius-full);background:var(--sun);box-shadow:0 0 0 3px rgba(253,232,55,.35);flex:none}
-
-/* annotation */
-.kw-hl{background:linear-gradient(var(--sun-wash),var(--sun-wash)) 0 .74em/100% .72em no-repeat;padding:0 .12em}
-.kw-circled{position:relative;display:inline-block;padding:.15em .45em}
-.kw-circled svg{position:absolute;inset:-.3em -.2em;width:calc(100% + .4em);height:calc(100% + .6em);overflow:visible;pointer-events:none}
-.kw-circled svg path{fill:none;stroke:var(--spot);stroke-width:2.5;stroke-linecap:round}
-.kw-margin{position:relative;padding-left:20px;transform:rotate(var(--tilt-s))}
-.kw-margin::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--spot)}
-.kw-margin p{font-family:var(--font-hand);color:var(--moss);font-size:18px;line-height:1.5;margin:0}
-
-/* pinned paper */
-.kw-taped{position:relative;display:inline-block;background:var(--paper-lift);border:1px solid var(--ink-hair);padding:18px 22px;transform:rotate(var(--tilt-m));
-  font-family:var(--font-hand);font-size:18px;color:var(--ink)}
-.kw-taped::before{content:"";position:absolute;top:-11px;left:50%;width:72px;height:22px;transform:translateX(-50%) rotate(3deg);background:var(--moss-tape)}
-.kw-polaroid{display:inline-block;background:var(--paper-lift);border:1px solid var(--ink-hair);padding:12px 12px 40px;transform:rotate(-3deg);box-shadow:var(--shadow-press)}
-
-/* quote tile: ticket stub. A perforation separates the quote from Kavya's note. */
-.kw-quote{position:relative;display:flex;flex-direction:column;text-align:left;width:100%;font:inherit;color:inherit;padding:0;cursor:pointer;
-  background:var(--paper-lift);border:1px solid var(--ink-hair);border-radius:var(--radius-0);box-shadow:var(--shadow-press);transition:transform .2s ease,box-shadow .2s ease}
-.kw-quote:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-lift)}
-.kw-quote .kw-q-top{display:block;padding:var(--space-5) var(--space-5) 18px}
-.kw-quote .kw-q-mark{position:absolute;right:16px;top:4px;font-family:var(--font-display);font-variation-settings:"opsz" 144,"SOFT" 100,"WONK" 1;font-size:84px;line-height:1;color:var(--spot-soft);pointer-events:none}
-.kw-quote .kw-deva{display:block;font-family:var(--font-deva);font-size:21px;line-height:1.85;margin:0 0 6px;padding-right:44px}
-.kw-quote .kw-trans{display:block;font-size:14.5px;line-height:1.55;margin:0 0 8px}
-.kw-quote .kw-cite{display:block;font-size:12.5px;color:var(--moss)}
-.kw-quote .kw-perf{display:block;height:14px;position:relative;margin:0 -1px;
-  background:radial-gradient(circle at 0 50%,var(--paper) 7px,transparent 7.5px),radial-gradient(circle at 100% 50%,var(--paper) 7px,transparent 7.5px)}
-.kw-quote .kw-perf::after{content:"";position:absolute;left:14px;right:14px;top:50%;border-top:2px dotted rgba(19,19,19,.28)}
-.kw-quote .kw-peek{display:block;padding:12px var(--space-5) 0;max-height:4.2em;overflow:hidden}
-.kw-quote .kw-peek span{display:block;font-family:var(--font-hand);font-size:15.5px;line-height:1.45;color:var(--moss);
-  -webkit-mask-image:linear-gradient(#000 40%,transparent);mask-image:linear-gradient(#000 40%,transparent)}
-.kw-quote .kw-unfold{display:block;font-size:12px;font-weight:600;padding:8px var(--space-5) 14px}
-.kw-quote--ink{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-.kw-quote--ink .kw-deva{color:var(--sun);font-size:30px}
-.kw-quote--ink .kw-cite{color:rgba(240,240,240,.62)}
-.kw-quote--ink .kw-peek span{color:rgba(240,240,240,.78)}
-.kw-quote--ink .kw-q-mark{display:none}
-.kw-quote--ink .kw-perf::after{border-top-color:rgba(240,240,240,.35)}
-
-/* logo intro: tendril grows round the pressed disc once, then fades */
-.kw-ix{width:100%;height:auto;overflow:visible;display:block}
-.kw-ix .ix-stem{fill:none;stroke:var(--ink);stroke-width:30;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
-.kw-ix .ix-leaf{fill:var(--leaf);opacity:0;transform-box:fill-box;transform-origin:0 50%}
-.kw-ix.play .ix-stem{animation:kw-ix-draw 1.8s cubic-bezier(.35,.1,.25,1) .25s forwards}
-.kw-ix.play .ix-leaf{animation:kw-ix-leaf .4s ease-out 1.3s forwards}
-.kw-ix.play .ix-vine{animation:kw-ix-fade .6s ease 2.6s forwards}
-.kw-ix.play .ix-disc{animation:kw-ix-pop .35s cubic-bezier(.3,1.4,.5,1) both;transform-origin:626px 690px}
-@keyframes kw-ix-draw{to{stroke-dashoffset:0}}
-@keyframes kw-ix-leaf{from{opacity:0;scale:.3}to{opacity:1;scale:1}}
-@keyframes kw-ix-fade{to{opacity:0}}
-@keyframes kw-ix-pop{from{scale:.94}to{scale:1}}
-@media (prefers-reduced-motion:reduce){.kw-ix .ix-vine{display:none}}
-
-/* tendril */
-.kw-tendril{display:block;width:100%;height:auto;overflow:visible}
-.kw-tendril .stem{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.kw-tendril .leaf{fill:var(--leaf)}
-.kw-tendril .leaf-soft{fill:var(--leaf);opacity:.5}
-.kw-tendril .bud{fill:var(--spot)}
-
-/* ink slab */
-.kw-slab{background:var(--ink);color:var(--paper);padding:var(--space-7)}
-.kw-slab .kw-heading{color:var(--sun)}
-.kw-slab p{color:rgba(240,240,240,.76)}
-
-@media (prefers-reduced-motion:reduce){.kw-root *{transition:none!important;animation:none!important}}
-
-/* garden scene: sky strip, garden footer, brush flowers. Class names match the V1 mockup. */
-.g-drift{animation:gdrift 38s ease-in-out infinite alternate}
-.g-drift.d1{animation-duration:46s}.g-drift.d2{animation-duration:34s;animation-direction:alternate-reverse}.g-drift.d3{animation-duration:28s}
-@keyframes gdrift{from{transform:translateX(-22px)}to{transform:translateX(26px)}}
-.g-birds{animation:gfly 9s ease-in-out infinite alternate}
-@keyframes gfly{from{transform:translate(0,0)}to{transform:translate(-40px,-14px)}}
-.g-sway{animation:gsway 7s ease-in-out infinite alternate}.g-sway.slow{animation-duration:11s}
-@keyframes gsway{from{transform:rotate(-0.8deg)}to{transform:rotate(0.8deg)}}
-.g-bob{animation:gbob 5s ease-in-out infinite alternate}
-@keyframes gbob{to{transform:translateY(-2px)}}
-.g-gate{transition:transform .7s cubic-bezier(.4,.1,.2,1)}
-.g-archlink:hover + svg .gl,.g-archlink:focus-visible + svg .gl,.g-archlink:hover + svg .gr,.g-archlink:focus-visible + svg .gr{transform:scaleX(.18)}
-.g-archlink:focus-visible{outline:2px solid #fd5183;outline-offset:6px}
-@media (prefers-reduced-motion:reduce){.g-drift,.g-birds,.g-sway,.g-bob{animation:none}.g-gate{transition:none}}
-.kw-sky{position:relative;background:var(--sky)}
-.kw-garden-foot{background:var(--garden-deep);color:var(--paper)}
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=DM+Sans:opsz,wght@9..40,300..700&family=Shantell+Sans:wght@400..600&family=Tiro+Devanagari+Hindi&display=swap");
+/* Kavya Wiki V2. The V2 mockup uses these same class names without the kw- prefix. */
+.kw-root{background:var(--paper);color:var(--ink);font-family:var(--font-text);font-size:17px;line-height:1.65}
+.kw-root a{color:var(--ink)}
+a{color:#1A1916}a:hover{color:#1A1916}
+.kw-ul{text-decoration:none;background:linear-gradient(#fd5183,#fd5183) 0 100%/100% 2px no-repeat;padding-bottom:2px;transition:background-size .2s}
+.kw-ul:hover{background-size:100% 3px}
+.kw-nav a{text-decoration:none;padding:10px 0;border-bottom:2px solid transparent;transition:border-color .2s}
+.kw-nav a:hover,.kw-nav a[aria-current="page"]{border-bottom-color:#fd5183}
+.kw-row{text-decoration:none;display:block}
+.kw-row .kw-t{background:linear-gradient(#fd5183,#fd5183) 0 100%/0% 2px no-repeat;transition:background-size .3s ease}
+.kw-row:hover .kw-t{background-size:100% 2px}
+.kw-card{transition:transform .2s ease,box-shadow .2s ease}
+.kw-card:hover{transform:translateY(-2px);box-shadow:0 3px 0 rgba(26,25,22,0.12)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid #1A1916;outline-offset:3px}
+details summary{list-style:none;cursor:pointer}details summary::-webkit-details-marker{display:none}
+details[open] .kw-plus{transform:rotate(45deg)}
+.kw-plus{display:inline-block;transition:transform .2s}
+.kw-tl{display:inline-flex;align-items:flex-end;text-decoration:none}
+.kw-tl .kw-lbl{background:linear-gradient(#fd5183,#fd5183) 0 100%/100% 2px no-repeat;padding-bottom:2px}
+.kw-tl svg{width:20px;height:16px;margin-left:-1px;overflow:visible;transform:translateY(6px)}
+.kw-tl svg path{fill:none;stroke:#fd5183;stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .45s ease}
+.kw-tl:hover svg path,.kw-tl:focus-visible svg path{stroke-dashoffset:0}
+.kw-vine path.kw-stem{stroke-dasharray:1;stroke-dashoffset:1;animation:vine 2.2s cubic-bezier(.35,.1,.25,1) .3s forwards}
+.kw-vine .kw-lf{opacity:0;transform-box:fill-box;transform-origin:0% 100%;transform:scale(.4);animation:lf .5s ease 1.8s forwards}
+@keyframes vine{to{stroke-dashoffset:0}}
+@keyframes lf{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}.kw-vine path.kw-stem{stroke-dashoffset:0}.kw-vine .kw-lf{opacity:1;transform:none}.kw-tl svg path{stroke-dashoffset:0}}

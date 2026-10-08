@@ -1,70 +1,98 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import PageIntro from '../components/PageIntro.astro';
-import QuoteTile from '../components/QuoteTile.astro';
+import Tendril from '../components/Tendril.astro';
+import QuoteCard from '../components/QuoteCard.astro';
+import { featuredQuote, isDevanagari } from '../lib/garden';
 
-const quotes = (await getCollection('quotes')).sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
-
-// CLAUDE.md: the ink ticket, two on the page at most.
-const ink = quotes.filter((q) => q.data.ink);
-if (ink.length > 2) {
-  throw new Error(`quotes.yaml: ${ink.length} quotes have ink: true (${ink.map((q) => q.id).join(', ')}). Two at most.`);
-}
-
-// Long quotes get two columns on the bento; short ones one.
-const wide = (q: (typeof quotes)[number]) => q.data.original.length + q.data.translation.length > 150;
+const featured = await featuredQuote();
+const rest = (await getCollection('quotes')).filter((q) => !q.data.featured).sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
+const deva = featured ? isDevanagari(featured.data.original) : false;
+// Couplets read better on two lines: break after the first full stop (।).
+const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
 ---
 
-<Base title="Quotes" description="Lines I keep needing, in the language I first met them, each with a note on why." strip="quotes" devanagari>
-  <PageIntro kicker="the shelf" title="Quotes">
-    <p>
-      Lines I keep needing, in the language I first met them. Each one has a note from me tucked under the tear-line. Tap
-      a quote to unfold it.
-    </p>
-  </PageIntro>
+<Base title="Quotes" description="Lines I keep needing, in the language I first met them, each with a note on why it stuck." devanagari>
+  <section class="page-top intro">
+    <h1 class="h1">Quotes</h1>
+    <p class="lede">Lines I keep needing, in the language I first met them, each with a note on why it stuck.</p>
+  </section>
 
   {
-    quotes.length ? (
-      <section class="bento" aria-label="Quotes">
-        {quotes.map((q) => (
-          <div class:list={['tile', { 'tile--wide': wide(q) }]}>
-            <QuoteTile quote={q} />
-          </div>
-        ))}
+    featured && (
+      <section class="featured">
+        <p class:list={['f-original', { deva }]} lang={deva ? 'hi' : undefined}>
+          {lines.map((l, i) => (
+            <>
+              {i > 0 && <br />}
+              {l}
+            </>
+          ))}
+        </p>
+        {featured.data.translation && <p class="f-translation">{featured.data.translation}</p>}
+        <p class="f-source">{featured.data.source}</p>
+        {featured.data.why && <p class="f-why">{featured.data.why}</p>}
       </section>
-    ) : (
-      <p class="empty">The shelf's empty for now.</p>
+    )
+  }
+
+  {
+    rest.length > 0 && (
+      <>
+        <Tendril width={560} class="divider" />
+        <section class="grid" aria-label="More quotes">
+          {rest.map((q) => (
+            <QuoteCard quote={q} />
+          ))}
+        </section>
+      </>
     )
   }
 </Base>
 
-<script>
-  // One note open at a time.
-  const tiles = [...document.querySelectorAll<HTMLButtonElement>('.quote-tile[aria-controls]')];
-  for (const tile of tiles) {
-    tile.addEventListener('click', () => {
-      const open = tile.getAttribute('aria-expanded') === 'true';
-      for (const t of tiles) t.setAttribute('aria-expanded', 'false');
-      tile.setAttribute('aria-expanded', String(!open));
-    });
-  }
-</script>
-
 <style>
-  .bento {
+  .intro {
+    max-width: 40rem;
+  }
+  .featured {
+    max-width: 48rem;
+    margin: clamp(64px, 9vw, 104px) 0;
+  }
+  .f-original {
+    margin-bottom: 16px;
+    font-family: var(--font-display);
+    font-size: clamp(26px, 3.4vw, 36px);
+    line-height: 1.45;
+  }
+  .f-original.deva {
+    font-family: var(--font-deva);
+    font-size: clamp(28px, 3.8vw, 40px);
+    line-height: 1.65;
+  }
+  .f-translation {
+    margin-bottom: 16px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 48, 'SOFT' 40;
+    font-style: italic;
+    font-size: clamp(22px, 2.6vw, 28px);
+    line-height: 1.4;
+  }
+  .f-source {
+    margin-bottom: 14px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .f-why {
+    max-width: 34em;
+    font-size: 16.5px;
+  }
+  .divider {
+    margin-bottom: clamp(48px, 7vw, 72px);
+  }
+  .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-    grid-auto-flow: dense;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
     gap: 20px;
     align-items: start;
-  }
-  @media (min-width: 720px) {
-    .tile--wide {
-      grid-column: span 2;
-    }
-  }
-  .empty {
-    color: var(--moss);
   }
 </style>

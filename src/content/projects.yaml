@@ -1,26 +1,55 @@
-# Small things I've made, on /gardener. Weekend projects.
-# image: a file next to this one, in images/made/ (480x600 works). cta: the link's label, saying what happens.
+# Things I've made, on /made. Shown in file order within each kind.
+# kind: run   the bigger things she runs, as a list with a `since` note.
+# kind: small weekend projects, as cards; image is a screenshot in images/made/ (shown 16:10).
+# short: optional shorter line for Home.
 
-- title: MRT Announcements
+- kind: run
+  title: StoryCV
+  url: https://story.cv/?ref=kavyawiki
+  blurb: "An AI interviewer that turns your work stories into résumé bullets."
+  short: turns work stories into résumé bullets
+  since: Since 2025
+  added: 2025-01-01
+
+- kind: run
+  title: Resumey.Pro
+  url: https://resumey.pro/?ref=kavyawiki
+  blurb: "A résumé builder that runs on Markdown. My first one."
+  short: a résumé builder that runs on Markdown
+  since: Since 2019
+  added: 2019-01-01
+
+- kind: run
+  title: Red Thread Careers
+  url: https://redthreadcareers.com/
+  blurb: "Résumés written for you, one conversation at a time."
+  since: Ongoing
+  added: 2026-10-08
+
+- kind: run
+  title: The Brave Rocketeers
+  url: https://www.goodreads.com/book/show/217947971-the-brave-rocketeers
+  blurb: "My picture book, for small people with big plans."
+  since: Published 2024
+  added: 2024-01-01
+
+- kind: small
+  title: MRT Announcements
   url: https://kavyaj.github.io/mrt-announcements/
   blurb: "Tap any station on the Singapore MRT map and hear it announced, just like on the train."
   image: ./images/made/mrt-announcements.jpg
-  alt: "MRT Announcements: a dark screen with coloured train lines and a Let's ride button"
-  cta: Play with it
   added: 2026-10-08
 
-- title: The Coach's Playbook
+- kind: small
+  title: The Coach's Playbook
   url: https://kavyaj.github.io/bft-bw-flipbook/
   blurb: "The whiteboards from my BFT Beauty World classes, one board per class, saved before they got wiped."
   image: ./images/made/coachs-playbook.jpg
-  alt: "The Coach's Playbook: a black notebook cover with the title in white and blue"
-  cta: Flip through it
   added: 2026-10-08
 
-- title: Bollywood Quiz
+- kind: small
+  title: Bollywood Quiz
   url: https://kavyaj.github.io/bollywood-quiz/
   blurb: "A trivia board for a night in with friends. It keeps score so nobody has to."
   image: ./images/made/bollywood-quiz.jpg
-  alt: "Bollywood Quiz: a pink grid of point tiles under the title Are You Desi Enough?"
-  cta: Take the quiz
   added: 2026-10-08

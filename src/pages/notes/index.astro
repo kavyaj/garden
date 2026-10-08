@@ -1,90 +1,59 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PageIntro from '../../components/PageIntro.astro';
-import RelTime from '../../components/RelTime.astro';
-import { notesByTended, recentlyTended } from '../../lib/garden';
+import NoteList from '../../components/NoteList.astro';
+import Tendril from '../../components/Tendril.astro';
+import { notesByTended } from '../../lib/garden';
 
 const notes = await notesByTended();
+// Grouped by the year each note was last tended, newest first.
+const years = [...new Set(notes.map((n) => n.data.tended.getUTCFullYear()))];
 ---
 
-<Base title="Notes" description="Every note in the garden, newest tended first." strip="notes">
-  <PageIntro kicker="unfinished, on purpose" title="Notes">
-    <p>
-      Things I'm thinking through. Some are a paragraph, some are long. All of them can change. A yellow dot means I
-      tended it in the last two weeks.
+<Base title="Notes" description="Everything I'm thinking through, sorted by when I last touched it." width="list">
+  <section class="page-top">
+    <h1 class="h1">Notes</h1>
+    <p class="lede">
+      Things I'm thinking through. Some are a paragraph, some are long, a few stop mid-sentence. All of them can change.
+      Sorted by when I last touched them.
     </p>
-  </PageIntro>
-
-  <section class="list" aria-label="All notes">
-    {
-      notes.map((note) => (
-        <a class="row" href={`/notes/${note.id}`}>
-          <span class="kw-subheading title">{note.data.title}</span>
-          <span class="when">
-            {recentlyTended(note.data.tended) && <span class="kw-dot" title="Tended in the last two weeks" />}
-            <RelTime date={note.data.tended} older="month" />
-          </span>
-          <span class="summary">{note.data.summary}</span>
-        </a>
-      ))
-    }
   </section>
 
-  <p class="signoff">{notes.length ? "that's all for now. more growing." : "nothing's planted yet."}</p>
+  {
+    years.map((y) => (
+      <section class="year" aria-labelledby={`y${y}`}>
+        <h2 class="label" id={`y${y}`}>
+          {y}
+        </h2>
+        <NoteList notes={notes.filter((n) => n.data.tended.getUTCFullYear() === y)} />
+      </section>
+    ))
+  }
+
+  <div class="end">
+    <Tendril width={360} class="end-vine" />
+    <p class="muted">{notes.length ? "That's everything, for now." : 'Nothing planted yet.'}</p>
+  </div>
 </Base>
 
 <style>
-  .list {
-    border-top: 2px solid var(--ink);
+  .year {
+    margin-top: 48px;
   }
-  .row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 4px var(--space-5);
-    padding: 22px 0;
-    border-bottom: 1px solid var(--ink-hair);
-    text-decoration: none;
-    color: var(--ink);
+  .year .label {
+    margin-bottom: 8px;
   }
-  .title {
-    font-size: 22px;
-    line-height: 1.25;
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 4px;
-    transition: text-decoration-color 0.2s;
+  .end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 6px 16px;
+    margin-top: 40px;
   }
-  .row:hover .title {
-    text-decoration-color: var(--spot);
+  .end :global(.end-vine) {
+    flex: 0 1 360px;
   }
-  .when {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--leaf);
-    white-space: nowrap;
-  }
-  .summary {
-    grid-column: 1 / -1;
-    max-width: 40em;
+  .end p {
+    margin-bottom: 6px;
     font-size: 15px;
-    line-height: 1.55;
-    color: var(--moss);
-  }
-  @media (min-width: 640px) {
-    .summary {
-      grid-column: 1;
-    }
-  }
-  .signoff {
-    margin-top: 28px;
-    font-family: var(--font-hand);
-    font-size: 17px;
-    color: var(--moss);
-    transform: rotate(var(--tilt-s));
-    transform-origin: left;
   }
 </style>

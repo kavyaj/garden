@@ -5,6 +5,7 @@ import { site } from '../site';
 export const BUILD_DATE = new Date();
 
 const DAY = 86_400_000;
+const daysSince = (d: Date, now = BUILD_DATE) => (now.getTime() - d.getTime()) / DAY;
 
 /** Notes, newest tended first. */
 export async function notesByTended(): Promise<CollectionEntry<'notes'>[]> {
@@ -13,8 +14,13 @@ export async function notesByTended(): Promise<CollectionEntry<'notes'>[]> {
 }
 
 /** The yellow dot: tended within site.recentDays of the build. Same rule everywhere. */
-export function recentlyTended(tended: Date, now = BUILD_DATE): boolean {
-  return (now.getTime() - tended.getTime()) / DAY <= site.recentDays;
+export function recentlyTended(tended: Date): boolean {
+  return daysSince(tended) <= site.recentDays;
+}
+
+/** Not tended for over a year: the title goes muted. Old notes stay; neglect shows. */
+export function neglected(tended: Date): boolean {
+  return daysSince(tended) > site.neglectDays;
 }
 
 /** ISO date for <time datetime>. */
@@ -22,19 +28,36 @@ export function iso(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** The no-JS fallback: a plain date. Client JS swaps in "3 days ago". */
-export function plainDate(d: Date): string {
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const fmt = (d: Date, opts: Intl.DateTimeFormatOptions) => d.toLocaleDateString('en-GB', { ...opts, timeZone: 'UTC' });
+
+/** "5 Oct" this year, "Jan 2025" otherwise. */
+export function shortDate(d: Date): string {
+  return d.getUTCFullYear() === BUILD_DATE.getUTCFullYear() ? fmt(d, { day: 'numeric', month: 'short' }) : fmt(d, { month: 'short', year: 'numeric' }).replace('Sept', 'Sep');
 }
 
-/** "4 min read", from the note's markdown. */
+/** "5 Oct 2026". */
+export function fullDate(d: Date): string {
+  return fmt(d, { day: 'numeric', month: 'short', year: 'numeric' }).replace('Sept', 'Sep');
+}
+
+/** "March 2026". */
+export function monthYear(d: Date): string {
+  return fmt(d, { month: 'long', year: 'numeric' });
+}
+
+/** The second line in the Notes list: "planted 12 Mar", or "never tended since". */
+export function plantedLine(planted: Date, tended: Date): string {
+  return iso(planted) === iso(tended) ? 'never tended since' : `planted ${shortDate(planted)}`;
+}
+
+/** "4 min", from the note's markdown. */
 export function readingTime(body = ''): string {
   const words = body
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/<!--[\s\S]*?-->/g, ' ')
     .split(/\s+/)
     .filter(Boolean).length;
-  return `${Math.max(1, Math.round(words / 220))} min read`;
+  return `${Math.max(1, Math.round(words / 220))} min`;
 }
 
 /** Slugs of other notes a note links to: plain markdown links to /notes/<slug>. */
@@ -56,9 +79,27 @@ export async function backlinks(): Promise<Map<string, CollectionEntry<'notes'>[
   return map;
 }
 
-const WORDS =['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+/** The one featured quote. Exactly one, or the build stops. */
+export async function featuredQuote(): Promise<CollectionEntry<'quotes'> | undefined> {
+  const quotes = await getCollection('quotes');
+  const featured = quotes.filter((q) => q.data.featured);
+  if (quotes.length && featured.length !== 1) {
+    throw new Error(`quotes.yaml: exactly one quote needs featured: true (found ${featured.length}).`);
+  }
+  return featured[0];
+}
+
+/** Devanagari in a string means it's set in Tiro and marked lang="hi". */
+export const isDevanagari = (s: string) => /[ऀ-ॿ]/.test(s);
+
+const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
 
 /** "Six records", "One record". Numbers past twelve stay digits. */
 export function count(n: number, singular: string, plural = singular + 's'): string {
   return `${WORDS[n] ?? n} ${n === 1 ? singular : plural}`;
+}
+
+/** "6 records", "1 record". */
+export function plural(n: number, singular: string, pluralForm = singular + 's'): string {
+  return `${n} ${n === 1 ? singular : pluralForm}`;
 }

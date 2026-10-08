@@ -1,46 +1,103 @@
 # kavya.wiki
 
-Kavya's digital garden. Notes that get planted, tended and sometimes composted, a shelf of quotes, a turntable of records, and a painted garden that every page scrolls down into. Kavya builds and runs it alone with Claude Code. There is no other developer.
+Kavya's digital garden: the place for the thinking that doesn't fit on LinkedIn. Half-ideas, things she's changed her mind about, words she keeps returning to. Kavya builds and runs it alone with Claude Code.
 
-Read this whole file before changing anything. When this file and your instincts disagree, this file wins. When this file and the design system disagree, the design system wins and this file gets fixed.
+**The order of importance is Kavya, then what she thinks and makes, then the garden.** The garden is the site's physics (things get planted, tended, left alone, revisited), not its decoration. When in doubt, take something away.
+
+Read this whole file before changing anything. If this file and the design system disagree, the design system wins and this file gets fixed.
 
 ## Sources of truth
 
 | What | Where |
 |---|---|
-| Design system: tokens, rules, components | https://claude.ai/artifact/1nXPMnsfRo7APjyFHyGSmN ("Kavya Wiki") |
-| Page mockups, one artboard per page | https://claude.ai/artifact/Lz4Gb8d2cwxXRvEUwEcnp6 ("Kavya Wiki V1") |
-| Content | `src/content/` in this repo. Flat files. No database, no CMS. |
+| Design system: tokens, rules, components | https://claude.ai/artifact/1nXPMnsfRo7APjyFHyGSmN ("Kavya Wiki", V2) |
+| Page mockups | https://claude.ai/artifact/Lz4Gb8d2cwxXRvEUwEcnp6, the page called **"V2, quieter"**. Ignore the "V1" page. |
+| Content | `src/content/` in this repo. Flat files, no database, no CMS. |
 
-The mockups are the spec for layout, copy tone and motion. Match them. Where a mockup uses stand-in content (records, notes, `[your portrait]`, `[your email]`), keep the structure and wait for real content.
+The V2 mockups are the spec for layout, spacing, copy and motion. Match them. Stand-in content (`[your portrait]`, `[your email]`, the record notes) keeps its structure until Kavya supplies the real thing.
+
+## Migrating from V1 (do this first)
+
+The site was already built once, against V1 (sky to garden). V2 is a deliberate subtraction. Before building anything new:
+
+**Remove**
+- The sky scenes (`SkyHome`, `SkyMap`, `SkyStrip`), clouds, birds and canopy corners.
+- `GardenFooter` and the whole painted garden: arch scene, bushes, lawn, brush flowers, and the scene generator (`src/scene/` or wherever it lives) with its pre-rendered SVGs.
+- Tape, tilted or rotated paper, hard offset shadows, the ticket-stub quote tiles with tear lines, hanging tags (on the map or anywhere), ink slabs.
+- The `LogoIntro` animation. The logo is static now.
+- The V1 colour tokens: `moss`, `leaf`, `spot-wash`, `moss-tape`, `paper-press`, every `sky-*`, `cloud-*`, `garden-*` token, `lawn` (V1 value), `path-edge`, `bud`.
+- Any Shantell (handwriting) used for kickers, buttons, labels or quote reflections.
+
+**Change**
+- `/gardener` becomes `/about`. Nav label "About", page heading "The gardener". Add a permanent redirect from `/gardener`.
+- Add `/made` ("Things I've made") as a top-level page.
+- `/map` stays, but leaves the header nav. It's reached through the gate drawing on Home and from the footer.
+- Notes render as a plain list everywhere. No note cards.
+- Footer becomes the small dark green band.
+- Swap in the V2 tokens (below) and the paper grain.
+
+**Keep:** the content collections, the census logic, the yellow-dot rule, backlinks, the relative-date script, the turntable logic and crackle, the fonts, and the voice rules.
+
+Do the migration as one commit ("Migrate to V2: remove scenes, new tokens") before any new work, and make sure the build passes with nothing from the removal list still referenced.
 
 ## Stack
 
 - **Astro**, static output. Content collections for everything Kavya writes.
-- **Plain CSS** with custom properties generated from the design system's `tokens.json`. No Tailwind, no CSS-in-JS. Component styles mirror the design system's `components/bundle.css`.
-- **No client framework.** Vanilla JS islands only where something reacts to the reader: the turntable, the quote unfold, relative dates, the logo intro.
-- **Hosting:** not chosen yet (moving off Replit). Ask Kavya before picking one. The output is a plain static folder, so it can go anywhere without changes.
-- **Commands:** `npm run dev` to preview, `npm run build` to build and check. Both run `npm run gen` first, which regenerates `src/styles/tokens.css`, `src/styles/components.css` and the painted scenes.
-- Fonts from Google Fonts: Fraunces, DM Sans, Shantell Sans, and Tiro Devanagari Hindi on `/quotes` only. Home's one Devanagari quote loads Tiro subset to just its own characters. Preload Fraunces.
+- **Plain CSS** with custom properties from the design system's `tokens.json`. Class names follow the V2 mockup (`ul`, `tl`, `row`, `card`, `vine`). The design system's `components/bundle.css` has the same rules with a `kw-` prefix.
+- **No client framework.** Small vanilla JS only for: the turntable, relative dates, and starting the tendril draw when it scrolls into view.
+- **Hosting:** not chosen yet (moving off Replit). Ask Kavya before picking one. Output is a plain static folder.
+- **Commands:** `npm run dev` to preview, `npm run build` to build and check, `npm run export` for a one-file preview to share (`exports/`, not committed).
+- **Fonts** (Google Fonts): Fraunces, DM Sans, Shantell Sans, and Tiro Devanagari Hindi on pages that show Devanagari: in full on Quotes, subset to the featured quote's characters on Home. Preload Fraunces.
 
-## Routes (V1)
+## Routes
 
 | Route | Page | Mockup artboard |
 |---|---|---|
-| `/` | Home: tall sky, hero, recently tended, on the turntable, a quote, garden | Home |
-| `/map` | The garden from above, with census and a plain list | The map |
-| `/notes` | Every note, newest tended first | Notes |
-| `/notes/[slug]` | One note, with marginalia and backlinks | A note |
-| `/quotes` | The bento of ticket stubs | Quotes |
-| `/gardener` | About, what I'm growing, small things I've made, terms of the garden | The Gardener |
+| `/` | Home | Home |
+| `/notes` | Notes, grouped by year | Notes |
+| `/notes/[slug]` | One note | A note |
+| `/quotes` | Quotes | Quotes |
 | `/on-repeat` | The turntable and the shelf | On repeat |
-| `/404` | "This one hasn't grown yet." A tendril that stops short. | none yet |
+| `/made` | Things I've made | Things I've made |
+| `/about` | About ("The gardener") | About |
+| `/map` | The garden from above | The map |
+| `/404` | "This one hasn't grown yet." with a tendril that stops short | none, build in the same style |
 
-Not in V1, and planned as empty plots on the map: Built, Reading bench, Compost, Guestbook. Topics come later too. Don't build any of these until Kavya asks.
+Header nav, in this order and with these exact words: **Notes · Quotes · On repeat · Things I've made · About.** Interface words stay boring on purpose; the content gets to be surprising.
+
+Planned for later, shown as dotted plots on the map: Reading, Compost, Guestbook. Don't build these until Kavya asks.
+
+## Tokens (V2)
+
+| Token | Value | Job |
+|---|---|---|
+| `paper` | `#F4F1EA` | Page ground, with grain |
+| `paper-lift` | `#FBFAF6` | Cards only |
+| `ink` | `#1A1916` | Text, lines, focus ring (15.6:1) |
+| `muted` | `#6B675E` | Summaries, dates, captions, margin notes (5.0:1) |
+| `hair` | `rgba(26,25,22,0.12)` | Hairlines, card borders, card hover shadow |
+| `green` | `#2F5D45` | The one green: tendril leaves, backlinks glyph, "playing" |
+| `green-deep` | `#22442F` | Footer only |
+| `green-mid`, `green-soft` | `#3F6B52`, `#6E8F72` | Gate drawing and map only |
+| `spot` | `#fd5183` | Link underlines, active nav, the one flower, vinyl label, selected sleeve. Never text |
+| `blue` | `#A7CDE0` | Sky through the gate, water on the map |
+| `sun` | `#FDE837` | The recently-tended dot |
+| `sun-wash` | `rgba(253,232,55,0.7)` | One highlighted phrase per page |
+| `path`, `lawn` | `#E7E0D1`, `#E4E8D7` | Gate drawing and map only |
+
+Pink and yellow never appear in the same component.
+
+**Paper grain:** an absolutely positioned SVG behind the content (`mix-blend-mode: multiply`, opacity .5) with two `feTurbulence` layers: fine grain (`baseFrequency .9`, 16% alpha) and horizontal fibre (`baseFrequency .012 .18`, 9% alpha). It sits under content, never over cards. Render it once in the base layout. If it costs paint performance on long pages, bake it to a small tiled PNG instead.
+
+## Type
+
+- **Fraunces**: H1 (`opsz 144, SOFT 50, WONK 1`, weight 600), H2 (weight 600), titles in lists (23 to 24px, weight 500), quotes.
+- **DM Sans**: everything else. Nav, body (17px; articles 18.5px at 1.7), dates, labels, buttons, quote reasons.
+- **Shantell Sans**: exactly three kinds of place. One margin note per article at most, the caption under the gate on Home, "thanks for wandering in" in the footer. Never rotated, never in UI.
 
 ## Content model
 
-All dates are ISO (`2026-10-04`). Kavya writes these files by hand or asks you to.
+All dates ISO (`2026-10-05`).
 
 **Notes:** `src/content/notes/<slug>.md`
 
@@ -48,144 +105,126 @@ All dates are ISO (`2026-10-04`). Kavya writes these files by hand or asks you t
 ---
 title: The résumé is a compression artifact
 summary: Everything interesting about a career is the part that doesn't fit on one page.
-planted: 2026-10-01
-tended: 2026-10-04
+planted: 2026-03-12
+tended: 2026-10-05
+margin: still not sure if this is a complaint or a design brief.   # optional, max one
+highlight: nine words on a page                                     # optional, exact phrase in the body
 ---
 ```
 
-Body is markdown. Two extras:
-- Marginalia: a fenced block ` ```aside ` renders as Shantell in the margin (see the Annotation component).
-- Links to other notes are plain markdown links to `/notes/<slug>`. Backlinks are built from these at build time. No wiki syntax.
+Body is markdown. Links to other notes are plain links to `/notes/<slug>`; backlinks come from these.
 
-**Quotes:** `src/content/quotes.yaml`, one list
+**Quotes:** `src/content/quotes.yaml`
 
 ```yaml
 - id: kabir-mali
-  original: "माली सींचे सौ घड़ा, ऋतु आए फल होय।"
-  script: deva            # deva | latin
-  translit: ""
-  translation: "The gardener pours a hundred pots of water, but fruit comes in its season."
-  highlight: "but fruit comes in its season."   # one phrase, gets the sun-wash
-  source: Kabir
-  when: 15th century
-  reflection: "The whole reason this site is a garden, in one line."
-  ink: false             # true = the dark ticket variant. Max two on the page.
+  original: "धीरे-धीरे रे मना, धीरे सब कुछ होय। माली सींचे सौ घड़ा, ऋतु आए फल होय।"
+  translation: "Slowly, mind, everything happens slowly. The gardener pours a hundred pots of water, but fruit comes in its season."
+  source: Kabir, 15th century
+  why: The whole reason this site is a garden, in two lines.
+  featured: true     # exactly one: shown big at the top of /quotes and on Home
   added: 2026-10-01
 ```
 
-**Records:** `src/content/records.yaml`
+**Records:** `src/content/records.yaml` (title, artist, note, listen_url, sleeve, added). `sleeve` picks a drawn two-colour sleeve (`ink` + `spot`) from `src/sleeves.ts`. Never real album art, never hosted audio.
 
-```yaml
-- title: Teardrop
-  artist: Massive Attack
-  label: TEARDROP          # printed on the vinyl label, caps, short
-  note: "On when I need to think and not talk."   # optional; Kavya writes it
-  listen_url: https://open.spotify.com/track/...
-  sleeve: drop             # which drawn sleeve, see src/scene/sleeves.ts
-  added: 2026-10-01
-```
+**Things I've made:** `src/content/projects.yaml` with `kind: run` (StoryCV, Resumey.Pro, Red Thread Careers, The Brave Rocketeers: shown as a list with a "Since 2019" style note) or `kind: small` (weekend projects: shown as cards with a 16:10 screenshot).
 
-Never host audio files. Playback is a link out to `listen_url`. The only sound the site makes is the generated vinyl crackle.
-
-**Small things I've made:** `src/content/projects.yaml` (title, url, blurb, image, alt, cta, added). `image` is a file in `src/content/images/made/`, written `./images/made/<file>`; the build serves it as resized WebP. `cta` is the link label ("Play with it").
-
-**What I'm growing:** `src/content/growing.yaml` (title, optional url, blurb), the bigger projects on The Gardener, shown in file order.
-
-**Map plots** live in `src/site.ts` with their position in the 1200×800 map drawing. Plots the mockup didn't paint (Built, Reading bench, Compost, Guestbook) are drawn by `src/scene/beds.ts`: dashed when their collection is empty, a seeded painted bed with one flower per entry once it isn't.
-
-**Site settings:** `src/site.ts` holds `planted` (the garden's birthday), socials (LinkedIn and X) and the list of map plots. There's no email on the site, by Kavya's choice: don't add one or a contact form.
+**Site settings:** `src/site.ts`: `planted`, socials (LinkedIn and X), map plots. No email on the site, by Kavya's choice: no email link or contact form anywhere, even where a mockup shows `[your email]`.
 
 ## How the site counts itself
 
-Nothing on the site is a hand-typed number. Everything is worked out at build time from the content files.
+Nothing is a hand-typed number. All of it is computed at build time.
 
-- **Census** on the map: `notes.length`, `quotes.length`, `records.length`, `projects.length`, and `site.planted`.
-- **Recently tended** (yellow dot): a note whose `tended` is within 14 days of the build. Same rule everywhere: Home, Notes, the map's Notes bed.
-- **Last tended:** the newest `tended` across notes. Output the ISO date in a `<time datetime>` and let a few lines of client JS turn it into "3 days ago", so it never goes stale between builds. Without JS it reads as the plain date.
-- **Notes order:** newest `tended` first.
-- **Map plots:** each plot in `site.ts` names a collection. Zero entries means a dashed "not planted yet" plot with a dashed tag. One or more means a solid bed with a count. Adding the first Compost entry redraws the map with no other change.
-- **Backlinks:** build an inverted map of note-to-note links. A note with any backlinks shows the Backlinks component (tendril vine) under "Mentioned in".
+- **Yellow dot:** a note whose `tended` is within 14 days of the build. Same everywhere.
+- **Dates in lists:** "Tended 5 Oct" this year, "Tended Jan 2025" otherwise. The Notes page adds "planted Mar 2026" underneath, or "never tended since" when `planted == tended`.
+- **Neglect shows:** notes not tended for over a year get a `muted` title. Don't hide old notes.
+- **Last tended** (map census, note header): output `<time datetime>`; a few lines of JS turn it into "3 days ago" in the browser where that reads better. Without JS it's the plain date.
+- **Map census:** one line under the map: "7 notes, 6 quotes, 6 records, 7 things made. Last tended 5 Oct 2026."
+- **Map plots:** each plot in `site.ts` names a collection. Empty means a dashed plot labelled "later"; one entry or more means a drawn bed with a count.
+- **Backlinks:** inverted note-to-note link map. "Mentioned in" only renders when there's at least one.
 
 ## Page anatomy
 
-Every page is three layers, top to bottom:
+Every page: `SiteHeader`, the page's content, `Footer`. That's it. No scenes above or below.
 
-1. **Sky.** `SkyHome` (900px, canopy in both top corners, layered clouds, birds) on `/`. `SkyMap` (620px, same) on `/map`. `SkyStrip` (210px, one cloud, one bird) on every other page. The header sits on the sky. Each sky ends in a cloud bank that turns into `paper`.
-2. **Paper.** All content. Scrapbook rules from the design system: square paper, hard offset shadows, tape, tilts inside containers only.
-3. **Garden.** `GardenFooter` on every page: canopy trees, hedge, bushes, lawn, path, and the green arch with the iron gate. The arch links to `/map` with a gate sign reading "the map, this way". On `/map` it links to `/` and reads "back to the start". Below it, the footer on `garden-deep` with the menu in one horizontal row.
+- **Home:** H1 "A garden I tend in public.", two lines about Kavya (with "still figuring out" highlighted), "This is where I put the thinking that doesn't fit on LinkedIn." On the right, the gate drawing (`GateIllustration`), which links to `/map`. Then the page's one tendril, Recently tended (4 notes, list), the featured quote large, then On repeat and Things I've made side by side, small.
+- **Notes:** H1, one paragraph, the list by year, then a tendril trailing off next to "That's everything, for now."
+- **A note:** narrow editorial column (36rem), title, meta line, body, margin note on the right on wide screens (inline on phones), "Mentioned in", All notes and Next.
+- **Quotes:** H1, intro, the featured quote big with no card (the page's loud thing), a tendril, then `QuoteCard`s with "Why I keep it" in a native `<details>`.
+- **On repeat:** turntable on the left, the 3×2 shelf on the right. See Interactions.
+- **Things I've made:** the `run` list, a tendril, the `small` cards.
+- **About:** "The gardener" bio and portrait, a tendril, then Terms of the garden with "Everything here is a work in progress, including me." set large in Fraunces.
+- **The map:** flat drawn plan (no scene, no hanging tags), plain labels with a count, a dashed ink outline on hover, the census line, then the same garden as a plain list for phones and screen readers. Keep that list.
 
-Make these three layout components (`SkyHome`, `SkyMap`, `SkyStrip`, `GardenFooter`) and one `Base` layout that composes them, so a new page is just its middle.
+**One loud thing per viewport.** If a section has a big title, a big quote or the drawing, everything near it stays quiet.
 
-## The painted scenes
+## Tendrils
 
-The mockups hold only the painted output, not a generator. So the sources are that output, copied from the V1 mockups into `src/scene/source/` (garden, Home sky, map sky, one strip per inner page). `src/scene/paint.ts` cuts each one into cached static layers in `public/scene/` and a small inline part in `src/scene/generated/`. Every build paints the same garden. It also holds a small table of cloud nudges so no text sits on a cloud. A seeded generator is still needed for anything new, like the map's beds; write it in `src/scene/` when that page is built.
+At most one big tendril per page, and it always has a job: a divider between the two halves of a page, or the end of a list. It's a thin ink line (1.6px) with a counter-clockwise coil and two small leaves (`green`, `green-soft`). It draws in once (2.2s) when it scrolls into view.
 
-Performance matters more than fidelity here. The mockups inline about 600KB of SVG per page, which is too heavy to ship.
+Small marks that don't count toward the one: the glyph beside "Mentioned in", the coil beside the footer signoff, and the pink coil that draws off the end of a `tl` link on hover.
 
-- At build time, render the static painted layers (dabs, hedge, lawn, canopies) to an optimised SVG file per scene, and reference it as an image. It's identical on every page, so it caches.
-- Inline only what moves or responds: the clouds (drift), the gate leaves (open on hover), the gate sign, the birds.
-- Budget: under 250KB transferred for any page on first load, fonts excluded. Check with the build output, not by guessing.
-- If Kavya later hand-paints the arch, canopy or a bush in Procreate, those come in as transparent PNG or WebP and replace the generated layer. Keep the animated parts as they are.
-
-Brush rules: crisp edges with a turbulence displacement filter for the wobble. Never blur, gradient washes or watercolour bleeds. Blur is banned site-wide because it causes eye strain.
+Never on cards, never on the gate drawing, never looping.
 
 ## Motion
 
-- One big moment per page: the scroll from sky to garden.
-- Clouds drift about 48px over 30 to 46s, alternating. Bushes sway ±0.8deg. Flowers bob 2px. The gate swings open on hover or focus (scaleX to .18, 700ms).
-- Paper hover: 2px nudge up-left, `shadow-press` to `shadow-lift`, 220ms.
-- Stroke draws: 1.9s `cubic-bezier(.35,.1,.25,1)`.
-- `LogoIntro` plays once per session (sessionStorage flag), never under reduced motion.
-- `prefers-reduced-motion: reduce`: everything renders in its final state. Links, the gate link, the turntable and sound still work.
+Only these:
+1. **Growth:** the gate drawing grows in once on Home (about 2.6s in total); a page's tendril draws in once.
+2. **The gate:** swings open on hover and focus (700ms), because it's the door to the map. The flower leans a little.
+3. **Hover details:** list titles get a pink underline growing from the left, `tl` links draw a coil, cards lift 2px with a `hair` shadow.
+4. **The turntable:** arm swing and spinning record.
+
+Nothing else moves. The logo is static. `prefers-reduced-motion`: everything shows in its final state, and the gate link and turntable still work.
 
 ## Interactions
 
-- **Turntable** (`/on-repeat`): pick a sleeve, then drop the needle (button, and dragging the arm past halfway). The record spins, the potted plant on the plinth dances, the crackle fades in through WebAudio. Lift to stop. Arrow keys work on the arm. The audio context is created on the first click, never on load.
-- **Quote unfold:** the ticket stub's reflection is clipped by the tile edge. Click to unfold it in place. One open at a time.
-- **Map:** every planted bed and its hanging tag is one link. Tags straighten on hover. The map has a plain-list version below it for phones and screen readers. Don't remove it.
+- **Turntable** (`/on-repeat`): picking a sleeve gives it a 2px pink outline and puts the record on the platter with its title on the pink label. "Drop the needle" is a real `<button>`: the arm swings 24deg, the record spins, and a soft crackle fades in (WebAudio noise through a 700Hz highpass, created on first click). "Lift the needle" reverses it. "Listen on Spotify" links out.
+- **Quote reasons:** native `<details>`; the `+` rotates into an `×`.
+- **Map:** each planted bed is one link. Unplanted plots aren't links.
 
 ## Floors
 
-- Text contrast 4.5:1 minimum. `spot` (pink) is never text. `sun` is never text on paper. Ink on the sky bands is over 9:1. Use these, not new colours.
-- Every interactive thing is a real `<a>` or `<button>` with a visible focus ring (`ink`, or `spot` on scenes), and at least 44px tall.
-- Every scene SVG is `aria-hidden`. The arch link has an `aria-label`.
-- Works at 360px wide: nav wraps, scenes crop to the centre (the arch and path), no horizontal scroll.
-- No dark mode. Paper doesn't invert.
-- No trackers, cookie banners or third-party scripts. Analytics, if ever, must be cookieless.
+- Text 4.5:1 minimum. Pink and yellow are never text.
+- Real `<a>` and `<button>` everywhere, visible `ink` focus ring, targets at least 44px.
+- Decorative SVG is `aria-hidden`. The gate link has `aria-label="Through the gate: a map of the whole site"`.
+- Works at 360px wide: the nav wraps, the margin note drops inline, the shelf stays 3 across or drops to 2, no horizontal scroll.
+- Under 150KB transferred per page on first load, fonts excluded.
+- No dark mode, no trackers, no cookie banner.
 
 ## Copy and voice
 
-Any copy you write (empty states, alt text, 404, meta descriptions, button labels) follows Kavya's voice:
+Any copy you write (alt text, empty states, 404, meta descriptions, labels) follows Kavya's voice:
 
 - Short paragraphs, contractions always, sharp and a little wry.
-- No em dashes, ever. Use a full stop, a comma or a colon.
+- No em dashes, ever.
 - Banned: "landscape", "leverage", "game-changer", "unlock", "delve", "quietly", and any "This isn't X, this is Y" construction.
-- No LinkedIn-speak or clichés. Physical verbs for abstract ideas. Humour through specificity.
-- Garden verbs where they're natural: planted, tended, unfold, drop the needle. Plain words where a stranger needs them.
-- Shantell (handwriting) is only for Kavya's own voice. If removing a sentence loses information, it's DM Sans.
+- No LinkedIn-speak, no clichés. Physical verbs. Humour through specificity.
+- Plain words in the interface. Garden verbs (planted, tended) only for dates.
 
-Never write a note, quote reflection or record note for Kavya. Draft only when she asks, and mark it as a draft.
+Never write a note, quote reason or record note on Kavya's behalf unless she asks, and mark anything you draft as a draft.
 
 ## Common jobs
 
-- **"Add a note":** create `src/content/notes/<slug>.md` with `planted` and `tended` set to today. Slug from the title, lowercase, hyphens.
-- **"I tended X":** set `tended` to today in that note. Nothing else changes; the dot, the order and the census follow.
-- **"Add a record / quote / project":** append to the YAML file. Pick a sleeve that isn't already on the shelf.
-- **"Plant a new section"** (Compost, Reading, Built, Guestbook): ask Kavya first. Then add the collection, the route, the plot in `site.ts`, and the page in the same three-layer anatomy. Ask before inventing any new component; check the design system for one first.
-- **Before every commit:** `npm run build` must pass, with no broken internal links (fail the build on one) and pages under budget.
+- **"Add a note":** new file in `src/content/notes/` with `planted` and `tended` set to today.
+- **"I tended X":** set `tended` to today. The dot, the order and the census follow.
+- **"Add a quote / record / project":** append to the YAML file.
+- **"Plant Reading / Compost / Guestbook":** ask first. Then the collection, the route, the map plot, and the page in the same anatomy, reusing existing components. Check the design system before inventing anything.
+- **Before every commit:** `npm run build` passes, there are no broken internal links (fail the build on one), and no page goes over budget.
 
 ## Don't
 
-- Add flowers, leaves or garden art anywhere except the scenes and the tendril.
-- Put text on a cloud.
-- Make the footer menu vertical or handwritten.
-- Add a second big tendril to a screen, or a tendril on the arch.
-- Use blur, `backdrop-filter`, soft shadows or gradients as fills.
+- Bring back anything from the V1 removal list.
+- Add illustrations beyond the gate drawing and the map.
+- Use cards for notes.
+- Use Shantell outside its three places.
+- Put pink and yellow in one component.
+- Add a second big tendril to a page.
+- Animate anything not listed under Motion.
+- Use blur, gradients as fills, soft shadows, rotations or tape.
 - Add a dependency for something 30 lines of code can do.
-- Change a colour, font or rule without updating the design system first.
 
 ## Still open
 
-- A note for Chasing Cars, and the rest of the shelf (up to six records).
-- The real Spotify track link for Chasing Cars (it's a search link for now).
-- The first real notes (the mockup titles are placeholders).
+- The rest of the records (Chasing Cars is the only one so far), with a note each, and Chasing Cars' Spotify track link.
+- The real notes (the mockup titles are placeholders).

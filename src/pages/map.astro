@@ -1,472 +1,107 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import RelTime from '../components/RelTime.astro';
-import map from '../scene/generated/map.json';
-import { plantedBed, emptyPlot, bedDefs } from '../scene/beds';
-import { plots, site } from '../site';
-import { notesByTended, recentlyTended } from '../lib/garden';
+import MapPlan from '../components/MapPlan.astro';
+import { notesByTended, recentlyTended, iso, fullDate, plural } from '../lib/garden';
+import { plots } from '../site';
 
 const notes = await notesByTended();
-const counts: Record<string, number> = {
-  notes: notes.length,
-  quotes: (await getCollection('quotes')).length,
-  records: (await getCollection('records')).length,
-  projects: (await getCollection('projects')).length,
+const quotes = await getCollection('quotes');
+const records = await getCollection('records');
+const projects = await getCollection('projects');
+const counts: Record<string, number> = { notes: notes.length, quotes: quotes.length, records: records.length, projects: projects.length };
+const fresh = notes.filter((n) => recentlyTended(n.data.tended)).length;
+const big = projects.filter((p) => p.data.kind === 'run').length;
+const small = projects.length - big;
+
+// The line under each planted plot's name.
+const subs: Record<string, string> = {
+  home: 'home',
+  about: 'the shed',
+  notes: fresh ? `${notes.length}, ${fresh} tended lately` : plural(notes.length, 'note'),
+  quotes: `${quotes.length} in the pond`,
+  records: plural(records.length, 'record'),
+  made: `${big} big, ${small} small`,
 };
-// Collections that don't exist yet (built, reading, compost, guestbook) count as zero.
-const countOf = (c?: string) => (c ? (counts[c] ?? 0) : 0);
-const anyFresh = notes.some((n) => recentlyTended(n.data.tended));
 const lastTended = notes[0]?.data.tended;
-const planted = new Date(site.planted + 'T00:00:00Z');
-const plantedLabel = planted.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-
-const shown = plots.map((p) => {
-  const n = countOf(p.collection);
-  const isPlanted = !p.collection || n > 0;
-  const forms = p.count?.split('|') ?? [];
-  const sub = p.count ? (n === 1 ? forms[0] : (forms[1] ?? forms[0])).replace('{n}', String(n)) : (p.sub ?? '');
-  return { ...p, n, isPlanted, sub };
-});
-
-// Beds the mockup didn't paint: dashed when empty, painted once they hold something.
-const beds = shown
-  .filter((p) => p.bed)
-  .map((p) => (p.isPlanted ? plantedBed(p.key, p.bed!, p.n) : emptyPlot(p.key)))
-  .join('');
-
-const plural = (n: number, one: string, many = one + 's') => `${n} ${n === 1 ? one : many}`;
+const isPlanted = (p: (typeof plots)[number]) => !p.collection || (counts[p.collection] ?? 0) > 0;
 ---
 
-<Base title="The map" description="The whole garden from above: every bed, and what's growing in it." sky="map">
-  <section slot="sky" class="hero">
-    <p class="kicker">the view from the top of the tree</p>
-    <h1 class="kw-display">The garden, from above.</h1>
-    <p class="lede">
-      Everything on this site, drawn as one plot. The paths are links. The dotted beds are things I haven't planted yet,
-      so you can see what's coming before it exists.
+<Base title="The map" description="Everything on this site, drawn as one plot." width="map">
+  <section class="page-top intro">
+    <h1 class="h1">The garden, from above.</h1>
+    <p class="lede">Everything on this site, drawn as one plot. Wander if you like. The dotted beds are things I haven't planted yet.</p>
+  </section>
+
+  <section class="plan-wrap">
+    <MapPlan counts={counts} fresh={fresh} subs={subs} />
+    <p class="census">
+      {plural(notes.length, 'note')}, {plural(quotes.length, 'quote')}, {plural(records.length, 'record')}, {plural(projects.length, 'thing')} made.
+      {lastTended && <>Last tended <time datetime={iso(lastTended)} data-rel>{fullDate(lastTended)}</time>.</>}
     </p>
   </section>
 
-  <section class="map-row">
-    <div class="map-card">
-      <span class="tape" style="left:36px;width:84px;height:22px;top:-11px;z-index:4;--tape-tilt:-4deg" aria-hidden="true"></span>
-      <span class="tape" style="right:40px;width:84px;height:22px;top:-11px;z-index:4;--tape-tilt:5deg" aria-hidden="true"></span>
-      <div class="plot">
-        <svg class="layer" viewBox={map.viewBox} preserveAspectRatio={map.preserveAspectRatio} aria-hidden="true" focusable="false" set:html={map.inner} />
-        <svg class="layer" viewBox={map.viewBox} aria-hidden="true" focusable="false" set:html={bedDefs + beds} />
-        {
-          shown.map((p) => {
-            const [l, t, w, h] = p.area;
-            const [tx, ty, tilt] = p.tagAt;
-            const box = `left:${l}%;top:${t}%;width:${w}%;height:${h}%`;
-            const tagStyle = `left:${tx}%;top:${ty}%;--tilt:${tilt}deg`;
-            const tag = (
-              <span class:list={['tagwrap', { 'tagwrap--empty': !p.isPlanted }]} style={tagStyle} aria-hidden="true">
-                <span class="htag">
-                  <svg viewBox="0 0 40 30">
-                    <path d="M38 15 C28 15 22 6 14 8 C6 10 6 22 14 22 C20 22 20 14 15 14" />
-                  </svg>
-                  <span class="tagcard">
-                    <span class="tagname">{p.tag}</span>
-                    <span class="tagsub">
-                      {p.key === 'notes' && anyFresh && <span class="kw-dot mini" />}
-                      {p.isPlanted ? p.sub : 'not planted yet'}
-                    </span>
-                  </span>
-                </span>
-              </span>
-            );
-            return p.isPlanted && p.href ? (
-              <a class="spot" href={p.href} style={box} aria-label={`${p.tag}: ${p.sub}`}>
-                {tag}
-              </a>
-            ) : (
-              <span class="spot spot--empty" style={box}>
-                {tag}
-              </span>
-            );
-          })
-        }
-        <span class="pin" aria-hidden="true">
-          <span class="pin-label">you are here</span>
-          <svg viewBox="0 0 24 30"><path d="M12 29 C12 29 2 17 2 10 A10 10 0 0 1 22 10 C22 17 12 29 12 29Z" fill="#fd5183" stroke="#131313" stroke-width="2"></path><circle cx="12" cy="10" r="4" fill="#ffffff" stroke="#131313" stroke-width="2"></circle></svg>
-        </span>
-      </div>
-    </div>
-
-    <aside class="side">
-      <div>
-        <h2 class="side-h">How to read it</h2>
-        <ul class="legend">
-          <li><svg viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10 C6 10 8 4 12 6" fill="none" stroke="#131313" stroke-width="1.4"></path><path d="M14 3 H26 V17 H14 L11 14 V6Z" fill="#ffffff" stroke="#131313" stroke-width="1.4"></path></svg><span>Growing now. Click to walk in.</span></li>
-          <li><svg viewBox="0 0 28 20" aria-hidden="true"><path d="M2 10 C6 10 8 4 12 6" fill="none" stroke="#131313" stroke-width="1.4"></path><path d="M14 3 H26 V17 H14 L11 14 V6Z" fill="#E9F4D8" stroke="#686957" stroke-width="1.4" stroke-dasharray="3 2"></path></svg><span>Not planted yet. Coming as the garden grows.</span></li>
-          <li><svg viewBox="0 0 28 20" aria-hidden="true"><circle cx="14" cy="10" r="5" fill="#FDE837"></circle><circle cx="14" cy="10" r="8" fill="none" stroke="rgba(253,232,55,0.5)" stroke-width="3"></circle></svg><span>Tended in the last two weeks.</span></li>
-          <li><svg viewBox="0 0 28 20" aria-hidden="true"><path d="M14 19 C14 19 7 11 7 7 A7 7 0 0 1 21 7 C21 11 14 19 14 19Z" fill="#fd5183" stroke="#131313" stroke-width="1.6"></path></svg><span>You are here.</span></li>
-        </ul>
-      </div>
-      <div class="census">
-        <p class="census-label">Garden census</p>
-        <p class="census-line">
-          {plural(counts.notes, 'note')}, {plural(counts.quotes, 'quote')}, {plural(counts.records, 'record')}, {plural(counts.projects, 'small thing')}.
-        </p>
-        <p class="census-small">
-          Planted {plantedLabel}.{lastTended && <> Last tended <RelTime date={lastTended} />.</>}
-        </p>
-      </div>
-      <p class="hand-note">The map redraws itself every time I plant something. Come back in a month and it'll be fuller.</p>
-    </aside>
-  </section>
-
   <section class="plain" aria-labelledby="plain-h">
-    <h2 id="plain-h" class="kw-heading">Or, as a plain list</h2>
-    <p class="plain-sub">Same garden, no squinting.</p>
-    <ul class="plain-list">
+    <h2 class="h2" id="plain-h">The same garden, as a list</h2>
+    <ul>
       {
-        shown
-          .filter((p) => p.list)
-          .map((p) => (
-            <li>
-              <span class="pl-name">{p.isPlanted && p.href ? <a href={p.href}>{p.list!.name}</a> : <span>{p.list!.name}</span>}</span>
-              <span class="pl-text">{p.list!.text}</span>
-              <span class:list={['pl-state', { 'pl-state--empty': !p.isPlanted }]}>{p.isPlanted ? 'Growing' : 'Not planted yet'}</span>
-            </li>
-          ))
+        plots.map((p) => (
+          <li>
+            <span class="name">{isPlanted(p) ? <a class="kw-ul" href={p.href}>{p.key === 'home' ? 'Home' : p.label}</a> : p.label}</span>
+            <span class="muted">{isPlanted(p) ? p.list : `Later. ${p.list}`}</span>
+          </li>
+        ))
       }
     </ul>
   </section>
 </Base>
 
 <style>
-  .hero {
+  .intro {
     max-width: 40rem;
-    padding-top: clamp(36px, 6vw, 72px);
   }
-  .kicker {
-    margin-bottom: var(--space-2);
-    font-family: var(--font-hand);
-    font-size: 19px;
-    transform: rotate(var(--tilt-m));
-    transform-origin: left;
-  }
-  h1 {
-    margin-bottom: 18px;
-    font-size: clamp(44px, 7vw, 84px);
-    line-height: 0.95;
-    letter-spacing: -0.035em;
-  }
-  .lede {
-    max-width: var(--measure-text);
-    font-size: 18px;
-    line-height: 1.6;
-  }
-
-  .map-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 40px 48px;
-    align-items: flex-start;
-    padding-top: var(--space-2);
-  }
-  .map-card {
-    flex: 999 1 40rem;
-    min-width: 0;
-    position: relative;
-    padding: 14px;
-    background: var(--paper-lift);
-    border: 1px solid var(--ink-hair);
-    box-shadow: var(--shadow-lift);
-  }
-  .plot {
-    position: relative;
-    aspect-ratio: 3 / 2;
-  }
-  .layer {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-  .layer :global(.g-spinslow) {
-    animation: spinslow 6s linear infinite;
-  }
-  @keyframes spinslow {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  .spot {
-    position: absolute;
-    display: block;
-    border-radius: 14px;
-    outline: 2px dashed transparent;
-    outline-offset: 4px;
-    text-decoration: none;
-    color: var(--ink);
-    transition: outline-color 0.2s;
-  }
-  a.spot:hover,
-  a.spot:focus-visible {
-    outline-color: var(--spot);
-  }
-  /* Small plots still get a 44px target, centred on the drawing. */
-  a.spot::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: max(100%, 44px);
-    height: max(100%, 44px);
-    transform: translate(-50%, -50%);
-  }
-  .spot--empty {
-    pointer-events: none;
-  }
-  .tagwrap {
-    position: absolute;
-    z-index: 2;
-    transform: translate(-50%, -50%) rotate(var(--tilt));
-    transition: transform 0.3s cubic-bezier(0.3, 1.5, 0.5, 1);
-  }
-  a.spot:hover .tagwrap,
-  a.spot:focus-visible .tagwrap {
-    transform: translate(-50%, -50%) rotate(0deg) translateY(-3px);
-  }
-  .htag {
-    display: inline-flex;
-    align-items: center;
-    filter: drop-shadow(2px 3px 0 rgba(19, 19, 19, 0.12));
-  }
-  .htag svg {
-    flex: none;
-    width: 26px;
-    height: 20px;
-    margin-right: -3px;
-    overflow: visible;
-  }
-  .htag path {
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 1.6;
-    stroke-linecap: round;
-  }
-  .tagcard {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 6px 13px 7px 24px;
-    background: var(--paper-lift);
-    clip-path: polygon(9px 0, 100% 0, 100% 100%, 9px 100%, 0 calc(100% - 9px), 0 9px);
-    line-height: 1.15;
-    white-space: nowrap;
-  }
-  .tagcard::before {
-    content: '';
-    position: absolute;
-    left: 9px;
-    top: 50%;
-    width: 6px;
-    height: 6px;
-    margin-top: -3px;
-    border-radius: var(--radius-full);
-    background: var(--lawn);
-  }
-  .tagname {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--leaf);
-  }
-  .tagsub {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--moss);
-  }
-  .kw-dot.mini {
-    width: 7px;
-    height: 7px;
-  }
-  .tagwrap--empty .tagcard {
-    background: rgba(255, 255, 255, 0.72);
-    outline: 1.5px dashed var(--moss);
-    outline-offset: -4px;
-  }
-  .tagwrap--empty .tagname {
-    color: var(--moss);
-  }
-  /* On a phone the tags crowd the drawing; the plain list below carries the words. */
-  @media (max-width: 640px) {
-    .tagwrap {
-      display: none;
-    }
-  }
-
-  .pin {
-    position: absolute;
-    left: 50%;
-    top: 86%;
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transform: translate(-50%, -100%);
-    pointer-events: none;
-    animation: pin 1.8s ease-in-out infinite alternate;
-  }
-  @keyframes pin {
-    to {
-      margin-top: -6px;
-    }
-  }
-  .pin-label {
-    margin-bottom: 2px;
-    padding: 1px 8px 2px;
-    background: var(--spot);
-    font-family: var(--font-hand);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--on-spot);
-    white-space: nowrap;
-  }
-  .pin svg {
-    display: block;
-    width: 22px;
-    height: 28px;
-  }
-
-  .side {
-    flex: 1 1 16rem;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-  }
-  .side-h {
-    margin-bottom: 14px;
-    font-family: var(--font-display);
-    font-variation-settings: 'opsz' 40, 'SOFT' 45, 'WONK' 1;
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 1.1;
-  }
-  .legend {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    font-size: 14.5px;
-    line-height: 1.45;
-  }
-  .legend li {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .legend svg {
-    flex: none;
-    width: 28px;
-    height: 20px;
+  .plan-wrap {
+    margin-top: 48px;
   }
   .census {
-    padding: 20px 22px 22px;
-    background: var(--garden-deep);
-    color: var(--paper);
-    transform: rotate(1.2deg);
-    box-shadow: 4px 5px 0 rgba(19, 19, 19, 0.08);
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--muted);
   }
-  .census-label {
-    margin-bottom: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--spot-soft);
-  }
-  .census-line {
-    font-family: var(--font-display);
-    font-variation-settings: 'opsz' 36, 'SOFT' 40, 'WONK' 1;
-    font-weight: 600;
-    font-size: 21px;
-    line-height: 1.3;
-  }
-  .census-small {
-    margin-top: 10px;
-    font-size: 13px;
-    color: rgba(240, 240, 240, 0.8);
-  }
-  .hand-note {
-    font-family: var(--font-hand);
-    font-size: 16px;
-    line-height: 1.45;
-    color: var(--moss);
-    transform: rotate(-1.2deg);
-  }
-
   .plain {
-    max-width: 52rem;
-    margin-top: clamp(56px, 8vw, 88px);
+    max-width: 46rem;
+    margin-top: 72px;
   }
-  .plain h2 {
-    margin-bottom: 6px;
-    font-size: clamp(26px, 3.4vw, 36px);
+  .plain .h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
   }
-  .plain-sub {
-    margin-bottom: var(--space-4);
-    color: var(--moss);
-  }
-  .plain-list {
+  ul {
     list-style: none;
-    margin: 0;
     padding: 0;
-    font-size: 15.5px;
-    border-bottom: 1px solid var(--ink-hair);
+    font-size: 16px;
+    border-bottom: 1px solid var(--hair);
   }
-  .plain-list li {
+  li {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 4px var(--space-4);
-    padding: 14px 0;
-    border-top: 1px solid var(--ink-hair);
+    gap: 2px 16px;
+    padding: 2px 0;
+    border-top: 1px solid var(--hair);
   }
-  .pl-name {
+  .name {
     flex: 0 0 11rem;
-    font-weight: 600;
+    padding: 10px 0;
   }
-  .pl-name a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    margin: -12px 0;
-    color: var(--ink);
-    text-decoration: none;
-    border-bottom: 2px solid var(--spot);
+  .name a {
+    display: inline-block;
+    padding: 10px 0;
+    margin: -10px 0;
+    background-position: 0 calc(100% - 10px);
   }
-  .pl-text {
+  li .muted {
     flex: 1 1 18rem;
-    color: var(--moss);
-  }
-  .pl-state {
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--leaf);
-  }
-  .pl-state--empty {
-    color: var(--moss);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .pin,
-    .layer :global(.g-spinslow) {
-      animation: none;
-    }
-    .tagwrap,
-    .spot {
-      transition: none;
-    }
+    padding-bottom: 10px;
   }
 </style>

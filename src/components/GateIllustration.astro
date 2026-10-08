@@ -1,0 +1,134 @@
+---
+// The only illustration on the site, beside Home's hero. The whole drawing is a link to the map.
+// It grows in once on load; hover or focus swings the gate open and the flower leans.
+// Don't add more plants, flowers, clouds or creatures. One strange flower is the point.
+---
+
+<div class="gate-wrap">
+  <a class="gatelink" href="/map" aria-label="Through the gate: a map of the whole site"><svg viewBox="0 0 360 410" aria-hidden="true" style="width: 100%; height: auto; display: block; overflow: visible;">
+  <clipPath id="gate-in"><path d="M100 350 V196 A70 70 0 0 1 240 196 V350 Z"/></clipPath>
+  <g class="grow g1">
+    <g clip-path="url(#gate-in)"><rect x="100" y="100" width="140" height="260" fill="var(--blue)"/>
+      <path d="M100 312 Q170 300 240 310 V350 H100Z" fill="#DCE4CC"/>
+      <path d="M148 350 L167 306 H173 L192 350Z" fill="var(--path)"/></g>
+    <path d="M136 350 H204 L232 408 H108Z" fill="var(--path)"/>
+  </g>
+  <g class="grow g2">
+    <path d="M62 350 V196 A108 108 0 0 1 278 196 V350 Z M100 350 V196 A70 70 0 0 1 240 196 V350 Z" fill-rule="evenodd" fill="var(--green-mid)"/>
+    <path d="M100 350 V196 A70 70 0 0 1 240 196 V350 H249 V196 A79 79 0 0 0 91 196 V350Z" fill="var(--green)"/>
+    <path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#86A487" transform="translate(113 115) rotate(56)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(76 193) rotate(288)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(227 146) rotate(193)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#86A487" transform="translate(122 133) rotate(77)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(262 305) rotate(290)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(235 139) rotate(112)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(247 319) rotate(31)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(164 111) rotate(312)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(258 238) rotate(318)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(245 221) rotate(149)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(97 168) rotate(16)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(72 252) rotate(101)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(161 99) rotate(323)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(268 281) rotate(346)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(271 291) rotate(148)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(266 251) rotate(294)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#86A487" transform="translate(125 138) rotate(49)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(125 113) rotate(153)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(208 127) rotate(15)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#86A487" transform="translate(151 98) rotate(89)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(254 306) rotate(179)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#86A487" transform="translate(114 143) rotate(313)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(262 236) rotate(357)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(82 143) rotate(324)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(262 176) rotate(236)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(272 340) rotate(241)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(72 324) rotate(46)"/><path d="M0 0 C3 -4 8 -4 11 0 C8 4 3 4 0 0Z" fill="#557F63" transform="translate(271 263) rotate(22)"/>
+    <path d="M18 350 C16 318 40 306 58 314 C70 300 92 308 92 350Z" fill="var(--green-mid)"/><path d="M28 322 C36 312 48 312 56 318" stroke="#86A487" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M250 350 C252 322 270 312 286 318 C296 310 312 318 314 350Z" fill="var(--green-mid)"/>
+  </g>
+  <g class="gate gl" style="transform-origin: 104px 0;"><g stroke="#1A1916" stroke-width="2.2" fill="none" stroke-linecap="round"><path class="bar" pathLength="1" d="M114.8 350 V262 C114.8 252 123.8 250 123.8 257 C123.8 262 118.8 262 118.8 258"/><path class="bar" pathLength="1" d="M136.5 350 V262 C136.5 252 145.5 250 145.5 257 C145.5 262 140.5 262 140.5 258"/><path class="bar" pathLength="1" d="M158.2 350 V262 C158.2 252 167.2 250 167.2 257 C167.2 262 162.2 262 162.2 258"/><path class="bar" pathLength="1" d="M104 278 H169"/><path class="bar" pathLength="1" d="M104 338 H169"/></g></g><g class="gate gr" style="transform-origin: 236px 0;"><g stroke="#1A1916" stroke-width="2.2" fill="none" stroke-linecap="round"><path class="bar" pathLength="1" d="M181.8 350 V262 C181.8 252 190.8 250 190.8 257 C190.8 262 185.8 262 185.8 258"/><path class="bar" pathLength="1" d="M203.5 350 V262 C203.5 252 212.5 250 212.5 257 C212.5 262 207.5 262 207.5 258"/><path class="bar" pathLength="1" d="M225.2 350 V262 C225.2 252 234.2 250 234.2 257 C234.2 262 229.2 262 229.2 258"/><path class="bar" pathLength="1" d="M171 278 H236"/><path class="bar" pathLength="1" d="M171 338 H236"/></g></g>
+  <g class="flower" style="transform-origin: 300px 350px;">
+    <path class="stem" pathLength="1" d="M300 350 C302 320 292 300 304 284 C314 270 300 262 294 270 C290 277 300 280 303 274 C310 260 318 240 322 214" fill="none" stroke="#1A1916" stroke-width="1.8" stroke-linecap="round"/>
+    <path class="leaf" d="M301 316 C312 306 326 306 330 312 C320 320 308 320 301 316Z" fill="var(--green-soft)"/>
+    <g class="bloom" style="transform-origin: 322px 214px;">
+      <path d="M322 214 C312 206 306 192 314 186 C322 188 324 202 322 214Z" fill="var(--spot)"/>
+      <path d="M322 214 C326 200 336 192 342 196 C342 206 332 212 322 214Z" fill="var(--spot)"/>
+      <path d="M322 214 C334 216 342 226 338 232 C330 232 324 222 322 214Z" fill="#E23C6E"/>
+      <circle cx="322" cy="214" r="3.2" fill="#1A1916"/>
+    </g>
+  </g>
+</svg></a>
+  <p class="caption">the gate opens onto a map, if you like wandering</p>
+</div>
+
+<style>
+  .gate-wrap {
+    flex: 1 1 260px;
+    max-width: 330px;
+  }
+  .gatelink {
+    display: block;
+    text-decoration: none;
+  }
+  .gatelink svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .caption {
+    margin: 6px 0 0 18px;
+    font-family: var(--font-hand);
+    font-size: 14.5px;
+    color: var(--muted);
+  }
+  .grow {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: rise 0.8s cubic-bezier(0.3, 0.6, 0.3, 1) forwards;
+  }
+  .g1 {
+    animation-delay: 0.1s;
+  }
+  .g2 {
+    animation-delay: 0.25s;
+  }
+  @keyframes rise {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .bar {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 1.1s cubic-bezier(0.35, 0.1, 0.25, 1) 0.7s forwards;
+  }
+  .stem {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 1.4s cubic-bezier(0.35, 0.1, 0.25, 1) 1s forwards;
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .leaf,
+  .bloom {
+    opacity: 0;
+    animation: pop 0.5s ease 2.1s forwards;
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .gate {
+    transition: transform 0.7s cubic-bezier(0.4, 0.1, 0.2, 1);
+  }
+  .gatelink:hover .gl,
+  .gatelink:focus-visible .gl,
+  .gatelink:hover .gr,
+  .gatelink:focus-visible .gr {
+    transform: scaleX(0.2);
+  }
+  .flower {
+    transition: transform 0.6s cubic-bezier(0.3, 1.4, 0.5, 1);
+  }
+  .gatelink:hover .flower,
+  .gatelink:focus-visible .flower {
+    transform: rotate(-3deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .grow,
+    .leaf,
+    .bloom {
+      opacity: 1;
+      transform: none;
+    }
+    .bar,
+    .stem {
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

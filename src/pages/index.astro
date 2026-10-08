@@ -1,124 +1,92 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import TendrilButton from '../components/TendrilButton.astro';
-import NoteCard from '../components/NoteCard.astro';
-import { notesByTended, count } from '../lib/garden';
-import heroCloud from '../scene/hero-cloud.svg?raw';
+import GateIllustration from '../components/GateIllustration.astro';
+import Tendril from '../components/Tendril.astro';
+import TendrilLink from '../components/TendrilLink.astro';
+import NoteList from '../components/NoteList.astro';
+import { notesByTended, featuredQuote, isDevanagari } from '../lib/garden';
+import { sleeve } from '../sleeves';
 
-const recent = (await notesByTended()).slice(0, 3);
+const recent = (await notesByTended()).slice(0, 4);
+const quote = await featuredQuote();
 const records = (await getCollection('records')).sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
-const quotes = (await getCollection('quotes')).sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
 const record = records[0];
-const quote = quotes[0];
-
-// The quote's highlighted phrase gets the sun-wash.
-const [before, after] = quote?.data.highlight
-  ? quote.data.translation.split(quote.data.highlight)
-  : [quote?.data.translation ?? '', undefined];
-
-// Card tilts and tape spots, straight from the mockup.
-const pins = [
-  { tilt: -1, tape: 'left', tapeTilt: -4 },
-  { tilt: 1.2, tape: 'right', tapeTilt: 5 },
-  { tilt: -0.6, tape: 'centre', tapeTilt: -2 },
-] as const;
+const run = (await getCollection('projects')).filter((p) => p.data.kind === 'run').sort((a, b) => a.data.order - b.data.order);
+const deva = quote ? isDevanagari(quote.data.original) : false;
 ---
 
-<Base description="Kavya Jahagirdar's digital garden: notes that get planted and tended, a shelf of quotes, and the records on repeat." sky="home"
-  devanagariText={quote?.data.script === 'deva' ? quote.data.original : undefined}
->
-  <section slot="sky" class="hero">
+<Base description="Kavya Jahagirdar's digital garden: the thinking that doesn't fit on LinkedIn." devanagariText={deva ? quote!.data.original : undefined}>
+  <section class="hero">
     <div class="hero-text">
-      <p class="kicker">hello, you found the garden</p>
-      <h1 class="kw-display hero-title">A garden I tend in <em>public.</em></h1>
-      <p class="intro">
-        I'm Kavya. I build tools that help people tell their career story, and I write here about the things I'm <span
-          class="kw-hl">still figuring out</span
-        >.
-      </p>
-      <div class="actions">
-        <TendrilButton href="/notes">Start reading</TendrilButton>
-        <TendrilButton href="/map" variant="secondary">See the whole garden</TendrilButton>
-      </div>
+      <h1 class="h1 home-h1">A garden I tend in public.</h1>
+      <p class="big">I build things that help people explain their careers better.</p>
+      <p class="big last">I write about things I'm <span class="hl">still figuring out</span>.</p>
+      <p class="aside">This is where I put the thinking that doesn't fit on LinkedIn.</p>
     </div>
-    <div class="hero-cloud" aria-hidden="true" set:html={heroCloud} />
+    <GateIllustration />
   </section>
 
-  <section class="recent" aria-labelledby="recent-h">
+  <Tendril width={620} class="divider" />
+
+  <section>
     <div class="section-head">
-      <h2 id="recent-h" class="kw-heading">Recently tended</h2>
-      <a class="kw-link" href="/notes">All notes</a>
+      <h2 class="h2">Recently tended</h2>
+      <TendrilLink href="/notes">All notes</TendrilLink>
     </div>
-    {
-      recent.length ? (
-        <div class="cards">
-          {recent.map((note, i) => (
-            <NoteCard note={note} {...pins[i]} />
-          ))}
-        </div>
-      ) : (
-        <p class="empty">Nothing's planted yet. The beds are dug, though.</p>
-      )
-    }
+    {recent.length ? <NoteList notes={recent} variant="home" /> : <p class="muted">Nothing planted yet.</p>}
   </section>
+
+  {
+    quote && (
+      <section class="featured">
+        <p class="label">A line I keep coming back to</p>
+        <p class:list={['q-original', { deva }]} lang={deva ? 'hi' : undefined}>
+          {quote.data.original}
+        </p>
+        {quote.data.translation && <p class="q-translation">{quote.data.translation}</p>}
+        <p class="q-source">
+          {quote.data.source} · <TendrilLink href="/quotes">More quotes</TendrilLink>
+        </p>
+      </section>
+    )
+  }
 
   <section class="pair">
     {
       record && (
-        <a class="paper-card turntable-card" href="/on-repeat" style="--tilt:-1.2deg">
-          <span class="tape" style="left:30px" aria-hidden="true" />
-          <span class="vinyl" aria-hidden="true">
-            <span class="vinyl-label" />
-            <span class="vinyl-hole" />
-            <span class="vinyl-shine" />
-          </span>
-          <span class="tt-text">
-            <span class="hand-label">on the turntable</span>
-            <span class="kw-subheading tt-title">
-              {record.data.title}, {record.data.artist}
+        <div class="col">
+          <h2 class="h2 small-h2">On repeat</h2>
+          <a class="kw-row record" href="/on-repeat">
+            <span class="sleeve" aria-hidden="true">
+              <svg viewBox="0 0 100 100" set:html={sleeve(record.data.sleeve)} />
             </span>
-            <span class="tt-sub">
-              {count(records.length, 'record')} I keep going back to{records.every((r) => r.data.note) ? `, ${records.length === 1 ? 'with' : 'each with'} a note on why.` : '.'}
-            </span>
-            <span class="tt-cta">Drop the needle</span>
-          </span>
-        </a>
-      )
-    }
-    {
-      quote && (
-        <a class="paper-card quote-card" href="/quotes" style="--tilt:1.5deg">
-          <span class="tape" style="left:50%;margin-left:-39px;width:78px;height:22px;z-index:1;--tape-tilt:-3deg" aria-hidden="true" />
-          <span class="q-mark" aria-hidden="true">
-            &#8220;
-          </span>
-          <span class="q-top">
-            <span class:list={['q-original', { 'q-deva': quote.data.script === 'deva' }]} lang={quote.data.script === 'deva' ? 'hi' : undefined}>
-              {quote.data.original}
-            </span>
-            {quote.data.translation && (
-              <span class="q-trans">
-                {before}
-                {after !== undefined && <span class="kw-hl">{quote.data.highlight}</span>}
-                {after}
+            <span>
+              <span class="kw-t rec-title">{record.data.title}</span>
+              <span class="rec-sub">
+                {record.data.artist}.{record.data.note && ` ${record.data.note}`}
               </span>
-            )}
-            <span class="q-cite">
-              {quote.data.source}
-              {quote.data.when && `, ${quote.data.when}`}
             </span>
-          </span>
-          <span class="q-perf" aria-hidden="true" />
-          {quote.data.reflection && (
-            <span class="q-peek">
-              <span>{quote.data.reflection}</span>
-            </span>
-          )}
-          <span class="q-unfold">Unfold my note</span>
-        </a>
+          </a>
+        </div>
       )
     }
+    <div class="col">
+      <h2 class="h2 small-h2 made-h">Things I've made</h2>
+      <ul class="made">
+        {
+          run.slice(0, 2).map((p) => (
+            <li>
+              <a class="kw-ul" href={p.data.url}>
+                {p.data.title}
+              </a>{' '}
+              <span class="muted">{p.data.short ?? p.data.blurb}</span>
+            </li>
+          ))
+        }
+        <li><TendrilLink href="/made">and a few small things</TendrilLink></li>
+      </ul>
+    </div>
   </section>
 </Base>
 
@@ -126,277 +94,128 @@ const pins = [
   .hero {
     display: flex;
     flex-wrap: wrap;
-    gap: 40px;
-    align-items: flex-start;
-    padding-top: clamp(40px, 7vw, 88px);
+    align-items: center;
+    gap: 40px 56px;
+    padding: clamp(56px, 9vw, 112px) 0 clamp(56px, 8vw, 96px);
   }
   .hero-text {
     flex: 999 1 26rem;
     min-width: 0;
   }
-  .kicker {
-    margin-bottom: var(--space-2);
-    font-family: var(--font-hand);
-    font-size: 19px;
-    transform: rotate(var(--tilt-m));
-    transform-origin: left;
+  .home-h1 {
+    font-size: clamp(46px, 7.2vw, 80px);
+    line-height: 0.98;
+    margin-bottom: 28px;
   }
-  .hero-title {
-    margin-bottom: var(--space-5);
-    font-size: clamp(50px, 8.5vw, 100px);
-    line-height: 0.92;
-    letter-spacing: -0.035em;
+  .big {
+    max-width: 28em;
+    margin-bottom: 6px;
+    font-size: 20px;
+    line-height: 1.5;
   }
-  .hero-title em {
-    display: inline-block;
-    font-weight: 400;
-    padding: 0 0.08em;
+  .big.last {
+    margin-bottom: 28px;
   }
-  .intro {
+  .aside {
     max-width: 30em;
-    margin-bottom: 30px;
-    font-size: 18px;
-    line-height: 1.6;
+    font-size: 15px;
+    color: var(--muted);
   }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 12px 40px;
-  }
-  /* On the sky, focus rings go spot. */
-  .hero :global(:focus-visible) {
-    outline-color: var(--spot);
-  }
-  .hero-cloud {
-    flex: 1 1 300px;
-    max-width: 340px;
-    position: relative;
-    height: 210px;
-    margin-top: 40px;
-  }
-  .hero-cloud :global(svg) {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-  @media (max-width: 640px) {
-    .hero-cloud {
-      display: none;
-    }
-  }
-
-  .recent {
-    margin-top: var(--space-2);
+  .divider {
+    margin: 0 0 clamp(48px, 7vw, 72px);
   }
   .section-head {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--space-2) var(--space-5);
-    margin-bottom: 22px;
+    gap: 8px 24px;
+    margin-bottom: 10px;
   }
-  .section-head h2 {
-    font-size: clamp(28px, 3.6vw, 40px);
+  .section-head :global(.kw-tl) {
+    font-size: 15px;
   }
-  .section-head .kw-link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    font-size: 14px;
-    border-bottom: 0;
-    text-decoration: underline;
-    text-decoration-color: var(--spot);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 4px;
+
+  .featured {
+    max-width: 46rem;
+    margin-top: clamp(88px, 12vw, 140px);
   }
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-    gap: 28px var(--space-5);
-    align-items: start;
+  .featured .label {
+    margin-bottom: 20px;
   }
-  .cards > :global(:nth-child(2)) {
-    margin-top: 14px;
+  .q-original {
+    margin-bottom: 14px;
+    font-family: var(--font-display);
+    font-size: clamp(24px, 3vw, 32px);
+    line-height: 1.4;
   }
-  .empty {
-    color: var(--moss);
+  .q-original.deva {
+    font-family: var(--font-deva);
+    font-size: clamp(26px, 3.4vw, 36px);
+    line-height: 1.7;
+  }
+  .q-translation {
+    margin-bottom: 14px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-style: italic;
+    font-size: clamp(21px, 2.4vw, 26px);
+    line-height: 1.4;
+  }
+  .q-source {
+    font-size: 15px;
+    color: var(--muted);
   }
 
   .pair {
-    margin-top: clamp(64px, 9vw, 104px);
     display: flex;
     flex-wrap: wrap;
-    gap: 40px 48px;
-    align-items: stretch;
+    gap: 48px 64px;
+    margin-top: clamp(88px, 12vw, 140px);
   }
-
-  .turntable-card {
-    flex: 1 1 20rem;
-    max-width: 460px;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--space-5);
-    padding: 26px;
-  }
-  .vinyl {
-    flex: none;
-    position: relative;
-    width: 112px;
-    height: 112px;
-    border-radius: var(--radius-full);
-    background: var(--ink) repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.07) 0 1px, rgba(255, 255, 255, 0) 1px 4px);
-    animation: spin 3.2s linear infinite;
-  }
-  .vinyl-label,
-  .vinyl-hole,
-  .vinyl-shine {
-    position: absolute;
-    border-radius: var(--radius-full);
-  }
-  .vinyl-label {
-    left: 50%;
-    top: 50%;
-    width: 38px;
-    height: 38px;
-    margin: -19px 0 0 -19px;
-    background: var(--spot);
-  }
-  .vinyl-hole {
-    left: 50%;
-    top: 50%;
-    width: 6px;
-    height: 6px;
-    margin: -3px 0 0 -3px;
-    background: var(--paper);
-  }
-  .vinyl-shine {
-    left: 58%;
-    top: 22%;
-    width: 8px;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.35);
-  }
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  .tt-text {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  .col {
+    flex: 1 1 18rem;
     min-width: 0;
   }
-  .hand-label {
-    font-family: var(--font-hand);
-    font-size: 15px;
-    color: var(--moss);
+  .small-h2 {
+    font-size: 22px;
+    margin-bottom: 16px;
   }
-  .tt-title {
-    font-size: 23px;
-    line-height: 1.15;
-    font-variation-settings: 'opsz' 36, 'SOFT' 40, 'WONK' 1;
+  .made-h {
+    margin-bottom: 12px;
   }
-  .tt-sub {
-    font-size: 14.5px;
-    line-height: 1.5;
-    color: var(--moss);
+  .record {
+    display: flex;
+    gap: 18px;
+    align-items: center;
   }
-  .tt-cta,
-  .q-unfold {
-    font-size: 12.5px;
+  .sleeve {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    background: var(--paper-lift);
+    border: 1px solid var(--hair);
+  }
+  .sleeve svg {
+    width: 60px;
+    height: 60px;
+  }
+  .rec-title {
     font-weight: 600;
   }
-  .tt-cta {
-    margin-top: 4px;
-  }
-
-  .quote-card {
-    flex: 1 1 20rem;
-    max-width: 430px;
-  }
-  .q-mark {
-    position: absolute;
-    right: 16px;
-    top: 4px;
-    font-family: var(--font-display);
-    font-variation-settings: 'opsz' 144, 'SOFT' 100, 'WONK' 1;
-    font-size: 84px;
-    line-height: 1;
-    color: var(--spot-soft);
-  }
-  .q-top {
+  .rec-sub {
     display: block;
-    padding: 26px var(--space-5) 18px;
-  }
-  .q-original {
-    display: block;
-    margin-bottom: 6px;
-    padding-right: 44px;
-    font-family: var(--font-display);
-    font-size: 20px;
-    line-height: 1.5;
-  }
-  .q-deva {
-    font-family: var(--font-deva);
-    font-size: 22px;
-    line-height: 1.85;
-  }
-  .q-trans {
-    display: block;
-    margin-bottom: var(--space-2);
     font-size: 15px;
-    line-height: 1.55;
+    color: var(--muted);
   }
-  .q-cite {
-    display: block;
-    font-size: 12.5px;
-    color: var(--moss);
-  }
-  .q-perf {
-    display: block;
-    height: 14px;
-    position: relative;
-    margin: 0 -1px;
-    background:
-      radial-gradient(circle at 0 50%, var(--paper) 7px, transparent 7.5px),
-      radial-gradient(circle at 100% 50%, var(--paper) 7px, transparent 7.5px);
-  }
-  .q-perf::after {
-    content: '';
-    position: absolute;
-    left: 14px;
-    right: 14px;
-    top: 50%;
-    border-top: 2px dotted rgba(19, 19, 19, 0.28);
-  }
-  .q-peek {
-    display: block;
-    padding: 12px var(--space-5) 0;
-    max-height: 4.2em;
-    overflow: hidden;
-  }
-  .q-peek span {
-    display: block;
-    font-family: var(--font-hand);
-    font-size: 15.5px;
-    line-height: 1.45;
-    color: var(--moss);
-    -webkit-mask-image: linear-gradient(#000 40%, transparent);
-    mask-image: linear-gradient(#000 40%, transparent);
-  }
-  .q-unfold {
-    display: block;
-    padding: var(--space-2) var(--space-5) 14px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .vinyl {
-      animation: none;
-    }
+  .made {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 16px;
   }
 </style>

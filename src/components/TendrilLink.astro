@@ -1,0 +1,15 @@
+---
+// The site's standalone link: a pink underline, and on hover a small pink coil draws off the end.
+interface Props {
+  href: string;
+  class?: string;
+  rel?: string;
+}
+const { href, class: cls, rel } = Astro.props;
+---
+
+<a class:list={['kw-tl', cls]} href={href} rel={rel}
+  ><span class="kw-lbl"><slot /></span><svg viewBox="0 0 20 16" aria-hidden="true"
+    ><path pathLength="1" d="M0 14 C6 14 12 13 14 9 C16 5 12 2 9.5 4.5 C7.5 6.5 10 10 12.5 8"></path></svg
+  ></a
+>

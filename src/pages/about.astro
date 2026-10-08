@@ -1,0 +1,136 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Tendril from '../components/Tendril.astro';
+import portrait from '../assets/portrait.webp';
+import { site } from '../site';
+---
+
+<Base title="About" description="Who tends this garden, and the terms of the garden.">
+  <section class="page-top about">
+    <div class="bio">
+      <h1 class="h1">The gardener</h1>
+      <p>
+        I'm Kavya Jahagirdar. I live in Singapore, studied engineering at NTU with a minor in entrepreneurship, and since
+        2019 I've been building things that help people explain their careers better than a résumé template lets them.
+      </p>
+      <p>
+        I also wrote a children's picture book, which turned out to be the best writing training I've ever had.
+        Six-year-olds don't skim. They just leave.
+      </p>
+      <p>
+        This garden is where I put the thinking that doesn't fit on LinkedIn: half-ideas, things I've changed my mind
+        about, and words I keep returning to.
+      </p>
+    </div>
+    <figure class="portrait">
+      <Image
+        src={portrait}
+        alt="Kavya smiling, in a pink floral dress, among plants and garden chairs in black and white"
+        width={520}
+        widths={[260, 520]}
+        sizes="260px"
+        format="webp"
+        quality={80}
+        loading="eager"
+      />
+    </figure>
+  </section>
+
+  <Tendril width={560} class="divider" />
+
+  <section class="terms" aria-labelledby="terms-h">
+    <h2 class="label" id="terms-h">Terms of the garden</h2>
+    <p class="big">Everything here is a work in progress, including me.</p>
+    <p>
+      I reserve the right to be wrong, and to change my mind in public. Notes get rewritten without warning, and the dates
+      show when.
+    </p>
+    <p>
+      If something here helps you, borrow it, and say where it came from. If something's wrong, tell me. That's the whole
+      point of tending things where people can see.
+    </p>
+  </section>
+
+  <section class="hello">
+    <h2 class="h2">Say hello</h2>
+    <p>I read everything, slowly.</p>
+    <p class="links">
+      {site.socials.map((s) => <a class="kw-ul" href={s.href} rel="me">{s.label}</a>)}
+    </p>
+  </section>
+</Base>
+
+<style>
+  .about {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px 64px;
+    align-items: flex-start;
+  }
+  .bio {
+    flex: 999 1 28rem;
+    min-width: 0;
+    max-width: var(--measure-text);
+    font-size: 18.5px;
+    line-height: 1.7;
+  }
+  .bio .h1 {
+    margin-bottom: 28px;
+  }
+  .bio p + p {
+    margin-top: 20px;
+  }
+  .portrait {
+    flex: 1 1 220px;
+    max-width: 260px;
+  }
+  .portrait :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+  .divider {
+    margin: clamp(72px, 10vw, 112px) 0 clamp(40px, 6vw, 56px);
+  }
+  .terms {
+    max-width: 44rem;
+    font-size: 19px;
+    line-height: 1.6;
+  }
+  .terms .label {
+    margin-bottom: 18px;
+  }
+  .terms .big {
+    margin-bottom: 22px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 96, 'SOFT' 50, 'WONK' 1;
+    font-weight: 500;
+    font-size: clamp(30px, 4.2vw, 46px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+  .terms p + p:not(.big) {
+    margin-top: 18px;
+  }
+  .hello {
+    max-width: var(--measure-text);
+    margin-top: 72px;
+  }
+  .hello .h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 22px;
+  }
+  .links a {
+    display: inline-block;
+    padding: 10px 0;
+    background-position: 0 calc(100% - 10px);
+  }
+</style>

@@ -1,13 +1,10 @@
-# The shelf of quotes. See CLAUDE.md for every field. `ink: true` on two at most.
+# Quotes. Exactly one has featured: true; it's shown big on Home and at the top of /quotes.
+# why: Kavya's reason for keeping it, under "Why I keep it". Write it in her words, never for her.
 
 - id: kabir-mali
-  original: "माली सींचे सौ घड़ा, ऋतु आए फल होय।"
-  script: deva
-  translit: ""
-  translation: "The gardener pours a hundred pots of water, but fruit comes in its season."
-  highlight: "but fruit comes in its season."
-  source: Kabir
-  when: 15th century
-  reflection: "The whole reason this site is a garden, in one line."
-  ink: false
+  original: "धीरे-धीरे रे मना, धीरे सब कुछ होय। माली सींचे सौ घड़ा, ऋतु आए फल होय।"
+  translation: "Slowly, mind, everything happens slowly. The gardener pours a hundred pots of water, but fruit comes in its season."
+  source: Kabir, 15th century
+  why: The whole reason this site is a garden, in two lines.
+  featured: true
   added: 2026-10-01

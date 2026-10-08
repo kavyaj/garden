@@ -1,12 +1,12 @@
 // Runs after `astro build`. Fails the build on:
 //   - any internal link, image or asset that points at nothing
-//   - any page over budget: 250KB transferred (gzip) on first load, fonts excluded
+//   - any page over budget: 150KB transferred (gzip) on first load, fonts excluded
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 
 const DIST = 'dist';
-const BUDGET = 250 * 1024;
+const BUDGET = 150 * 1024;
 
 const walk = (dir) =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
@@ -14,7 +14,7 @@ const walk = (dir) =>
     return e.isDirectory() ? walk(p) : [p];
   });
 
-/** "/notes" → dist/notes/index.html, "/scene/x.svg" → dist/scene/x.svg. */
+/** "/notes" → dist/notes/index.html, "/kj-logo.svg" → dist/kj-logo.svg. */
 function resolve(url) {
   const clean = decodeURIComponent(url.split(/[?#]/)[0]);
   const base = path.join(DIST, clean);
@@ -64,7 +64,7 @@ for (const page of pages) {
   rows.push({ page: '/' + path.relative(DIST, page).replace(/\\/g, '/').replace(/index\.html$/, ''), files: loads.size, total });
 }
 
-console.log('\nPage weight (gzip, fonts excluded, budget 250KB):');
+console.log('\nPage weight (gzip, fonts excluded, budget 150KB):');
 for (const r of rows.sort((a, b) => b.total - a.total)) {
   const flag = r.total > BUDGET ? '  OVER BUDGET' : '';
   console.log(`  ${(r.total / 1024).toFixed(1).padStart(6)}KB  ${String(r.files).padStart(2)} files  ${r.page}${flag}`);

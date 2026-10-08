@@ -1,0 +1,96 @@
+---
+// How notes appear everywhere: a plain list with hairlines. Never cards.
+// The yellow dot is the only colour in a row. Neglected notes get a muted title.
+import type { CollectionEntry } from 'astro:content';
+import { iso, shortDate, plantedLine, recentlyTended, neglected } from '../lib/garden';
+
+interface Props {
+  notes: CollectionEntry<'notes'>[];
+  /** home: date first, no planted line. full: date on the right with the planted line under it. */
+  variant?: 'home' | 'full';
+}
+const { notes, variant = 'full' } = Astro.props;
+---
+
+<ul class:list={['note-list', variant]}>
+  {
+    notes.map((n) => {
+      const date = (
+        <span class="when">
+          {recentlyTended(n.data.tended) && <span class="dot" />}
+          <time datetime={iso(n.data.tended)}>{variant === 'home' ? shortDate(n.data.tended) : `Tended ${shortDate(n.data.tended)}`}</time>
+          {variant === 'full' && <span class="planted">{plantedLine(n.data.planted, n.data.tended)}</span>}
+        </span>
+      );
+      return (
+        <li>
+          <a class="kw-row" href={`/notes/${n.id}`}>
+            {variant === 'home' && date}
+            <span class="text">
+              <span class:list={['kw-t', 'title', { muted: neglected(n.data.tended) }]}>{n.data.title}</span>
+              <span class="summary">{n.data.summary}</span>
+            </span>
+            {variant === 'full' && date}
+          </a>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .note-list {
+    list-style: none;
+    padding: 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  li {
+    border-top: 1px solid var(--hair);
+  }
+  .kw-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 32px;
+    padding: 20px 0 22px;
+  }
+  .home .kw-row {
+    gap: 4px 28px;
+  }
+  .text {
+    flex: 1 1 24rem;
+    min-width: 0;
+  }
+  .full .text {
+    flex-basis: 26rem;
+  }
+  .title {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-weight: 500;
+    font-size: 23px;
+    line-height: 1.25;
+  }
+  .home .title {
+    font-size: 24px;
+  }
+  .summary {
+    display: block;
+    margin-top: 4px;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .when {
+    flex: 0 0 9rem;
+    padding-top: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .home .when {
+    flex-basis: 7.5rem;
+  }
+  .planted {
+    display: block;
+    font-size: 13px;
+  }
+</style>
