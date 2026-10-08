@@ -39,7 +39,7 @@ const small = projects.filter((p) => p.data.kind === 'small');
     )
   }
 
-  {run.length > 0 && small.length > 0 && <Tendril width={520} flip class="divider" />}
+  {run.length > 0 && small.length > 0 && <div class="divider"><Tendril width={520} flip /></div>}
 
   {
     small.length > 0 && (

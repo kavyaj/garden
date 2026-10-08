@@ -37,7 +37,7 @@ import { site } from '../site';
     </figure>
   </section>
 
-  <Tendril width={560} class="divider" />
+  <div class="divider"><Tendril width={560} /></div>
 
   <section class="terms" aria-labelledby="terms-h">
     <h2 class="label" id="terms-h">Terms of the garden</h2>
@@ -87,6 +87,7 @@ import { site } from '../site';
   }
   .portrait :global(img) {
     display: block;
+    border-radius: 10px;
     width: 100%;
     height: auto;
     aspect-ratio: 4 / 5;

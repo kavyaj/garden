@@ -39,7 +39,7 @@ const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
   {
     rest.length > 0 && (
       <>
-        <Tendril width={560} class="divider" />
+        <div class="divider"><Tendril width={560} /></div>
         <section class="grid" aria-label="More quotes">
           {rest.map((q) => (
             <QuoteCard quote={q} />

@@ -59,8 +59,7 @@ for (const file of pageFiles) {
   });
   // One image size is enough for a preview.
   html = html.replace(/\s(?:srcset|sizes)="[^"]*"/g, '');
-  // External links open in a new tab, not inside the preview.
-  html = html.replace(/<a\b([^>]*?)href="(https?:\/\/[^"]+)"/g, '<a$1href="$2" target="_blank" rel="noopener"');
+  // External links already open in a new tab (src/middleware.ts), so they don't open inside the preview either.
   // Local URLs: pages become in-file links, files become assets.
   html = html.replace(/\b(src|href)="(\/(?!\/)[^"#?]*)([#?][^"]*)?"/g, (m, attr, url, rest = '') => {
     const key = url.replace(/\/$/, '') || '/';
