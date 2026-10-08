@@ -77,6 +77,9 @@ main {
 }
 
 .skip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   position: absolute;
   left: var(--space-4);
   top: -100px;
