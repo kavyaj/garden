@@ -1,9 +1,9 @@
-# The shelf on /on-repeat. Never host audio: listen_url links out.
+# The shelf on /on-repeat. Never host audio: listen_url links out to the full song (YouTube preferred).
 # sleeve: a drawn two-colour sleeve from src/sleeves.ts, one not already on the shelf.
 # note is optional and always Kavya's: leave it out and the turntable shows none.
 
 - title: Chasing Cars
   artist: Snow Patrol
-  listen_url: https://open.spotify.com/search/Chasing%20Cars%20Snow%20Patrol
+  listen_url: https://www.youtube.com/results?search_query=Chasing+Cars+Snow+Patrol
   sleeve: sunset
   added: 2026-10-08

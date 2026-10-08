@@ -226,5 +226,5 @@ Never write a note, quote reason or record note on Kavya's behalf unless she ask
 
 ## Still open
 
-- The rest of the records (Chasing Cars is the only one so far), with a note each, and Chasing Cars' Spotify track link.
+- The rest of the records (Chasing Cars is the only one so far), with a note each, and Chasing Cars' YouTube video link (it's a YouTube search for now).
 - The real notes (the mockup titles are placeholders).
