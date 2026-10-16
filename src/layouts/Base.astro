@@ -8,7 +8,8 @@ import { site } from '../site';
 interface Props {
   /** Page title. Home passes nothing and gets the bare site name. */
   title?: string;
-  description: string;
+  /** Falls back to the tagline. */
+  description?: string;
   /** Content width: the page (64rem), the Notes list (50rem), or the map (72rem). */
   width?: 'page' | 'list' | 'map';
   /** Load Tiro Devanagari Hindi in full (Quotes). */
@@ -16,7 +17,7 @@ interface Props {
   /** Load Tiro Devanagari Hindi subset to just these characters (Home's featured quote). */
   devanagariText?: string;
 }
-const { title, description, width = 'page', devanagari = false, devanagariText } = Astro.props;
+const { title, description = site.tagline, width = 'page', devanagari = false, devanagariText } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name}, a garden I tend in public`;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 

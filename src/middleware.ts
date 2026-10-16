@@ -1,9 +1,9 @@
-// Every link that leaves kavya.wiki opens in a new tab, wherever it comes from: components, YAML, or a
+// Every link that leaves kavya.garden opens in a new tab, wherever it comes from: components, YAML, or a
 // note's markdown. Runs as each page is built, so new content needs nothing extra.
 import { defineMiddleware } from 'astro:middleware';
 
 const EXTERNAL = /^https?:\/\//;
-const OWN = /^https?:\/\/(www\.)?kavya\.wiki(\/|$)/;
+const OWN = /^https?:\/\/(www\.)?kavya\.garden(\/|$)/;
 
 export function openExternalInNewTab(html: string): string {
   return html.replace(/<a\b[^>]*>/g, (tag) => {

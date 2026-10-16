@@ -77,11 +77,11 @@ const shell = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>kavya.wiki preview</title>
+<title>kavya.garden preview</title>
 <style>html,body{margin:0;height:100%;background:#f0f0f0}iframe{position:fixed;inset:0;width:100%;height:100%;border:0;display:block}</style>
 </head>
 <body>
-<iframe id="page" title="kavya.wiki"></iframe>
+<iframe id="page" title="kavya.garden"></iframe>
 <script type="application/json" id="pages">${json(pages)}</script>
 <script type="application/json" id="assets">${json(assets)}</script>
 <script>
@@ -93,7 +93,7 @@ function show() {
   var html = pages[key] || pages['/404'];
   frame.srcdoc = html.replace(/__A(\\d+)__/g, function (_, i) { return assets[+i]; });
   var t = /<title>([^<]*)<\\/title>/.exec(html);
-  document.title = (t ? t[1] : 'kavya.wiki') + ' (preview)';
+  document.title = (t ? t[1] : 'kavya.garden') + ' (preview)';
 }
 window.addEventListener('message', function (e) {
   if (e.data && typeof e.data.go === 'string') location.hash = e.data.go;

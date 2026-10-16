@@ -5,7 +5,7 @@
 
 - kind: run
   title: StoryCV
-  url: https://story.cv/?ref=kavyawiki
+  url: https://story.cv/?ref=kavyagarden
   blurb: "An AI interviewer that turns your work stories into résumé bullets."
   short: turns work stories into résumé bullets
   since: Since 2025
@@ -13,7 +13,7 @@
 
 - kind: run
   title: Resumey.Pro
-  url: https://resumey.pro/?ref=kavyawiki
+  url: https://resumey.pro/?ref=kavyagarden
   blurb: "A résumé builder that runs on Markdown. My first one."
   short: a résumé builder that runs on Markdown
   since: Since 2019

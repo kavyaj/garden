@@ -21,5 +21,3 @@ Wanting all facets of life, and actually doing the work to hold them together, i
 
 I came across this tweet, which inspired me to think further about how we define ambition:
 
-<!-- The old post showed a screenshot of the tweet here: https://kavya.wiki/images/ambition.jpg
-     Add it to public/images/ and link it, or link the tweet itself. -->

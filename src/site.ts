@@ -2,7 +2,8 @@
 
 export const site = {
   name: 'Kavya Jahagirdar',
-  url: 'https://kavya.wiki',
+  url: 'https://kavya.garden',
+  tagline: 'Perpetually figuring it out. Annoyingly self-aware about it.',
   /** The garden's birthday. */
   planted: '2026-10-07',
   place: 'Singapore',

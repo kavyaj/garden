@@ -5,7 +5,7 @@
   "scripts": {
     "gen": "node scripts/tokens.mjs",
     "dev": "npm run gen && astro dev",
-    "build": "npm run gen && astro build && node scripts/check-build.mjs",
+    "build": "npm run gen && astro build && node scripts/sitemap.mjs && node scripts/check-build.mjs",
     "preview": "astro preview",
     "export": "npm run build && node scripts/export-preview.mjs"
   },
