@@ -5,6 +5,8 @@ import { nav, site } from '../site';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const current = (href: string) => path === href || path.startsWith(href + '/');
+// The book about Thatha lives under Things I've made, so that link stays marked while you read it.
+const within = (href: string) => href === '/made' && (path === '/thatha' || path.startsWith('/thatha/'));
 ---
 
 <header class="wrap site-header">
@@ -15,7 +17,7 @@ const current = (href: string) => path === href || path.startsWith(href + '/');
   <nav class="kw-nav" aria-label="Main">
     {
       nav.map((item) => (
-        <a href={item.href} aria-current={current(item.href) ? 'page' : undefined}>
+        <a href={item.href} aria-current={current(item.href) ? 'page' : within(item.href) ? 'true' : undefined}>
           {item.label}
         </a>
       ))

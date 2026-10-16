@@ -219,4 +219,11 @@ const [tag1, ...tagRest] = site.tagline.split(/(?<=.)s+/);
     gap: 10px;
     font-size: 16px;
   }
+  /* Inline links, but still a 44px target. */
+  .made a.kw-ul {
+    display: inline-block;
+    padding: 11px 0;
+    margin: -11px 0;
+    background-position: 0 calc(100% - 11px);
+  }
 </style>

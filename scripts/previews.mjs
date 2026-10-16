@@ -20,7 +20,7 @@ const norm = (s) =>
 const bare = (s) => norm(s.replace(/\(.*?\)|\[.*?\]/g, ''));
 /** A store title without its film credit: "Tere Paas Main - Female Version (From …)" → "tere paas main female version". */
 const storeTitle = (s) => norm(s.replace(/\((from|feat)[^)]*\)|\[.*?\]/gi, '').replace(/\s-\s/, ' '));
-const keyOf = (song) => `${song.title} — ${song.artist}`;
+const keyOf = (song) => `${song.title} · ${song.artist}`;
 const UNWANTED = /\b(live|demo|riff|rough mix|karaoke|instrumental|remix|cover|tribute|acoustic|unplugged|sped up|slowed|8d)\b/;
 
 async function search(term, country) {

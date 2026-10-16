@@ -190,9 +190,12 @@ const tended = new Date(site.thatha.tended);
     color: var(--muted);
   }
   @media (max-width: 640px) {
+    .text {
+      flex-basis: 0;
+    }
     .date {
-      flex-basis: auto;
-      margin-left: calc(2.2rem + 20px);
+      flex-basis: 100%;
+      padding-left: calc(2.2rem + 20px);
       padding-top: 4px;
     }
   }
