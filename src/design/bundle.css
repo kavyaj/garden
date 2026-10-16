@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=DM+Sans:opsz,wght@9..40,300..700&family=Shantell+Sans:wght@400..600&family=Tiro+Devanagari+Hindi&display=swap");
-/* Kavya Wiki V2. The V2 mockup uses these same class names without the kw- prefix. */
+/* Kavya Garden V2. The V2 mockup uses these same class names without the kw- prefix. */
 .kw-root{background:var(--paper);color:var(--ink);font-family:var(--font-text);font-size:17px;line-height:1.65}
 .kw-root a{color:var(--ink)}
 a{color:#1A1916}a:hover{color:#1A1916}
