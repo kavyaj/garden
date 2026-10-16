@@ -6,6 +6,7 @@ import ProjectCard from '../components/ProjectCard.astro';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const run = projects.filter((p) => p.data.kind === 'run');
+const written = projects.filter((p) => p.data.kind === 'written');
 const small = projects.filter((p) => p.data.kind === 'small');
 ---
 

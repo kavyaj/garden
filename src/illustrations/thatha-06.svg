@@ -1,0 +1,8 @@
+<svg viewBox="0 0 320 190" role="img" aria-label="A farm well with steps, and a dried gourd floating" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path d="M20 50 H100 M220 50 H300" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M100 50 V180 H220 V50" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M101 110 H219 V179 H101Z" fill="#A7CDE0"/><path d="M100 110 C130 106 160 114 220 110" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M220 50 H204 V66 H188 V82 H172 V98" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M38 50 V30 H82 V50 M30 30 H90" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 30 V20" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="60" cy="18" r="4" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M60 22 C66 40 100 60 128 96" stroke="#1A1916" stroke-width="1" stroke-dasharray="3 3" fill="none"/>
+<ellipse cx="140" cy="108" rx="14" ry="10" fill="#6E8F72" stroke="#1A1916" stroke-width="1.5"/><path d="M152 102 C158 96 164 96 166 100" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M150 46 C150 30 164 22 176 28" stroke="none"/></svg>

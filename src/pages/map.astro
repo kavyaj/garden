@@ -7,9 +7,9 @@ import { plots } from '../site';
 
 const notes = await notesByTended();
 const quotes = await getCollection('quotes');
-const records = await getCollection('records');
+const songs = await getCollection('songs');
 const projects = await getCollection('projects');
-const counts: Record<string, number> = { notes: notes.length, quotes: quotes.length, records: records.length, projects: projects.length };
+const counts: Record<string, number> = { notes: notes.length, quotes: quotes.length, songs: songs.length, projects: projects.length };
 const fresh = notes.filter((n) => recentlyTended(n.data.tended)).length;
 const big = projects.filter((p) => p.data.kind === 'run').length;
 const small = projects.length - big;
@@ -20,7 +20,7 @@ const subs: Record<string, string> = {
   about: 'the shed',
   notes: fresh ? `${notes.length}, ${fresh} tended lately` : plural(notes.length, 'note'),
   quotes: `${quotes.length} in the pond`,
-  records: plural(records.length, 'record'),
+  records: plural(songs.length, 'song'),
   made: `${big} big, ${small} small`,
 };
 const lastTended = notes[0]?.data.tended;
@@ -36,7 +36,7 @@ const isPlanted = (p: (typeof plots)[number]) => !p.collection || (counts[p.coll
   <section class="plan-wrap">
     <MapPlan counts={counts} fresh={fresh} subs={subs} />
     <p class="census">
-      {plural(notes.length, 'note')}, {plural(quotes.length, 'quote')}, {plural(records.length, 'record')}, {plural(projects.length, 'thing')} made.
+      {plural(notes.length, 'note')}, {plural(quotes.length, 'quote')}, {plural(songs.length, 'song')}, {plural(projects.length, 'thing')} made.
       {lastTended && <>Last tended <time datetime={iso(lastTended)} data-rel>{fullDate(lastTended)}</time>.</>}
     </p>
   </section>

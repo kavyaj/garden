@@ -1,0 +1,8 @@
+<svg viewBox="0 0 320 190" role="img" aria-label="A bicycle, and Rs 150" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path d="M20 162 H300" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="96" cy="126" r="34" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="224" cy="126" r="34" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="96" cy="126" r="3" fill="#1A1916"/><circle cx="224" cy="126" r="3" fill="#1A1916"/>
+<path d="M96 126 L140 80 L206 80 L224 126 M140 80 L160 126 L96 126 M160 126 L206 80" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M140 80 L134 66 M124 64 H146" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M206 80 L200 58 C210 54 222 56 226 60" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="160" cy="126" r="7" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="rotate(-8 112 52)"><rect x="80" y="40" width="64" height="26" rx="2" fill="#E7E0D1" stroke="#1A1916" stroke-width="1.4"/><text x="112" y="58" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" font-weight="600" fill="#1A1916">Rs 150</text></g></svg>

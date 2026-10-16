@@ -1,20 +1,14 @@
 ---
-// Wraps a note body and puts the highlighter behind its first match of `phrase` (text only, never inside a tag).
+// Wraps a rendered note or chapter: the highlighter behind one phrase, quoted tweets as quiet cards,
+// and glossary words with a tooltip. See src/lib/prose.ts.
+import { highlight, tweetCards, glossary } from '../lib/prose';
+
 interface Props {
   phrase?: string;
+  glossary?: Record<string, string>;
 }
-const { phrase } = Astro.props;
-let html = await Astro.slots.render('default');
-if (phrase) {
-  const esc = phrase.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  // Split into tags and text, and mark the first text run that contains the phrase.
-  let done = false;
-  html = html.replace(/(<[^>]+>)|([^<]+)/g, (m, tag, text) => {
-    if (tag || done || !text.includes(esc)) return m;
-    done = true;
-    return text.replace(esc, `<span class="hl">${esc}</span>`);
-  });
-}
+const { phrase, glossary: words } = Astro.props;
+const html = glossary(tweetCards(highlight(await Astro.slots.render('default'), phrase)), words);
 ---
 
 <Fragment set:html={html} />

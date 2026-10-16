@@ -6,12 +6,10 @@ import Tendril from '../components/Tendril.astro';
 import TendrilLink from '../components/TendrilLink.astro';
 import NoteList from '../components/NoteList.astro';
 import { notesByTended, featuredQuote, isDevanagari } from '../lib/garden';
-import { sleeve } from '../sleeves';
 
 const recent = (await notesByTended()).slice(0, 4);
 const quote = await featuredQuote();
-const records = (await getCollection('records')).sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
-const record = records[0];
+const song = (await getCollection('songs')).sort((a, b) => a.data.order - b.data.order)[0];
 const run = (await getCollection('projects')).filter((p) => p.data.kind === 'run').sort((a, b) => a.data.order - b.data.order);
 const deva = quote ? isDevanagari(quote.data.original) : false;
 ---
@@ -54,17 +52,14 @@ const deva = quote ? isDevanagari(quote.data.original) : false;
 
   <section class="pair">
     {
-      record && (
+      song && (
         <div class="col">
           <h2 class="h2 small-h2">On repeat</h2>
           <a class="kw-row record" href="/on-repeat">
-            <span class="sleeve" aria-hidden="true">
-              <svg viewBox="0 0 100 100" set:html={sleeve(record.data.sleeve)} />
-            </span>
             <span>
-              <span class="kw-t rec-title">{record.data.title}</span>
+              <span class="kw-t rec-title">{song.data.title}</span>
               <span class="rec-sub">
-                {record.data.artist}.{record.data.note && ` ${record.data.note}`}
+                {song.data.artist}.{song.data.note && ` ${song.data.note}`}
               </span>
             </span>
           </a>

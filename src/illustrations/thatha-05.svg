@@ -1,0 +1,8 @@
+<svg viewBox="0 0 320 190" role="img" aria-label="A boat on the Narmada between marble cliffs at sunset" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path d="M10 150 C40 146 80 154 120 150 C170 146 220 154 310 150 V190 H10Z" fill="#A7CDE0"/>
+<path d="M10 150 C40 146 80 154 120 150 C170 146 220 154 310 150" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10 150 V60 C30 54 44 70 60 62 C74 56 84 72 96 150" fill="#FBFAF6" stroke="#1A1916" stroke-width="1.7" stroke-linejoin="round"/>
+<path d="M310 150 V50 C292 46 282 64 266 58 C250 52 238 70 224 150" fill="#FBFAF6" stroke="#1A1916" stroke-width="1.7" stroke-linejoin="round"/>
+<path d="M28 90 L40 120 M58 84 L70 118 M286 80 L276 112 M258 82 L248 118" stroke="#1A1916" stroke-width="0.8" opacity="0.5"/>
+<path d="M160 120 A24 24 0 0 1 184 96" stroke="none"/><path d="M136 120 A24 24 0 0 1 184 120" fill="none" stroke="#fd5183" stroke-width="1.7"/>
+<path d="M132 152 H190 L182 162 H140Z" fill="#FBFAF6" stroke="#1A1916" stroke-width="1.6" stroke-linejoin="round"/><path d="M160 152 V132" fill="none" stroke="#1A1916" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M60 172 H90 M220 174 H260 M130 178 H170" stroke="#FBFAF6" stroke-width="1.6" stroke-linecap="round"/></svg>

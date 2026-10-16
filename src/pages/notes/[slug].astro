@@ -122,6 +122,42 @@ const d = note.data;
     border-left: 2px solid var(--hair);
     color: var(--muted);
   }
+  /* A quoted tweet: a quiet card, never a screenshot (see src/lib/prose.ts). */
+  .body :global(.tweet) {
+    max-width: 30rem;
+    margin: 8px 0 30px;
+    padding: 20px 22px 16px;
+    background: var(--paper-lift);
+    border: 1px solid var(--hair);
+  }
+  .body :global(.tweet-by) {
+    margin: 0 0 10px;
+    font-size: 15px;
+  }
+  .body :global(.tweet-name) {
+    font-weight: 600;
+  }
+  .body :global(.tweet-handle) {
+    color: var(--muted);
+  }
+  .body :global(.tweet blockquote) {
+    margin: 0 0 12px;
+    padding: 0;
+    border: 0;
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .body :global(.tweet blockquote p) {
+    margin: 0;
+  }
+  .body :global(.tweet figcaption) {
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .body :global(.tweet figcaption a) {
+    color: var(--muted);
+  }
   .body :global(img) {
     display: block;
     height: auto;

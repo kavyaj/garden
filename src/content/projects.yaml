@@ -1,5 +1,6 @@
 # Things I've made, on /made. Shown in file order within each kind.
-# kind: run   the bigger things she runs, as a list with a `since` note.
+# kind: run     the bigger things she runs, as a list with a `since` note.
+# kind: written books, as a list under "Things I've written"; thumb is a 72px photo under public/.
 # kind: small weekend projects, as cards; image is a screenshot in images/made/ (shown 16:10).
 # short: optional shorter line for Home.
 
@@ -26,11 +27,20 @@
   since: Ongoing
   added: 2026-10-08
 
-- kind: run
+- kind: written
+  title: Allide mane, illige bande summane
+  url: /thatha
+  blurb: Conversations with my grandfather.
+  since: '2013'
+  thumb: /thatha/thatha-and-kavya.jpg
+  italic: true
+  added: 2013-07-23
+
+- kind: written
   title: The Brave Rocketeers
   url: https://www.goodreads.com/book/show/217947971-the-brave-rocketeers
   blurb: "My picture book, for small people with big plans."
-  since: Published 2024
+  since: Published
   added: 2024-01-01
 
 - kind: small

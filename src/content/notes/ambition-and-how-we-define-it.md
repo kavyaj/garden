@@ -1,23 +1,27 @@
 ---
-title: Ambition and how we define it.
-summary: We've made ambition synonymous with career. But what about the people holding together a full, demanding life — with intention?
-planted: 2026-10-07
-tended: 2026-10-07
+title: "Ambition and how we define it"
+summary: "Ambition, to most people, means putting career above everything else."
+planted: 2026-03-18
+tended: 2026-03-18
+highlight: "is ambitious too"
 ---
 
-Ambition, to most people, means putting career above everything else. At least, that’s been my observation in my own peer groups.
+Ambition, to most people, means putting career above everything else. At least, that's been my observation in my own peer groups.
 
-We’ve made it synonymous with career and underneath that, money, the title, the salary. That’s the version we celebrate.
+We've made it synonymous with career and underneath that, money, the title, the salary. That's the version we celebrate.
 
 But I know people who are raising kids with intention while holding down a career, showing up for ageing parents, staying consistent at the gym and upskilling themselves. And still eking out some time for themselves.
 
-That’s not lack of ambition but a full, demanding life chosen deliberately.
+That's not lack of ambition but a full, demanding life chosen deliberately.
 
 Yet, we seem to award the word “ambitious” only to people climbing a corporate ladder, those who ace performance reviews.
 
-Maybe it’s time we expanded the definition, don’t you think? ;)
+Maybe it's time we expanded the definition, don't you think? ;)
 
 Wanting all facets of life, and actually doing the work to hold them together, is ambitious too.
 
 I came across this tweet, which inspired me to think further about how we define ambition:
 
+> If you're truly ambitious you should want to have it all: lifestyle, family, work, health, hobbies. It's not a pick one or two out of five. Pick all five.
+>
+> Daniel Vassallo ([@dvassallo](https://x.com/dvassallo)), on X, 6 Dec 2024

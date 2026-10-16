@@ -1,0 +1,69 @@
+# Reverse bucket list. Entries with "[year]" or bracketed text are placeholders Kavya still has to replace.
+- group: Made
+  title: Published a children's picture book
+  story: The Brave Rocketeers. For small people with big plans.
+  year: '[year]'
+- group: Made
+  title: Built a résumé tool people still use, seven years on
+  story: Resumey.Pro. My first product, and still running.
+  year: '2019'
+- group: Made
+  title: Built StoryCV
+  story: An AI interviewer for the stories résumés leave out.
+  year: '[year]'
+- group: Made
+  title: Made a website that announces MRT stations, for no good reason
+  story: Tap a station, hear the chime.
+  year: '[year]'
+- group: Made
+  title: Turned my class whiteboards into a flipbook before they got wiped
+  story: The Coach's Playbook.
+  year: '[year]'
+- group: Learned
+  title: Graduated in engineering from NTU, with a minor in entrepreneurship
+  story: null
+  year: '[year]'
+- group: Learned
+  title: '[Something hard you taught yourself]'
+  story: '[One line on how long it took.]'
+  year: '[year]'
+- group: Learned
+  title: '[A skill you picked up late and love]'
+  story: null
+  year: '[year]'
+- group: Went
+  title: '[A place you went that changed something]'
+  story: '[What you still remember about it.]'
+  year: '[year]'
+- group: Went
+  title: '[A trip you almost didn''t take]'
+  story: null
+  year: '[year]'
+- group: Went
+  title: '[A sunrise, a summit, a city]'
+  story: null
+  year: '[year]'
+- group: Did anyway
+  title: '[The scary thing you did anyway]'
+  story: '[How it went. Honestly.]'
+  year: '[year]'
+- group: Did anyway
+  title: '[The time you said yes before you were ready]'
+  story: null
+  year: '[year]'
+- group: Did anyway
+  title: '[Something you quit, on purpose]'
+  story: '[Why it was the right call.]'
+  year: '[year]'
+- group: Small, and still counts
+  title: '[A tiny win nobody else would notice]'
+  story: null
+  year: '[year]'
+- group: Small, and still counts
+  title: '[Something silly you''re weirdly proud of]'
+  story: null
+  year: '[year]'
+- group: Small, and still counts
+  title: '[A thing you finally did after years of meaning to]'
+  story: null
+  year: '[year]'

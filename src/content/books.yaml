@@ -1,0 +1,65 @@
+# Notes are Kavya's own words, trimmed from her list. Nothing here is written by Claude.
+# cover: slug of the files in public/covers/, which come as <slug>-sm.webp (160px, list)
+# and <slug>-lg.webp (360px, featured book only). Covers are the publishers' own art,
+# supplied by Kavya. If a cover file is missing, fall back to the lettered cover.
+
+- title: The Annihilation of Caste
+  author: B. R. Ambedkar
+  cover: annihilation-of-caste
+  goodreads_url: https://www.goodreads.com/book/show/24621582
+  first_read: 2020
+  reread: false
+  featured: true
+  note: "Words won't do justice to what this book means to me. It bridges the gap between what most of us are schooled to believe and what the reality is. It was published in the 1930s and it's still relevant now, which calls for introspection, not celebration. The change has to come from us."
+  line: "If the fundamental rights are opposed by the community, no law, no parliament, no judiciary can guarantee them in the real sense of the word."
+
+- title: Harry Potter
+  author: J. K. Rowling
+  cover: harry-potter
+  first_read: 2007
+  reread: true
+  note: "I really imagined myself in their world. Read and reread so many times, queued up to grab the sixth book when it released, hid under blanket covers to read when I was supposed to be studying for my exam."
+
+- title: Why I Am an Atheist
+  author: Bhagat Singh
+  cover: why-i-am-an-atheist
+  first_read: 2022
+  reread: false
+  note: "Resonated so much. He was around 22 when he wrote it, and I was amazed by how articulate he was. I feel fortunate to have gotten a glimpse of him in his own words."
+
+- title: The Pathless Path
+  author: Paul Millerd
+  cover: pathless-path
+  goodreads_url: https://www.goodreads.com/book/show/60151185
+  first_read: 2025
+  reread: false
+  note: "Was already on the path and it felt good to be seen by the author."
+
+- title: Sleeping Like a Baby
+  author: Himani Dalmia and Neha Bhatt
+  cover: sleeping-like-a-baby
+  first_read: 2023
+  reread: false
+  note: "Was a clueless mom and this book rescued me from the abyss."
+
+- title: "Jugalbandi: The BJP Before Modi"
+  author: Vinay Sitapati
+  cover: jugalbandi
+  goodreads_url: https://www.goodreads.com/book/show/55987598
+  first_read: 2023
+  reread: false
+  note: "A nice, engaging insight into what culminated in today's Indian political landscape."
+
+- title: Dan Brown books
+  author: Dan Brown
+  cover: dan-brown
+  first_read: 2008
+  reread: true
+  note: "Made me want to write a book myself."
+
+- title: Sherlock Holmes
+  author: Arthur Conan Doyle
+  cover: sherlock-holmes
+  first_read: 2007
+  reread: true
+  note: "As a teenager, I felt like an adult when I read it."

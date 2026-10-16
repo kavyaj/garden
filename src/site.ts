@@ -40,7 +40,7 @@ export interface Plot {
   key: string;
   label: string;
   href: string;
-  collection?: 'notes' | 'quotes' | 'records' | 'projects' | 'reading' | 'compost' | 'guestbook';
+  collection?: 'notes' | 'quotes' | 'songs' | 'projects' | 'reading' | 'compost' | 'guestbook';
   area: [number, number, number, number];
   labelAt: 'above' | 'below';
   bed?: { x: number; y: number; w: number; h: number };
@@ -51,7 +51,7 @@ export const plots: Plot[] = [
   { key: 'home', label: 'The gate', href: '/', area: [45, 94.21, 10, 5.79], labelAt: 'above', list: 'Where you came in.' },
   { key: 'notes', label: 'Notes', href: '/notes', collection: 'notes', area: [13.83, 44.21, 22.33, 17.89], labelAt: 'below', list: "Thinking in progress. Some of it will be wrong, and that's fine." },
   { key: 'quotes', label: 'Quotes', href: '/quotes', collection: 'quotes', area: [64.67, 28.68, 22, 22.89], labelAt: 'above', list: 'Lines that stuck, each with a note on why.' },
-  { key: 'records', label: 'On repeat', href: '/on-repeat', collection: 'records', area: [44.17, 13.16, 11.67, 18.42], labelAt: 'above', list: 'Records, and what each one is attached to.' },
+  { key: 'records', label: 'On repeat', href: '/on-repeat', collection: 'songs', area: [44.17, 13.16, 11.67, 18.42], labelAt: 'above', list: 'Songs, and what each one is attached to.' },
   { key: 'made', label: "Things I've made", href: '/made', collection: 'projects', area: [71.33, 67.89, 17.33, 15.53], labelAt: 'below', list: 'What I run, and what I built on weekends.' },
   { key: 'about', label: 'About', href: '/about', area: [15.83, 15.79, 11, 12.89], labelAt: 'above', list: 'Who I am, and the terms of the garden.' },
   { key: 'reading', label: 'Reading', href: '/reading', collection: 'reading', area: [15, 72.37, 14.17, 13.16], labelAt: 'below', bed: { x: 180, y: 550, w: 170, h: 100 }, list: 'Books, with the page I folded down.' },
