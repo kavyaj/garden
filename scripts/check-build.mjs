@@ -14,7 +14,7 @@ const walk = (dir) =>
     return e.isDirectory() ? walk(p) : [p];
   });
 
-/** "/notes" → dist/notes/index.html, "/kj-logo.svg" → dist/kj-logo.svg. */
+/** "/notes" → dist/notes/index.html, "/brand/kj-mark-paper.svg" → dist/brand/kj-mark-paper.svg. */
 function resolve(url) {
   const clean = decodeURIComponent(url.split(/[?#]/)[0]);
   const base = path.join(DIST, clean);
@@ -53,7 +53,7 @@ for (const page of pages) {
     // Links to other pages don't count toward this page's weight.
     if (file.endsWith('.html') || loads.has(file)) continue;
     // Icons only load in the tab, and og:image never loads in the page.
-    if (/favicon|apple-touch|kj-logo-512/.test(file)) continue;
+    if (/favicon|apple-touch|kj-mark-512|kj-avatar/.test(file)) continue;
     loads.add(file);
     if (/\.(css|svg|js)$/.test(file)) {
       for (const r of localRefs(fs.readFileSync(file, 'utf8'))) queue.push({ u: r, from: file });

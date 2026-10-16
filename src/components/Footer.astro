@@ -6,6 +6,7 @@ import { nav, site } from '../site';
 <footer class="site-footer">
   <div class="wrap inner">
     <div>
+      <p class="lockup"><img src="/brand/kj-mark-paper.svg" alt="" width="28" height="28" /><span>kavya.garden</span></p>
       <p class="signoff">
         <svg viewBox="0 0 30 16" aria-hidden="true"><path d="M1 12 C8 12 12 4 19 5 C25 6 24 13 19 12 C16 11 17 7 20 8"></path></svg>
         thanks for wandering in
@@ -39,6 +40,23 @@ import { nav, site } from '../site';
     gap: 28px 40px;
     padding-top: 40px;
     padding-bottom: 32px;
+  }
+  .lockup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .lockup img {
+    display: block;
+    width: 28px;
+    height: 28px;
+  }
+  .lockup span {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 72, 'SOFT' 50;
+    font-weight: 500;
+    font-size: 17px;
   }
   .signoff {
     display: flex;

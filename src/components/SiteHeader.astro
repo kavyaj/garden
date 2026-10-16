@@ -1,5 +1,6 @@
 ---
-// Logo disc (34px, static) and the name, then five plain-word links. The map isn't here.
+// The horizontal lockup (deep-green mark, 32px, and the name in Fraunces), then five plain-word links.
+// The map isn't here. The logo never animates.
 import { nav, site } from '../site';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -8,7 +9,7 @@ const current = (href: string) => path === href || path.startsWith(href + '/');
 
 <header class="wrap site-header">
   <a class="home" href="/">
-    <img src="/kj-logo.svg" alt="" width="34" height="34" />
+    <img src="/brand/kj-mark-deep-green.svg" alt="" width="32" height="32" />
     <span>{site.name}</span>
   </a>
   <nav class="kw-nav" aria-label="Main">
@@ -37,14 +38,16 @@ const current = (href: string) => path === href || path.startsWith(href + '/');
     gap: 10px;
     min-height: 44px;
     text-decoration: none;
-    font-size: 15px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 1;
+    font-size: 18px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
   .home img {
     display: block;
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
   }
   nav {
     display: flex;
