@@ -16,11 +16,11 @@ Read this whole file before changing anything. If this file and the design syste
 | Page mockups | https://claude.ai/artifact/Lz4Gb8d2cwxXRvEUwEcnp6, the page called **"V2, quieter"**. Ignore the "V1" page. |
 | Content | `src/content/` in this repo. Flat files, no database, no CMS. |
 
-The V2 mockups are the spec for layout, spacing, copy and motion. Match them. The mockups use stand-ins where the repo already has the real thing: the About portrait is `src/assets/portrait.webp`, and there is no email anywhere on the site, by Kavya's choice (people reach her through LinkedIn and X). Offline copies of the mockups are in `_v2-update/design/` until that folder is deleted.
+The V2 mockups are the spec for layout, spacing, copy and motion. Match them. The mockups use stand-ins where the repo already has the real thing: the About portrait is `src/assets/portrait.webp`, and there is no email anywhere on the site, by Kavya's choice (people reach her through LinkedIn and X).
 
 ## Where the repo stands
 
-The V1 to V2 migration is done (commit "Migrate to V2: remove scenes, new tokens"). The repo was then built against an early V2 (Oct 8). Everything decided since (the new logo, the kavya.garden domain, the MP3 player, Books, the reverse bucket list, the book about Thatha, Experience, Why it looks like this, the real notes and quotes) is described in `_v2-update/BRIEF.md`, with the content and assets in `_v2-update/`. Work through that brief once, then delete `_v2-update/`. After that, this file is the only spec.
+The V1 to V2 migration is done (commit "Migrate to V2: remove scenes, new tokens"). The repo was then built against an early V2 (Oct 8). Everything decided since (the new logo, the kavya.garden domain, the MP3 player, Books, the reverse bucket list, the book about Thatha, Experience, Why it looks like this, the real notes and quotes) was built from the V2 update brief (commits "New spec" to "Check"). The brief and its folder are gone; this file is the only spec.
 
 ## Stack
 
@@ -158,9 +158,8 @@ Displayed titles drop Spotify's suffixes ("2013 Remaster", the film credit). Whe
 
 **Things I've made:** `src/content/projects.yaml` with `kind: run` (StoryCV, Resumey.Pro, Red Thread Careers: shown as a list under "The ones I run" with a "Since 2019" style note), `kind: written` (the book "Allide mane, illige bande summane", dated 2013, with a 72px thumbnail, and The Brave Rocketeers: shown as a list under "Things I've written") or `kind: small` (weekend projects: shown as cards with a 16:10 screenshot).
 
-**Site settings:** `src/site.ts`: `url` (`https://kavya.garden`), `tagline` ("Perpetually figuring it out. Annoyingly self-aware about it.", used on Home and as the fallback meta description), `planted`, socials, email, map plots.
+**Site settings:** `src/site.ts`: `url` (`https://kavya.garden`), `tagline` ("Perpetually figuring it out. Annoyingly self-aware about it.", used on Home and as the fallback meta description), `planted`, socials (LinkedIn and X, no email), the book's planted and tended dates, map plots.
 
-The real content Kavya has supplied so far (3 notes, the Sanchi Honnamma quote, experience) is in `content-pack/`; copy it into `src/content/`.
 
 ## How the site counts itself
 
@@ -184,7 +183,7 @@ Every page: `SiteHeader`, the page's content, `Footer`. That's it. No scenes abo
 - **Experience (`/experience`):** H1 "Where I've been", Kavya's three intro paragraphs, then a vertical timeline (years left, a thin ink line with a dot per role; current roles have a filled green dot; the line fades to `hair` after the last role), Education, a tendril, "Featured in" (tendril links to the two Indie Founder episodes), and a closing link to Things I've made.
 - **Quotes:** H1, intro, the featured quote big with no card (the page's loud thing), a tendril, then `QuoteCard`s with "Why I keep it" in a native `<details>`.
 - **On repeat:** the MP3 player on the left (a replica of the blue one her parents gave her as a teenager), the song list on the right, then "The real one" story under the player. Intro: "The songs I keep going back to, and the memories stuck to each one. Pick one, press play, stay a while." See Interactions.
-- **Books:** H1, intro, one featured book large with the underlined line, then a list with lettered covers (no real cover art). Notes are Kavya's; never write them.
+- **Books:** H1, intro, one featured book large with the underlined line, then the shelf with each book's cover (lettered cover when the file is missing). Notes are Kavya's; never write them.
 - **Reverse bucket list:** H1, intro, groups (Made, Learned, Went, Did anyway, Small) as plain lists with a green tick that redraws on hover, and a "still counts" line.
 - **The book:** cover with the photo of Kavya and her grandfather and the foreword, then the chapter list with Contents, then the timeline and words pages. Chapter column 42rem, 18.5px at 1.7, one illustration with a caption per chapter.
 - **Why it looks like this (`/why`):** one 64rem column. Hero splits H1 and lede | the mark you can walk (the page's one loud thing: buttons "Walk the J", "Walk the K", "Just the garden" reveal pink dotted paths through the J and K, by stroke-dashoffset on masks; respect reduced motion). Then "A garden, seen from above", "It took six tries" (a viewer with the six logo attempts plus Earlier/Later buttons, and a numbered list that selects each; tries 1 to 5 are black or green sketches, 6 is the final mark), "What the garden is about" (Curiosity, Care, Growth, Personality, Restraint, each with a "So:" line), the Kabir couplet with one highlighted phrase, "What it's made of" (colours, rare colours, type), "Where you'll see the mark", "Rules I gave myself", and a closing "This page will change too." with the tended dot. **The copy is a draft written by Claude for Kavya to edit; do not treat it as final.** The mockup carries a thin ink banner saying so; the real page does not. The mark is the shared logo files, but the walkable mark inlines the SVG paths.
