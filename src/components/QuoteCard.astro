@@ -1,5 +1,6 @@
 ---
-// A quote as an object: original, translation, source, and "Why I keep it" in a native <details>.
+// A quote as an object: original, transliteration, translation, source, and "Why I keep it" in a native <details>.
+// A wide card spans the whole grid row: the original on the left, the rest on the right.
 import type { CollectionEntry } from 'astro:content';
 import { isDevanagari } from '../lib/garden';
 
@@ -7,24 +8,42 @@ interface Props {
   quote: CollectionEntry<'quotes'>;
 }
 const q = Astro.props.quote.data;
-const deva = isDevanagari(q.original);
+const lang = q.lang ?? (isDevanagari(q.original) ? 'hi' : undefined);
+const script = lang === 'kn' ? 'kn' : lang ? 'deva' : 'latin';
+const lines = (s: string) => s.split('\n');
+// Kannada script inside the source line gets its own lang and face.
+const sourceParts = q.source.split(/([ಀ-೿][ಀ-೿\s]*[ಀ-೿])/);
 ---
 
-<article class="kw-card quote-card">
-  <p class:list={['original', { deva }]} lang={deva ? 'hi' : undefined}>{q.original}</p>
-  {q.translit && <p class="type-translit translit">{q.translit}</p>}
-  {q.translation && <p class="translation">{q.translation}</p>}
-  <p class="source">{q.source}</p>
-  {
-    q.why && (
-      <details>
-        <summary>
-          Why I keep it <span class="kw-plus" aria-hidden="true">+</span>
-        </summary>
-        <p>{q.why}</p>
-      </details>
-    )
-  }
+<article class:list={['kw-card', 'quote-card', { wide: q.wide }]}>
+  <div class="left">
+    <p class:list={['original', script]} lang={lang}>
+      {lines(q.original).map((l, i) => (<>{i > 0 && <br />}{l}</>))}
+    </p>
+    {
+      q.translit && (
+        <p class="translit" lang={lang ? `${lang}-Latn` : undefined}>
+          {lines(q.translit).map((l, i) => (<>{i > 0 && <br />}{l}</>))}
+        </p>
+      )
+    }
+  </div>
+  <div class="right">
+    {q.translation && <p class="translation">{q.translation}</p>}
+    <p class="source">
+      {sourceParts.map((part, i) => (i % 2 ? <span lang="kn" class="kn">{part}</span> : part))}
+    </p>
+    {
+      q.why && (
+        <details>
+          <summary>
+            Why I keep it <span class="kw-plus" aria-hidden="true">+</span>
+          </summary>
+          <p>{q.why}</p>
+        </details>
+      )
+    }
+  </div>
 </article>
 
 <style>
@@ -34,6 +53,26 @@ const deva = isDevanagari(q.original);
     padding: 26px 26px 18px;
     background: var(--paper-lift);
     border: 1px solid var(--hair);
+  }
+  .right {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .wide {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 48px;
+    padding: 28px 28px 18px;
+  }
+  .wide .left {
+    flex: 1 1 18rem;
+    min-width: 0;
+  }
+  .wide .right {
+    flex: 1 1 20rem;
+    min-width: 0;
   }
   .original {
     margin-bottom: 10px;
@@ -46,8 +85,17 @@ const deva = isDevanagari(q.original);
     font-size: 21px;
     line-height: 1.75;
   }
+  .original.kn {
+    font-family: var(--font-kn);
+    font-size: 22px;
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
   .translit {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    font-style: italic;
     color: var(--muted);
   }
   .translation {
@@ -57,10 +105,16 @@ const deva = isDevanagari(q.original);
     font-size: 18px;
     line-height: 1.45;
   }
+  .wide .translation {
+    font-size: 20px;
+  }
   .source {
     margin-bottom: 14px;
     font-size: 13.5px;
     color: var(--muted);
+  }
+  .kn {
+    font-family: var(--font-kn);
   }
   details {
     margin-top: auto;

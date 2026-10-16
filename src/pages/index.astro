@@ -5,21 +5,29 @@ import GateIllustration from '../components/GateIllustration.astro';
 import Tendril from '../components/Tendril.astro';
 import TendrilLink from '../components/TendrilLink.astro';
 import NoteList from '../components/NoteList.astro';
-import { notesByTended, featuredQuote, isDevanagari } from '../lib/garden';
+import { notesByTended, featuredQuote, isDevanagari, count } from '../lib/garden';
+import { site } from '../site';
 
 const recent = (await notesByTended()).slice(0, 4);
 const quote = await featuredQuote();
-const song = (await getCollection('songs')).sort((a, b) => a.data.order - b.data.order)[0];
+const songs = (await getCollection('songs')).sort((a, b) => a.data.order - b.data.order);
+const song = songs[0];
+const more = songs.length - 1;
 const run = (await getCollection('projects')).filter((p) => p.data.kind === 'run').sort((a, b) => a.data.order - b.data.order);
-const deva = quote ? isDevanagari(quote.data.original) : false;
+// Home can show an excerpt of the featured quote.
+const qOriginal = quote ? (quote.data.home?.original ?? quote.data.original) : '';
+const qTranslation = quote ? (quote.data.home?.translation ?? quote.data.translation) : '';
+const deva = isDevanagari(qOriginal);
+// The tagline, with its second sentence highlighted.
+const [tag1, ...tagRest] = site.tagline.split(/(?<=.)s+/);
 ---
 
-<Base description="Kavya Jahagirdar's digital garden: the thinking that doesn't fit on LinkedIn." devanagariText={deva ? quote!.data.original : undefined}>
+<Base description="Kavya Jahagirdar's digital garden: the thinking that doesn't fit on LinkedIn." devanagariText={deva ? qOriginal : undefined}>
   <section class="hero">
     <div class="hero-text">
       <h1 class="h1 home-h1">A garden I tend in public.</h1>
       <p class="big">I build things that help people explain their careers better.</p>
-      <p class="big last">I write about things I'm <span class="hl">still figuring out</span>.</p>
+      <p class="big last">{tag1} <span class="hl">{tagRest.join(' ')}</span></p>
       <p class="aside">This is where I put the thinking that doesn't fit on LinkedIn.</p>
     </div>
     <GateIllustration />
@@ -38,11 +46,11 @@ const deva = quote ? isDevanagari(quote.data.original) : false;
   {
     quote && (
       <section class="featured">
-        <p class="label">A line I keep coming back to</p>
+        <p class="label">Six hundred years old. Still right.</p>
         <p class:list={['q-original', { deva }]} lang={deva ? 'hi' : undefined}>
-          {quote.data.original}
+          {qOriginal}
         </p>
-        {quote.data.translation && <p class="q-translation">{quote.data.translation}</p>}
+        {qTranslation && <p class="q-translation">{qTranslation}</p>}
         <p class="q-source">
           {quote.data.source} · <TendrilLink href="/quotes">More quotes</TendrilLink>
         </p>
@@ -56,11 +64,12 @@ const deva = quote ? isDevanagari(quote.data.original) : false;
         <div class="col">
           <h2 class="h2 small-h2">On repeat</h2>
           <a class="kw-row record" href="/on-repeat">
+            <span class="mp3" aria-hidden="true">
+              <svg viewBox="0 0 120 40"><rect x="4" y="2" width="114" height="36" rx="18" fill="#2E58A6"></rect><rect x="4" y="31" width="114" height="7" rx="3.5" fill="#C9CED6"></rect><rect x="4" y="2" width="114" height="31" rx="15.5" fill="#2E58A6"></rect><path d="M93 3 V37" stroke="#21417F" stroke-width="1.5"></path><rect x="21" y="8" width="64" height="22" rx="11" fill="#151619"></rect><circle cx="31.5" cy="19" r="6.5" fill="#D9DCE1"></circle><path d="M30 16.5 L34 19 L30 21.5Z" fill="#1A1916"></path><rect x="42" y="13.5" width="30" height="11" rx="1.5" fill="#BFD0BC"></rect><path d="M45 19 H66" stroke="#2A3326" stroke-width="2" stroke-dasharray="2 1.5"></path><circle cx="1.5" cy="20" r="3" fill="none" stroke="#9EA4AD" stroke-width="1.6"></circle></svg>
+            </span>
             <span>
               <span class="kw-t rec-title">{song.data.title}</span>
-              <span class="rec-sub">
-                {song.data.artist}.{song.data.note && ` ${song.data.note}`}
-              </span>
+              <span class="rec-sub">{song.data.artist}{more > 0 ? `, and ${count(more, 'more', 'more').replace(/ more$/, '').toLowerCase()} more.` : '.'}</span>
             </span>
           </a>
         </div>
@@ -184,18 +193,15 @@ const deva = quote ? isDevanagari(quote.data.original) : false;
     gap: 18px;
     align-items: center;
   }
-  .sleeve {
+  .mp3 {
     flex: none;
-    display: grid;
-    place-items: center;
-    width: 72px;
-    height: 72px;
-    background: var(--paper-lift);
-    border: 1px solid var(--hair);
+    width: 96px;
   }
-  .sleeve svg {
-    width: 60px;
-    height: 60px;
+  .mp3 svg {
+    display: block;
+    width: 96px;
+    height: auto;
+    overflow: visible;
   }
   .rec-title {
     font-weight: 600;

@@ -24,7 +24,7 @@ const plant = ([x, y]: number[], halo: boolean) =>
   (halo ? `<circle cx="${x}" cy="${y}" r="16" fill="#FDE837" opacity="0.55"/>` : '') +
   `<circle cx="${x}" cy="${y}" r="9" fill="#3F6B52"/><circle cx="${x - 2}" cy="${y - 2}" r="4" fill="#86A487"/>`;
 const notesBed =
-  '<rect x="170" y="340" width="260" height="128" fill="#C9D6C2" stroke="#1A1916" stroke-width="2"/>' +
+  '<rect x="170" y="340" width="260" height="128" fill="#FBFAF6" stroke="#1A1916" stroke-width="2"/>' +
   spots
     .slice(0, counts.notes ?? 0)
     .map((s, i) => plant(s, i < fresh))
@@ -40,7 +40,7 @@ const extra = plots
     const cols = Math.max(1, Math.round(w / 45));
     const rows = Math.max(1, Math.round(h / 45));
     const shown = Math.min(n, cols * rows);
-    let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#C9D6C2" stroke="#1A1916" stroke-width="2"/>`;
+    let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#FBFAF6" stroke="#1A1916" stroke-width="2"/>`;
     for (let i = 0; i < shown; i++) s += plant([x + (w / cols) * ((i % cols) + 0.5), y + (h / rows) * (Math.floor(i / cols) + 0.5)], false);
     return s;
   })
@@ -52,8 +52,8 @@ const drawing = mapUnder + notesBed + mapOver + extra;
 <div class="plan">
   <svg viewBox="0 0 1200 760" aria-hidden="true" focusable="false" set:html={drawing} />
   {
-    plots.map((p) => {
-      const [l, t, w, h] = p.area;
+    plots.filter((p) => p.area).map((p) => {
+      const [l, t, w, h] = p.area!;
       const style = `left:${l}%;top:${t}%;width:${w}%;height:${h}%`;
       return countOf(p) > 0 ? (
         <a class="spot" href={p.href} style={style} aria-label={`${p.label}: ${subs[p.key]}`}>

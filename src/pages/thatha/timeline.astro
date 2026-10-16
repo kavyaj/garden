@@ -1,0 +1,107 @@
+---
+// His life, 1934 to 2014, as Kavya pieced it together. The gap entry is the part still to fill in.
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { BOOK_TITLE } from '../../lib/thatha';
+
+const entries = (await getCollection('timeline')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base title="His timeline" description="Eighty years, mostly told through jobs and vehicles, because that's how he told them.">
+  <section class="page-top wrap-tl">
+    <p class="crumb"><a class="kw-ul" href="/thatha"><i>{BOOK_TITLE}</i></a> · Timeline</p>
+    <h1 class="h1 title">His timeline</h1>
+    <p class="intro">Eighty years, mostly told through jobs and vehicles, because that's how he told them.</p>
+    <ol>
+      {
+        entries.map((e) =>
+          e.data.gap ? (
+            <li class="gap">
+              <span class="year" aria-hidden="true">⋯</span>
+              <span class="text">{e.data.text}</span>
+            </li>
+          ) : (
+            <li>
+              <span class="year">{e.data.year}</span>
+              <span class="text">{e.data.text}</span>
+            </li>
+          )
+        )
+      }
+    </ol>
+  </section>
+</Base>
+
+<style>
+  .wrap-tl {
+    max-width: 44rem;
+  }
+  .crumb {
+    margin-bottom: 22px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .crumb a {
+    display: inline-block;
+    padding: 12px 0;
+    margin: -12px 0;
+    background-position: 0 calc(100% - 12px);
+  }
+  .title {
+    margin-bottom: 16px;
+    font-size: clamp(40px, 5.6vw, 60px);
+    line-height: 1.02;
+  }
+  .intro {
+    margin-bottom: 40px;
+    font-size: 18px;
+    color: var(--muted);
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  li {
+    display: flex;
+    gap: 24px;
+    padding: 14px 0;
+    border-top: 1px solid var(--hair);
+  }
+  li.gap {
+    border-top: 0;
+  }
+  .year {
+    flex: 0 0 4rem;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36;
+    font-weight: 600;
+    font-size: 20px;
+  }
+  .text {
+    flex: 1;
+    min-width: 0;
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .gap .year {
+    font-family: var(--font-text);
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .gap .text {
+    font-size: 16px;
+    font-style: italic;
+    color: var(--muted);
+  }
+  @media (max-width: 480px) {
+    li {
+      gap: 16px;
+    }
+    .year {
+      flex-basis: 3.4rem;
+    }
+  }
+</style>

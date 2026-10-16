@@ -1,16 +1,761 @@
 ---
-// Interim: the song list. The MP3 player replaces the turntable in the next step.
+// On repeat: a replica of the blue MP3 player Kavya had as a teenager, and her playlist beside it.
+// Spec: the design system's Mp3Player. Audio is Apple's 30-second preview (found at build time by
+// scripts/previews.mjs), played in an <audio> element only after a click. Nothing is hosted.
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import TendrilLink from '../components/TendrilLink.astro';
+import { site } from '../site';
+import cache from '../content/.preview-cache.json';
 
-const songs = (await getCollection('songs')).sort((a, b) => a.data.order - b.data.order);
+const previews = cache as Record<string, { url: string } | null>;
+const songs = (await getCollection('songs'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((s) => ({
+    t: s.data.title,
+    a: s.data.artist,
+    n: s.data.note,
+    p: previews[`${s.data.title} — ${s.data.artist}`]?.url ?? '',
+  }));
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<Base title="On repeat" description="The songs I keep going back to, and the memories stuck to each one.">
-  <section class="page-top">
+<Base
+  title="On repeat"
+  description="The songs I keep going back to, and the memories stuck to each one."
+  extraFonts={['VT323']}
+>
+  <section class="page-top intro">
     <h1 class="h1">On repeat</h1>
-    <ol>
-      {songs.map((s) => <li>{s.data.title}, {s.data.artist}</li>)}
-    </ol>
+    <p class="lede">The songs I keep going back to, and the memories stuck to each one. Pick one, press play, stay a while.</p>
+  </section>
+
+  <section class="deck" data-player>
+    <div class="left">
+      <div class="mp3">
+        <span class="ring" aria-hidden="true"></span>
+        <span class="jack" aria-hidden="true"></span>
+        <div class="body">
+          <span class="shine" aria-hidden="true"></span>
+          <span class="strip" aria-hidden="true"></span>
+          <span class="seam" aria-hidden="true"></span>
+          <span class="dots" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        </div>
+        <div class="face">
+          <span class="caps top" aria-hidden="true">DIGITAL MP3 PLAYER</span>
+          <button type="button" class="playbtn" data-play aria-label="Play">
+            <span class="knob" aria-hidden="true">
+              <svg class="i-play" viewBox="0 0 20 20"><path d="M6 3 L17 10 L6 17Z"></path></svg>
+              <svg class="i-pause" viewBox="0 0 20 20"><rect x="4" y="3" width="4" height="14"></rect><rect x="12" y="3" width="4" height="14"></rect></svg>
+            </span>
+          </button>
+          <div class="lcd">
+            <span class="lcd-top">
+              <span data-track></span>
+              <span class="eq" data-eq aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              <span data-time></span>
+            </span>
+            <span class="lcd-title"><span class="mq" data-title>HELLO :)&nbsp;&nbsp;PICK A SONG</span></span>
+            <span class="segs" data-segs aria-hidden="true">{Array.from({ length: 12 }, () => <span class="seg"></span>)}</span>
+          </div>
+          <span class="caps usb" aria-hidden="true">USB</span>
+          <span class="caps bottom" aria-hidden="true">MP3 / WMA / REC</span>
+        </div>
+        <button type="button" class="side prev" data-prev aria-label="Previous song"><span aria-hidden="true"></span></button>
+        <button type="button" class="side next" data-next aria-label="Next song"><span aria-hidden="true"></span></button>
+        <span class="neck" aria-hidden="true"></span>
+        <span class="plug" aria-hidden="true"><span class="pin a"></span><span class="pin b"></span><span class="base"></span></span>
+        <button type="button" class="cap" data-cap aria-pressed="false" aria-label="Take the cap off">
+          <span class="cap-edge" aria-hidden="true"></span>
+          <span class="cap-shine" aria-hidden="true"></span>
+          <span class="cap-shade" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="kw-vine cable" aria-hidden="true">
+        <svg viewBox="0 0 400 120">
+          <path
+            class="kw-stem"
+            pathLength="1"
+            d="M4 0 C4 40 30 60 90 62 C170 64 210 40 270 52 C330 64 350 100 322 106 C300 110 296 84 316 84 C330 84 332 98 322 100"
+          ></path>
+          <path class="kw-lf" d="M150 61 C156 47 170 43 178 46 C174 57 164 63 150 61Z" fill="var(--green)"></path>
+          <g class="kw-lf bud"><rect x="314" y="92" width="14" height="10" rx="2" fill="#E9ECF0" stroke="#1A1916" stroke-width="1.4"></rect><circle cx="321" cy="88" r="7.5" fill="#F4F4F4" stroke="#1A1916" stroke-width="1.4"></circle></g>
+        </svg>
+      </div>
+
+      <section class="story" aria-labelledby="story-h">
+        <h2 class="h2" id="story-h">The real one</h2>
+        <p>
+          This is a replica of the MP3 player my parents gave me when I was a teenager. Blue, about the size of a USB stick,
+          and the first thing I owned that felt completely mine.
+        </p>
+        <p>
+          It went everywhere. Long car rides, forehead against the window. Bedtime, one earphone in, volume low enough that
+          nobody would knock. A school trip, where my best friend and I split the earphones, one each, and argued over what
+          came next.
+        </p>
+        <p>
+          It had 32 MB of space. That's about ten songs, if you were careful. So I got sneaky. I'd keep the radio on, wait for
+          the RJ to announce a song I loved, and hit record the second it started. Radio recordings took up less space than
+          the real files, so a few more could squeeze in.
+        </p>
+        <p>Plenty of gadgets came and went after this one. This is the one that stayed.</p>
+      </section>
+    </div>
+
+    <div class="right">
+      <h2 class="label list-h">Tracklist</h2>
+      <ol class="tracks">
+        {
+          songs.map((s, i) => (
+            <li>
+              <button type="button" class="trk" data-pick={i} aria-label={`Play ${s.t} by ${s.a}${s.p ? '' : ' (no preview)'}`}>
+                <span class="num">
+                  <span class="n">{pad(i + 1)}</span>
+                  <svg class="cur-mark" viewBox="0 0 12 12" aria-hidden="true">
+                    <path d="M2 1 L11 6 L2 11Z" fill="var(--spot)"></path>
+                  </svg>
+                </span>
+                <span class="text">
+                  <span class="t">{s.t}</span>
+                  <span class="a">{s.a}</span>
+                </span>
+              </button>
+              {s.n && <p class="note" hidden>{s.n}</p>}
+            </li>
+          ))
+        }
+      </ol>
+      <p class="out"><TendrilLink href={site.playlist_url}>Open the whole playlist on Spotify</TendrilLink></p>
+    </div>
+    <audio data-audio preload="none"></audio>
+    <script type="application/json" data-songs set:html={JSON.stringify(songs)} />
   </section>
 </Base>
+
+<script>
+  // The player. Idle, the LCD is a clock. Picking a song (or play, prev, next) loads its 30-second preview
+  // and plays it; there's no audio at all until someone clicks.
+  type Song = { t: string; a: string; n: string; p: string };
+  const root = document.querySelector<HTMLElement>('[data-player]');
+  if (root) {
+    const songs: Song[] = JSON.parse(root.querySelector('[data-songs]')!.textContent || '[]');
+    const $ = <T extends Element = HTMLElement>(s: string) => root.querySelector(s) as unknown as T;
+    const audio = $<HTMLAudioElement>('[data-audio]');
+    const play = $<HTMLButtonElement>('[data-play]');
+    const cap = $<HTMLButtonElement>('[data-cap]');
+    const title = $('[data-title]');
+    const segs = [...root.querySelectorAll<HTMLElement>('.seg')];
+    const rows = [...root.querySelectorAll<HTMLButtonElement>('[data-pick]')];
+    const MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const pad = (x: number) => String(x).padStart(2, '0');
+    let cur: number | null = null;
+    let capOff = false;
+
+    function lcd() {
+      const now = new Date();
+      const playing = !audio.paused;
+      const s = cur === null ? null : songs[cur];
+      $('[data-track]').textContent = s ? `${pad(cur! + 1)}/${pad(songs.length)}` : `${now.getDate()} ${MON[now.getMonth()]} ${String(now.getFullYear()).slice(2)}`;
+      $('[data-time]').textContent = s
+        ? s.p
+          ? `0:${pad(Math.floor(audio.currentTime || 0))}`
+          : '--:--'
+        : `${pad(now.getHours())}${now.getSeconds() % 2 ? ' ' : ':'}${pad(now.getMinutes())}`;
+      const filled = s && audio.duration ? Math.round((audio.currentTime / audio.duration) * 12) : 0;
+      segs.forEach((g, i) => g.classList.toggle('on', i < filled));
+      $('[data-eq]').classList.toggle('on', playing);
+      title.classList.toggle('run', !!s && playing);
+    }
+
+    function render() {
+      const s = cur === null ? null : songs[cur];
+      const playing = !audio.paused;
+      title.textContent = s ? `${s.t}  -  ${s.a}${s.p ? '' : '  (NO PREVIEW)'}`.toUpperCase() : capOff ? 'CAP OFF :O' : 'HELLO :)  PICK A SONG';
+      play.classList.toggle('playing', playing);
+      play.setAttribute('aria-label', s && !s.p ? 'No preview' : playing ? 'Pause' : 'Play');
+      rows.forEach((r, i) => {
+        const on = i === cur;
+        r.classList.toggle('sel', on);
+        if (on) r.setAttribute('aria-current', 'true');
+        else r.removeAttribute('aria-current');
+        const note = r.parentElement!.querySelector<HTMLElement>('.note');
+        if (note) note.hidden = !on;
+      });
+      lcd();
+    }
+
+    function load(i: number) {
+      cur = (i + songs.length) % songs.length;
+      const s = songs[cur];
+      audio.pause();
+      if (s.p) {
+        audio.src = s.p;
+        audio.currentTime = 0;
+        audio.play().catch(() => render());
+      } else {
+        audio.removeAttribute('src');
+        audio.load();
+      }
+      render();
+    }
+
+    play.addEventListener('click', () => {
+      if (cur === null) return load(0);
+      if (!songs[cur].p) return;
+      if (audio.paused) audio.play().catch(() => render());
+      else audio.pause();
+    });
+    $('[data-prev]').addEventListener('click', () => load(cur === null ? songs.length - 1 : cur - 1));
+    $('[data-next]').addEventListener('click', () => load(cur === null ? 0 : cur + 1));
+    rows.forEach((r, i) => r.addEventListener('click', () => load(i)));
+    cap.addEventListener('click', () => {
+      capOff = !capOff;
+      cap.classList.toggle('off', capOff);
+      cap.setAttribute('aria-pressed', String(capOff));
+      cap.setAttribute('aria-label', capOff ? 'Put the cap back on' : 'Take the cap off');
+      render();
+    });
+    ['play', 'pause', 'ended'].forEach((e) => audio.addEventListener(e, render));
+    audio.addEventListener('timeupdate', lcd);
+    audio.addEventListener('ended', () => {
+      audio.currentTime = 0;
+      render();
+    });
+    render();
+    setInterval(() => {
+      if (audio.paused) lcd();
+    }, 1000);
+  }
+</script>
+
+<style>
+  .intro {
+    max-width: 40rem;
+  }
+  .deck {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px 64px;
+    align-items: flex-start;
+    margin-top: clamp(64px, 9vw, 96px);
+  }
+  .left {
+    flex: 1 1 28rem;
+    min-width: 0;
+    max-width: 36rem;
+  }
+  .right {
+    flex: 1 1 20rem;
+    min-width: 0;
+  }
+
+  /* The player: one piece, sized in container units so it scales together. Its blue and greys stay inside it. */
+  .mp3 {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3.3 / 1;
+    container-type: inline-size;
+  }
+  .mp3 :is(span, button, div) {
+    box-sizing: border-box;
+  }
+  .ring {
+    position: absolute;
+    left: 0;
+    top: 41%;
+    width: 4.2%;
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    border: 0.6cqw solid #9ea4ad;
+  }
+  .jack {
+    position: absolute;
+    left: 3.4%;
+    top: 47%;
+    width: 2.6%;
+    height: 6%;
+    background: #b9bec6;
+    border-radius: 1cqw;
+  }
+  .body {
+    position: absolute;
+    left: 5.5%;
+    right: 18.5%;
+    top: 0;
+    bottom: 0;
+    border-radius: 9999px 2cqw 2cqw 9999px;
+    background: #2e58a6;
+    overflow: hidden;
+  }
+  .shine,
+  .cap-shine {
+    position: absolute;
+    top: 5%;
+    height: 13%;
+    border-radius: 9999px;
+    background: #4a72be;
+    opacity: 0.55;
+  }
+  .shine {
+    left: 6%;
+    right: 6%;
+  }
+  .strip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 15%;
+    background: #c9ced6;
+  }
+  .seam {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 15%;
+    height: 6%;
+    background: #21417f;
+    opacity: 0.55;
+  }
+  .dots {
+    position: absolute;
+    left: 3.2%;
+    top: 30%;
+    display: grid;
+    gap: 1.1cqw;
+  }
+  .dots span {
+    display: block;
+    width: 0.9cqw;
+    height: 0.9cqw;
+    border-radius: 9999px;
+    background: #21417f;
+  }
+  .dots span:nth-child(1) {
+    margin-left: 1.2cqw;
+  }
+  .dots span:nth-child(2),
+  .dots span:nth-child(4) {
+    margin-left: 0.4cqw;
+  }
+  .face {
+    position: absolute;
+    left: 15%;
+    top: 13%;
+    width: 58%;
+    height: 60%;
+    border-radius: 9999px;
+    background: #151619;
+  }
+  .caps {
+    position: absolute;
+    font-family: var(--font-text);
+    font-size: 1.85cqw;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #e8e8e8;
+  }
+  .caps.top,
+  .caps.bottom {
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding-left: 14%;
+  }
+  .caps.top {
+    top: 9%;
+  }
+  .caps.bottom {
+    bottom: 8%;
+  }
+  .caps.usb {
+    right: 5%;
+    top: 40%;
+    font-size: 1.8cqw;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .playbtn {
+    position: absolute;
+    left: 5.5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20%;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: 9999px;
+    background: #b5bac2;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: transform 0.12s;
+  }
+  .playbtn:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+  .knob {
+    width: 82%;
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    background: #d9dce1;
+    box-shadow: inset 0 0 0 0.5cqw #eef0f2;
+    display: grid;
+    place-items: center;
+  }
+  .knob svg {
+    grid-area: 1 / 1;
+    width: 2.8cqw;
+    height: 2.8cqw;
+    fill: var(--ink);
+  }
+  .i-pause,
+  .playbtn:global(.playing) .i-play {
+    display: none;
+  }
+  .playbtn:global(.playing) .i-pause {
+    display: block;
+  }
+  .lcd {
+    position: absolute;
+    left: 31%;
+    top: 28%;
+    width: 52%;
+    height: 46%;
+    padding: 0.9cqw 1.4cqw 0;
+    overflow: hidden;
+    border-radius: 0.6cqw;
+    background: #bfd0bc;
+    box-shadow: inset 0 0 0 0.4cqw #9fb09a;
+    color: #2a3326;
+    font-family: 'VT323', ui-monospace, monospace;
+  }
+  .lcd-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 2.9cqw;
+    line-height: 1;
+    white-space: pre;
+  }
+  .eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 0.3cqw;
+    height: 2.2cqw;
+  }
+  .eq i {
+    display: block;
+    width: 0.45cqw;
+    height: 30%;
+    background: #2a3326;
+  }
+  .eq:global(.on) i {
+    animation: eq 0.7s ease-in-out infinite alternate;
+  }
+  .eq:global(.on) i:nth-child(2) {
+    animation-delay: -0.2s;
+  }
+  .eq:global(.on) i:nth-child(3) {
+    animation-delay: -0.45s;
+  }
+  .eq:global(.on) i:nth-child(4) {
+    animation-delay: -0.1s;
+  }
+  .eq:global(.on) i:nth-child(5) {
+    animation-delay: -0.6s;
+  }
+  @keyframes eq {
+    from {
+      height: 20%;
+    }
+    to {
+      height: 100%;
+    }
+  }
+  .lcd-title {
+    display: block;
+    margin-top: 0.5cqw;
+    overflow: hidden;
+    white-space: pre;
+    font-size: 4.3cqw;
+    line-height: 1.25;
+  }
+  .mq {
+    display: inline-block;
+  }
+  .mq:global(.run) {
+    padding-left: 100%;
+    animation: mq 9s linear infinite;
+  }
+  @keyframes mq {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+  .segs {
+    display: flex;
+    gap: 0.35cqw;
+    margin-top: 0.6cqw;
+  }
+  .seg {
+    display: block;
+    flex: 1;
+    height: 0.9cqw;
+    background: rgba(42, 51, 38, 0.18);
+  }
+  .seg:global(.on) {
+    background: #2a3326;
+  }
+  .side {
+    position: absolute;
+    bottom: 0;
+    width: 10%;
+    height: 14%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  /* The visible bar is small; the button around it is the 44px target. */
+  .side::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+  .side.prev {
+    left: 30%;
+  }
+  .side.next {
+    left: 45%;
+  }
+  .side span {
+    display: block;
+    width: 100%;
+    height: 55%;
+    border-radius: 9999px;
+    background: #e9ecf0;
+    box-shadow: inset 0 -0.3cqw 0 #aeb4bc;
+  }
+  .side:active span {
+    transform: translateY(1px);
+  }
+  .neck {
+    position: absolute;
+    left: 80.6%;
+    top: 16%;
+    width: 4.4%;
+    height: 68%;
+    background: #c9ced6;
+    border-radius: 0 1cqw 1cqw 0;
+    box-shadow: inset -0.4cqw 0 0 #aeb4bc;
+  }
+  .plug {
+    position: absolute;
+    left: 84.6%;
+    top: 27%;
+    width: 13.5%;
+    height: 46%;
+    background: #dce0e5;
+    border: 0.3cqw solid #a9afb8;
+    border-radius: 0.6cqw;
+  }
+  .pin {
+    position: absolute;
+    top: 22%;
+    width: 16%;
+    height: 22%;
+    background: #8f96a0;
+  }
+  .pin.a {
+    left: 30%;
+  }
+  .pin.b {
+    left: 62%;
+  }
+  .plug .base {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 14%;
+    height: 18%;
+    background: #c3c8cf;
+  }
+  .cap {
+    position: absolute;
+    left: 79.2%;
+    top: 0;
+    z-index: 2;
+    width: 20.8%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 1.6cqw 9999px 9999px 1.6cqw;
+    background: #2e58a6;
+    overflow: hidden;
+    cursor: pointer;
+    transform-origin: 30% 50%;
+    transition: transform 0.55s cubic-bezier(0.3, 1.35, 0.5, 1);
+  }
+  .cap:hover:not(:global(.off)) {
+    transform: translateX(1.5%);
+  }
+  .cap:global(.off) {
+    transform: translate(58%, -92%) rotate(16deg);
+  }
+  .cap-edge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0.5cqw;
+    background: #21417f;
+  }
+  .cap-shine {
+    left: 10%;
+    right: 12%;
+  }
+  .cap-shade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 15%;
+    background: #21417f;
+    opacity: 0.55;
+  }
+  .mp3 :is(button):focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  /* The earphone cable: the page's one tendril. */
+  .cable {
+    width: 68%;
+    margin: -4px 0 0 6%;
+  }
+  .cable svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .cable .kw-stem {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .cable .bud {
+    animation-delay: 2s !important;
+  }
+
+  .story {
+    max-width: 34rem;
+    margin-top: 36px;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+  .story .h2 {
+    font-size: 24px;
+    margin-bottom: 14px;
+  }
+  .story p + p {
+    margin-top: 16px;
+  }
+
+  .list-h {
+    margin-bottom: 8px;
+  }
+  .tracks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  .tracks li {
+    border-top: 1px solid var(--hair);
+  }
+  .trk {
+    width: 100%;
+    display: flex;
+    gap: 16px;
+    align-items: baseline;
+    padding: 14px 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: var(--ink);
+  }
+  .num {
+    flex: 0 0 1.8rem;
+    font-size: 14px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .cur-mark {
+    display: none;
+    width: 11px;
+    height: 11px;
+  }
+  .trk:global(.sel) .n {
+    display: none;
+  }
+  .trk:global(.sel) .cur-mark {
+    display: inline-block;
+  }
+  .text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .t {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.25;
+    background: linear-gradient(var(--spot), var(--spot)) 0 100% / 0% 2px no-repeat;
+    transition: background-size 0.3s ease;
+  }
+  .trk:hover .t,
+  .trk:global(.sel) .t {
+    background-size: 100% 2px;
+  }
+  .a {
+    display: block;
+    font-size: 14.5px;
+    color: var(--muted);
+  }
+  .note {
+    margin: -4px 0 16px 3.1rem;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .out {
+    margin-top: 22px;
+  }
+  .out :global(.kw-tl) {
+    font-size: 15px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mq:global(.run) {
+      animation: none;
+      padding-left: 0;
+    }
+    .eq:global(.on) i {
+      animation: none;
+      height: 70%;
+    }
+  }
+</style>

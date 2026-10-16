@@ -1,0 +1,206 @@
+---
+// The cover of the book about Thatha: the photo, Kavya's foreword, and the chapters.
+// His words are Kavya's rough translations; the line saying so stays on the cover.
+import Base from '../../layouts/Base.astro';
+import Tendril from '../../components/Tendril.astro';
+import TendrilLink from '../../components/TendrilLink.astro';
+import { site } from '../../site';
+import { recentlyTended, fullDate, monthYear } from '../../lib/garden';
+import { chapters, inlineItalics, pad2, BOOK_TITLE } from '../../lib/thatha';
+
+const list = await chapters();
+const planted = new Date(site.thatha.planted);
+const tended = new Date(site.thatha.tended);
+---
+
+<Base title={BOOK_TITLE} description="Conversations with my grandfather, Krishna Rao Manvikar, 1934 to 2014.">
+  <section class="page-top hero">
+    <div class="hero-text">
+      <p class="label kicker">Things I've written</p>
+      <h1 class="h1 title">{BOOK_TITLE}</h1>
+      <p class="sub">My house is elsewhere. I'm just visiting.</p>
+      <p class="meta">
+        Conversations with my grandfather, Krishna Rao Manvikar, 1934 to 2014.<br />
+        Planted {monthYear(planted)} ·{' '}
+        {recentlyTended(tended) && <span class="dot" />}Last tended <time datetime={site.thatha.tended} data-rel>{fullDate(tended)}</time> · Unfinished
+      </p>
+    </div>
+    <figure class="photo">
+      <img src="/thatha/thatha-and-kavya.jpg" alt="My grandfather and me, smiling, at a restaurant table" width="300" height="300" />
+      <figcaption>Thatha and me.</figcaption>
+    </figure>
+  </section>
+
+  <section class="foreword">
+    <p>
+      In July 2013 I sat down across from my grandfather with a pen and a diary and told him I was writing his biography. He
+      looked amused, a little pleased, and decided to humour me.
+    </p>
+    <p>We talked mostly over lunch, for a few weeks. He passed away in May 2014, before we got to the end.</p>
+    <p>So this is unfinished, and some of it will stay that way, by design.</p>
+    <p class="aside">We spoke in Kannada. His words here are my rough translations.</p>
+  </section>
+
+  <div class="divider"><Tendril width={560} /></div>
+
+  <section class="contents" aria-labelledby="ch-h">
+    <h2 class="label" id="ch-h">Chapters</h2>
+    <ol>
+      {
+        list.map((c) => (
+          <li>
+            <a class="kw-row ch" href={`/thatha/${c.data.number}`}>
+              <span class="num">{pad2(c.data.number)}</span>
+              <span class="text">
+                <span class:list={['kw-t', 'ch-title', { writing: c.data.status === 'writing' }]}>{c.data.title}</span>
+                <span class="summary" set:html={inlineItalics(c.data.summary)} />
+              </span>
+              <span class="date">{c.data.date}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="extras">
+      <TendrilLink href="/thatha/timeline">His timeline</TendrilLink>
+      <TendrilLink href="/thatha/words">Things he used to say</TendrilLink>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px 64px;
+    align-items: flex-end;
+  }
+  .hero-text {
+    flex: 999 1 26rem;
+    min-width: 0;
+  }
+  .kicker {
+    margin-bottom: 18px;
+  }
+  .title {
+    margin-bottom: 14px;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(44px, 6.4vw, 72px);
+    line-height: 1;
+  }
+  .sub {
+    margin-bottom: 24px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-size: 21px;
+    line-height: 1.35;
+  }
+  .meta {
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .photo {
+    flex: 1 1 240px;
+    max-width: 300px;
+    margin: 0;
+  }
+  .photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .photo figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .foreword {
+    max-width: 36rem;
+    margin-top: clamp(56px, 8vw, 88px);
+    font-size: 18.5px;
+    line-height: 1.7;
+  }
+  .foreword p {
+    margin: 0 0 18px;
+  }
+  .foreword .aside {
+    margin: 0;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .divider {
+    margin: clamp(56px, 8vw, 80px) 0 clamp(24px, 4vw, 40px);
+  }
+  .contents {
+    max-width: 50rem;
+  }
+  .contents .label {
+    margin-bottom: 8px;
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--hair);
+  }
+  li {
+    border-top: 1px solid var(--hair);
+  }
+  .ch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 20px;
+    padding: 18px 0 19px;
+  }
+  .num {
+    flex: 0 0 2.2rem;
+    padding-top: 5px;
+    font-size: 14px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .text {
+    flex: 1 1 22rem;
+    min-width: 0;
+  }
+  .ch-title {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+  .ch-title.writing {
+    color: var(--muted);
+  }
+  .summary {
+    display: block;
+    margin-top: 3px;
+    font-size: 15.5px;
+    color: var(--muted);
+  }
+  .date {
+    flex: 0 0 8.5rem;
+    padding-top: 5px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  @media (max-width: 640px) {
+    .date {
+      flex-basis: auto;
+      margin-left: calc(2.2rem + 20px);
+      padding-top: 4px;
+    }
+  }
+  .extras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin-top: 28px;
+    font-size: 16px;
+  }
+</style>

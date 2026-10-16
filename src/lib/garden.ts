@@ -92,9 +92,9 @@ export async function featuredQuote(): Promise<CollectionEntry<'quotes'> | undef
 /** Devanagari in a string means it's set in Tiro and marked lang="hi". */
 export const isDevanagari = (s: string) => /[ऀ-ॿ]/.test(s);
 
-const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty'];
 
-/** "Six records", "One record". Numbers past twelve stay digits. */
+/** "Six records", "One record". Numbers past twenty stay digits. */
 export function count(n: number, singular: string, plural = singular + 's'): string {
   return `${WORDS[n] ?? n} ${n === 1 ? singular : plural}`;
 }

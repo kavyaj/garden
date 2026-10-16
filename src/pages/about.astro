@@ -52,6 +52,15 @@ import { site } from '../site';
     </p>
   </section>
 
+  <section class="more" aria-labelledby="more-h">
+    <h2 class="h2" id="more-h">More of me</h2>
+    <p>
+      The <a class="kw-ul" href="/books">books that moved me</a>, my <a class="kw-ul" href="/done">reverse bucket list</a>,
+      <a class="kw-ul" href="/experience">where I've worked</a>, <a class="kw-ul" href="/why">why the site looks like this</a>,
+      and <a class="kw-ul" href="/thatha">a book about my grandfather</a> that I'm still finishing.
+    </p>
+  </section>
+
   <section class="hello">
     <h2 class="h2">Say hello</h2>
     <p>I read everything, slowly.</p>
@@ -116,9 +125,20 @@ import { site } from '../site';
   .terms p + p:not(.big) {
     margin-top: 18px;
   }
-  .hello {
+  .more {
     max-width: var(--measure-text);
     margin-top: 72px;
+  }
+  .more .h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .more p {
+    line-height: 1.75;
+  }
+  .hello {
+    max-width: var(--measure-text);
+    margin-top: 56px;
   }
   .hello .h2 {
     font-size: 24px;

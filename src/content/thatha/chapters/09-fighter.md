@@ -5,6 +5,7 @@ date: May 2014
 summary: Pune.
 caption: The rain, the next morning.
 illustration: /illustrations/thatha-09.svg
+byline: Pune, May 2014
 status: done
 ---
 

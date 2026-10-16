@@ -1,0 +1,134 @@
+---
+// Things he used to say: his phrases with Kavya's rough meanings, then the songs and rhymes.
+import { getEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { BOOK_TITLE } from '../../lib/thatha';
+
+const { words, songs } = (await getEntry('words', 'words'))!.data;
+---
+
+<Base title="Things he used to say" description="His private dictionary, half Kannada, half Telugu, some of it English he made his own.">
+  <section class="page-top intro">
+    <p class="crumb"><a class="kw-ul" href="/thatha"><i>{BOOK_TITLE}</i></a> · Things he used to say</p>
+    <h1 class="h1 title">Things he used to say</h1>
+    <p class="lede-w">
+      His private dictionary, half Kannada, half Telugu, some of it English he made his own. Rough translations, and a few
+      I'm still chasing down.
+    </p>
+  </section>
+
+  <section class="grid words" aria-label="Phrases">
+    {
+      words.map((w) => (
+        <article class="kw-card card">
+          <p class="phrase">{w.phrase}</p>
+          <p class="meaning">{w.meaning}</p>
+        </article>
+      ))
+    }
+  </section>
+
+  {
+    songs.length > 0 && (
+      <section class="songs" aria-labelledby="songs-h">
+        <h2 class="h2" id="songs-h">Songs and rhymes</h2>
+        <div class="grid">
+          {songs.map((s) =>
+            s.lyrics ? (
+              <article class="kw-card card">
+                <p class="label">{s.title}</p>
+                <p class="lyrics">{s.lyrics}</p>
+                {s.note && <p class="meaning">{s.note}</p>}
+              </article>
+            ) : (
+              <article class="kw-card card">
+                <p class="phrase">{s.title}</p>
+                {s.note && <p class="meaning">{s.note}</p>}
+              </article>
+            )
+          )}
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .intro {
+    max-width: 40rem;
+  }
+  .crumb {
+    margin-bottom: 22px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .crumb a {
+    display: inline-block;
+    padding: 12px 0;
+    margin: -12px 0;
+    background-position: 0 calc(100% - 12px);
+  }
+  .title {
+    margin-bottom: 16px;
+    font-size: clamp(40px, 5.6vw, 60px);
+    line-height: 1.02;
+  }
+  .lede-w {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+  .words {
+    margin-top: 48px;
+  }
+  .card {
+    padding: 22px 22px 20px;
+  }
+  .phrase {
+    margin-bottom: 8px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+  .meaning {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+  .songs {
+    margin-top: 64px;
+  }
+  .songs .h2 {
+    margin-bottom: 16px;
+    font-size: 24px;
+  }
+  .songs .grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  }
+  .songs .card {
+    padding: 22px 24px 20px;
+  }
+  .songs .label {
+    margin-bottom: 10px;
+  }
+  .lyrics {
+    margin-bottom: 12px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-style: italic;
+    font-size: 21px;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  .songs .phrase {
+    font-size: 21px;
+    line-height: 1.35;
+  }
+</style>

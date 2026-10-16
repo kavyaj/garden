@@ -7,6 +7,10 @@
   source: Kabir, 15th century
   why: The whole reason this site is a garden, in two lines.
   featured: true
+  # Home shows just the second line, and the matching half of the translation.
+  home:
+    original: "माली सींचे सौ घड़ा, ऋतु आए फल होय।"
+    translation: "The gardener pours a hundred pots of water, but fruit comes in its season."
   added: 2026-10-01
 
 - id: sanchi-honnamma

@@ -1,0 +1,181 @@
+---
+// One chapter of the book: a narrow column, the chapter's drawing with its caption, then Kavya's words.
+// Chapter 8 is still being written, and says so. Glossary words come from the chapter's frontmatter.
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Tendril from '../../components/Tendril.astro';
+import Highlighted from '../../components/Highlighted.astro';
+import { chapters, BOOK_TITLE } from '../../lib/thatha';
+
+const drawings = import.meta.glob<string>('../../illustrations/*.svg', { query: '?raw', import: 'default', eager: true });
+
+export async function getStaticPaths() {
+  const list = await chapters();
+  return list.map((c, i) => ({
+    params: { chapter: String(c.data.number) },
+    props: { c, prev: list[i - 1], next: list[i + 1], total: list.length },
+  }));
+}
+const { c, prev, next, total } = Astro.props;
+const d = c.data;
+const { Content } = await render(c);
+const file = d.illustration.split('/').pop()!;
+const drawing = drawings[`../../illustrations/${file}`];
+if (!drawing) throw new Error(`Chapter ${d.number}: no drawing at src/illustrations/${file}.`);
+---
+
+<Base title={`${d.title}: chapter ${d.number}`} description={d.summary.replace(/\*/g, '')}>
+  <article class="page-top chapter">
+    <p class="crumb"><a class="kw-ul" href="/thatha"><i>{BOOK_TITLE}</i></a> · Chapter {d.number} of {total}</p>
+    <h1 class="h1 title">{d.title}</h1>
+    <p class="byline">{d.byline ?? `From our conversations, ${d.date}`}</p>
+
+    <figure class="vignette">
+      <Fragment set:html={drawing} />
+      <figcaption>{d.caption}</figcaption>
+    </figure>
+
+    <div class="body">
+      <Highlighted glossary={d.glossary}><Content /></Highlighted>
+      {
+        d.status === 'writing' && (
+          <div class="unfinished">
+            <Tendril width={320} />
+            <p>This chapter stops here. I'm still writing it.</p>
+          </div>
+        )
+      }
+    </div>
+
+    <nav class="pager" aria-label="Chapters">
+      {
+        prev ? (
+          <a class="kw-row" href={`/thatha/${prev.data.number}`}>
+            <span class="which">Chapter {prev.data.number}</span>
+            <span class="kw-t">{prev.data.title}</span>
+          </a>
+        ) : (
+          <a class="kw-row" href="/thatha">
+            <span class="which">Back to</span>
+            <span class="kw-t">The cover</span>
+          </a>
+        )
+      }
+      {
+        next ? (
+          <a class="kw-row right" href={`/thatha/${next.data.number}`}>
+            <span class="which">Chapter {next.data.number}</span>
+            <span class="kw-t">{next.data.title}</span>
+          </a>
+        ) : (
+          <a class="kw-row right" href="/thatha/timeline">
+            <span class="which">Next</span>
+            <span class="kw-t">His timeline</span>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .chapter {
+    max-width: 42rem;
+  }
+  .crumb {
+    margin-bottom: 22px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .crumb a {
+    display: inline-block;
+    padding: 12px 0;
+    margin: -12px 0;
+    background-position: 0 calc(100% - 12px);
+  }
+  .title {
+    margin-bottom: 14px;
+    font-size: clamp(40px, 5.6vw, 60px);
+    line-height: 1.02;
+  }
+  .byline {
+    margin-bottom: 36px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .vignette {
+    max-width: 300px;
+    margin: 0 0 44px;
+  }
+  .vignette :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .vignette figcaption {
+    margin-top: 10px;
+    font-size: 13.5px;
+    font-style: italic;
+    color: var(--muted);
+  }
+  .body {
+    font-size: 18.5px;
+    line-height: 1.7;
+  }
+  .body :global(p),
+  .body :global(ul),
+  .body :global(ol),
+  .body :global(blockquote) {
+    margin: 0 0 22px;
+  }
+  .body :global(blockquote) {
+    padding-left: var(--space-4);
+    border-left: 2px solid var(--hair);
+  }
+  .body :global(h2) {
+    margin: 44px 0 14px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 48, 'SOFT' 40;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    font-size: 26px;
+  }
+  .body :global(hr) {
+    margin: 36px 0;
+    border: 0;
+    border-top: 1px solid var(--hair);
+  }
+  .unfinished {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 6px 16px;
+    margin-top: 32px;
+  }
+  .unfinished > :global(.kw-vine) {
+    flex: 0 1 320px;
+  }
+  .unfinished p {
+    margin: 0 0 6px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid var(--hair);
+    font-size: 15px;
+  }
+  .right {
+    text-align: right;
+  }
+  .which {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>

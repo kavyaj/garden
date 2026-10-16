@@ -48,6 +48,8 @@ const quotes = defineCollection({
     why: z.string().default(''),
     /** Exactly one: big at the top of /quotes and on Home. */
     featured: z.boolean().default(false),
+    /** The featured quote's excerpt on Home, if it shows less than the whole quote. */
+    home: z.object({ original: z.string(), translation: z.string() }).optional(),
     /** The card spans the whole grid row (long quotes with a transliteration). */
     wide: z.boolean().default(false),
     added: z.coerce.date(),
@@ -121,6 +123,8 @@ const chapters = defineCollection({
     number: z.number(),
     title: z.string(),
     date: z.string(),
+    /** The line under the title. Defaults to "From our conversations, <date>". */
+    byline: z.string().optional(),
     summary: z.string(),
     caption: z.string(),
     /** /illustrations/thatha-0N.svg: the drawing is inlined from src/illustrations/. */

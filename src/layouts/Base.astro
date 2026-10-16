@@ -18,8 +18,10 @@ interface Props {
   devanagariText?: string;
   /** Load Tiro Kannada (Quotes, for Sanchi Honnamma). */
   kannada?: boolean;
+  /** Extra Google Fonts families for one page, e.g. 'VT323' for the MP3 player's LCD. */
+  extraFonts?: string[];
 }
-const { title, description = site.tagline, width = 'page', devanagari = false, devanagariText, kannada = false } = Astro.props;
+const { title, description = site.tagline, width = 'page', devanagari = false, devanagariText, kannada = false, extraFonts = [] } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name}, a garden I tend in public`;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 
@@ -28,6 +30,7 @@ const fonts =
   '&family=DM+Sans:opsz,wght@9..40,300..700&family=Shantell+Sans:wght@400..600' +
   (devanagari ? '&family=Tiro+Devanagari+Hindi' : '') +
   (kannada ? '&family=Tiro+Kannada' : '') +
+  extraFonts.map((f) => `&family=${f.replace(/ /g, '+')}`).join('') +
   '&display=swap';
 ---
 

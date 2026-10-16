@@ -1,0 +1,221 @@
+---
+// Where I've been: Kavya's intro, the work timeline, education, Featured in. Her words, never rewritten.
+// Same URL as on the old site, so old links keep working.
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Tendril from '../components/Tendril.astro';
+import TendrilLink from '../components/TendrilLink.astro';
+import { site, withRef } from '../site';
+
+const xp = (await getEntry('experience', 'experience'))!.data;
+const place = xp.location ?? site.place;
+---
+
+<Base title="Where I've been" description="Where I've worked, what I studied, and where I've talked about it.">
+  <section class="page-top intro">
+    <h1 class="h1">Where I've been</h1>
+    {xp.intro.map((p) => <p class="lede para">{p}</p>)}
+  </section>
+
+  <section class="work" aria-labelledby="work-h">
+    <h2 class="label" id="work-h">Work</h2>
+    <ol class="roles">
+      {
+        xp.roles.map((r, i) => (
+          <li class:list={{ last: i === xp.roles.length - 1 }}>
+            <span class="years">{r.years}</span>
+            <span class="role">
+              <span class:list={['pin', { current: r.current }]} aria-hidden="true" />
+              <span class="title">{r.title}</span>
+              <span class="org">
+                {r.url ? <a class="kw-ul" href={withRef(r.url)}>{r.org}</a> : r.org} <span class="where">· {place}</span>
+              </span>
+              <span class="line">{r.line}</span>
+            </span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="edu" aria-labelledby="edu-h">
+    <h2 class="label" id="edu-h">Education</h2>
+    {
+      xp.education.map((e) => (
+        <p class="edu-row">
+          <span class="years">{e.years}</span>
+          <span>
+            <span class="degree">{e.degree}</span>
+            <span class="school">{e.school}</span>
+          </span>
+        </p>
+      ))
+    }
+  </section>
+
+  <div class="divider"><Tendril width={560} flip /></div>
+
+  <section class="featured" aria-labelledby="featured-h">
+    <h2 class="h2" id="featured-h">Featured in</h2>
+    <ul>
+      {
+        xp.featured.map((f) => (
+          <li>
+            <TendrilLink href={f.url}>
+              {f.name}, episode {f.episode}
+            </TendrilLink>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <p class="closing">What I'm running now lives in <TendrilLink href="/made">Things I've made</TendrilLink></p>
+</Base>
+
+<style>
+  .intro {
+    max-width: 40rem;
+  }
+  .para {
+    font-size: 19px;
+    line-height: 1.6;
+  }
+  .para + .para {
+    margin-top: 16px;
+  }
+  .work {
+    max-width: var(--measure-list);
+    margin-top: clamp(56px, 8vw, 88px);
+  }
+  .work .label {
+    margin-bottom: 22px;
+  }
+  .roles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .roles li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 28px;
+    padding-bottom: 34px;
+  }
+  .roles li.last {
+    padding-bottom: 0;
+  }
+  .years {
+    flex: 0 0 7.5rem;
+    padding-top: 6px;
+    font-size: 14px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  /* A thin ink line with a dot per role. Current roles get a filled green dot; the line fades after the last. */
+  .role {
+    flex: 1 1 26rem;
+    min-width: 0;
+    position: relative;
+    padding-left: 26px;
+    border-left: 1.6px solid var(--ink);
+  }
+  .last .role {
+    border-left-color: var(--hair);
+  }
+  .pin {
+    position: absolute;
+    left: -6px;
+    top: 9px;
+    width: 11px;
+    height: 11px;
+    border-radius: var(--radius-full);
+    background: var(--paper);
+    box-shadow: 0 0 0 1.6px var(--ink);
+  }
+  .pin.current {
+    background: var(--green);
+    box-shadow: 0 0 0 1.6px var(--green);
+  }
+  .title {
+    display: block;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-weight: 500;
+    font-size: 23px;
+    line-height: 1.25;
+  }
+  .org {
+    display: block;
+    margin-top: 2px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .org a {
+    display: inline-block;
+    padding: 12px 0;
+    margin: -12px 0;
+    background-position: 0 calc(100% - 12px);
+  }
+  .where {
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .line {
+    display: block;
+    margin-top: 6px;
+    font-size: 16.5px;
+    line-height: 1.6;
+  }
+  .edu {
+    max-width: var(--measure-list);
+    margin-top: 56px;
+  }
+  .edu .label {
+    margin-bottom: 12px;
+  }
+  .edu-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 28px;
+  }
+  .edu-row .years {
+    padding-top: 4px;
+  }
+  .edu-row > span:last-child {
+    flex: 1 1 26rem;
+  }
+  .degree {
+    font-weight: 600;
+  }
+  .school {
+    display: block;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .divider {
+    margin: clamp(64px, 9vw, 96px) 0 clamp(40px, 6vw, 56px);
+  }
+  .featured {
+    max-width: 46rem;
+  }
+  .featured .h2 {
+    font-size: 26px;
+    margin-bottom: 14px;
+  }
+  .featured ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .featured :global(.kw-tl),
+  .closing :global(.kw-tl) {
+    font-size: 16px;
+  }
+  .closing {
+    margin-top: 56px;
+    font-size: 16px;
+    color: var(--muted);
+  }
+</style>

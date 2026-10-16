@@ -4,20 +4,22 @@ import Base from '../../layouts/Base.astro';
 import Backlinks from '../../components/Backlinks.astro';
 import TendrilLink from '../../components/TendrilLink.astro';
 import Highlighted from '../../components/Highlighted.astro';
-import { notesByTended, recentlyTended, readingTime, backlinks, iso, fullDate, monthYear } from '../../lib/garden';
+import { notesByTended, recentlyTended, readingTime, backlinks, iso, fullDate } from '../../lib/garden';
 
 export async function getStaticPaths() {
   const notes = await notesByTended();
   const links = await backlinks();
   return notes.map((note, i) => ({
     params: { slug: note.id },
-    // "Next" walks down the list: the next one tended before this.
-    props: { note, next: notes[i + 1], mentionedIn: links.get(note.id) ?? [] },
+    // "Next" walks down the list and loops back to the top.
+    props: { note, next: notes.length > 1 ? notes[(i + 1) % notes.length] : undefined, mentionedIn: links.get(note.id) ?? [] },
   }));
 }
 const { note, next, mentionedIn } = Astro.props;
 const { Content } = await render(note);
 const d = note.data;
+const untouched = iso(d.planted) === iso(d.tended);
+const fresh = recentlyTended(d.tended);
 ---
 
 <Base title={d.title} description={d.summary}>
@@ -25,8 +27,10 @@ const d = note.data;
     <p class="crumb"><a class="kw-ul" href="/notes">Notes</a></p>
     <h1 class="h1 title">{d.title}</h1>
     <p class="meta">
-      Planted {monthYear(d.planted)} ·{' '}
-      {recentlyTended(d.tended) && <span class="dot" />}Last tended <time datetime={iso(d.tended)}>{fullDate(d.tended)}</time> · {readingTime(note.body)}
+      Planted <time datetime={iso(d.planted)}>{fullDate(d.planted)}</time> ·{' '}
+      {fresh && <span class="dot" />}
+      {untouched ? (fresh ? 'Fresh' : 'Not tended since') : <>Last tended <time datetime={iso(d.tended)}>{fullDate(d.tended)}</time></>} ·{' '}
+      {readingTime(note.body)}
     </p>
 
     <div class="cols">
@@ -50,7 +54,7 @@ const d = note.data;
         next && (
           <a class="kw-row next" href={`/notes/${next.id}`}>
             <span class="muted next-label">Next</span>
-            <span class="kw-t">{next.data.title}</span>
+            <span class="kw-t next-title">{next.data.title}</span>
           </a>
         )
       }
@@ -188,6 +192,8 @@ const d = note.data;
     gap: 24px;
     max-width: var(--measure-text);
     margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid var(--hair);
     font-size: 15px;
   }
   .next {

@@ -10,10 +10,10 @@ const written = projects.filter((p) => p.data.kind === 'written');
 const small = projects.filter((p) => p.data.kind === 'small');
 ---
 
-<Base title="Things I've made" description="The things I run, and the ones I built on a weekend for people I like.">
+<Base title="Things I've made" description="The things I run, the ones I wrote, and the ones I built on a weekend for people I like.">
   <section class="page-top intro">
     <h1 class="h1">Things I've made</h1>
-    <p class="lede">The ones I run, and the ones I built on a weekend for people I like.</p>
+    <p class="lede">The ones I run, the ones I wrote, and the ones I built on a weekend for people I like.</p>
   </section>
 
   {
@@ -40,7 +40,32 @@ const small = projects.filter((p) => p.data.kind === 'small');
     )
   }
 
-  {run.length > 0 && small.length > 0 && <div class="divider"><Tendril width={520} flip /></div>}
+  {
+    written.length > 0 && (
+      <section class="run written" aria-labelledby="written-h">
+        <h2 class="label" id="written-h">
+          Things I've written
+        </h2>
+        <ul>
+          {written.map((p) => {
+            const inner = (
+              <>
+                {p.data.thumb && <img class="thumb" src={p.data.thumb} alt="" width="72" height="72" loading="lazy" />}
+                <span class="text">
+                  <span class:list={['kw-t', 'title', { italic: p.data.italic }]}>{p.data.title}</span>
+                  <span class="blurb">{p.data.blurb}</span>
+                </span>
+                {p.data.since && <span class="since">{p.data.since}</span>}
+              </>
+            );
+            return <li>{p.data.url ? <a class="kw-row row" href={p.data.url}>{inner}</a> : <div class="row">{inner}</div>}</li>;
+          })}
+        </ul>
+      </section>
+    )
+  }
+
+  {(run.length > 0 || written.length > 0) && small.length > 0 && <div class="divider"><Tendril width={520} flip /></div>}
 
   {
     small.length > 0 && (
@@ -65,6 +90,27 @@ const small = projects.filter((p) => p.data.kind === 'small');
   .run {
     max-width: var(--measure-list);
     margin-top: 56px;
+  }
+  .written {
+    margin-top: 64px;
+  }
+  .written .row {
+    align-items: center;
+    gap: 12px 24px;
+  }
+  .written .text {
+    flex-basis: 20rem;
+  }
+  .thumb {
+    flex: none;
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    display: block;
+    border-radius: 8px;
+  }
+  .italic {
+    font-style: italic;
   }
   .run .label {
     margin-bottom: 8px;

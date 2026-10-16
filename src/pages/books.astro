@@ -1,0 +1,225 @@
+---
+// Books that moved me. One featured book large with its underlined line, then the shelf.
+// The notes are Kavya's own words. Covers are the publishers' art, supplied by her, in public/covers/.
+import fs from 'node:fs';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Tendril from '../components/Tendril.astro';
+
+const books = (await getCollection('books')).sort((a, b) => a.data.order - b.data.order);
+const featured = books.filter((b) => b.data.featured);
+if (featured.length !== 1) throw new Error(`books.yaml: exactly one book needs featured: true (found ${featured.length}).`);
+const feature = featured[0];
+const shelf = books.filter((b) => b !== feature);
+
+/** The cover's URL if the file exists, else nothing (the lettered cover stands in). */
+const cover = (slug: string | undefined, size: 'sm' | 'lg') =>
+  slug && fs.existsSync(`public/covers/${slug}-${size}.webp`) ? `/covers/${slug}-${size}.webp` : undefined;
+const meta = (b: (typeof books)[number]) =>
+  `${b.data.author} · ${b.data.reread ? `First read ${b.data.first_read} · re-read` : `Read ${b.data.first_read}`}`;
+const initials = (t: string) =>
+  t
+    .replace(/^The\s+/i, '')
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('');
+const featureCover = cover(feature.data.cover, 'lg');
+---
+
+<Base title="Books that moved me" description="Not everything I've read. The handful that changed how I think, or how I behave.">
+  <section class="page-top intro">
+    <h1 class="h1">Books that moved me</h1>
+    <p class="lede">
+      Not everything I've read. Just the handful that changed how I think, or how I behave, which is rarer. It's a short
+      shelf on purpose.
+    </p>
+  </section>
+
+  <section class="feature" aria-labelledby="feature-h">
+    <div class="kw-card f-cover">
+      {
+        featureCover ? (
+          <img src={featureCover} alt={`Cover of ${feature.data.title}`} width="220" />
+        ) : (
+          <span class="lettered big" aria-hidden="true">{initials(feature.data.title)}</span>
+        )
+      }
+    </div>
+    <div class="f-text">
+      <p class="label">If you only read one</p>
+      <h2 id="feature-h" class="f-title">{feature.data.title}</h2>
+      <p class="f-meta">{meta(feature)}</p>
+      {feature.data.line && <p class="f-line"><span class="hl">{feature.data.line}</span></p>}
+      <p class="f-note">{feature.data.note}</p>
+      {feature.data.goodreads_url && <a class="gr" href={feature.data.goodreads_url}>On Goodreads</a>}
+    </div>
+  </section>
+
+  <div class="divider"><Tendril width={560} /></div>
+
+  <section class="shelf" aria-label="The rest of the shelf">
+    {
+      shelf.map((b) => {
+        const src = cover(b.data.cover, 'sm');
+        return (
+          <article class="book">
+            <span class="kw-card b-cover">
+              {src ? (
+                <img src={src} alt={`Cover of ${b.data.title}`} width="104" loading="lazy" />
+              ) : (
+                <span class="lettered" aria-hidden="true">{initials(b.data.title)}</span>
+              )}
+            </span>
+            <span class="b-text">
+              <span class="b-title">{b.data.title}</span>
+              <span class="b-meta">{meta(b)}</span>
+              <span class="b-note">{b.data.note}</span>
+              {b.data.goodreads_url && <a class="gr" href={b.data.goodreads_url}>On Goodreads</a>}
+            </span>
+          </article>
+        );
+      })
+    }
+  </section>
+</Base>
+
+<style>
+  .intro {
+    max-width: 40rem;
+  }
+  .feature {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px 56px;
+    align-items: flex-start;
+    margin-top: clamp(56px, 8vw, 88px);
+  }
+  /* Covers keep square corners and the hair border. */
+  .f-cover,
+  .b-cover {
+    flex: none;
+    display: block;
+    line-height: 0;
+    border: 1px solid var(--hair);
+  }
+  .f-cover {
+    width: 220px;
+  }
+  .b-cover {
+    width: 104px;
+  }
+  .f-cover img,
+  .b-cover img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .lettered {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 2 / 3;
+    background: var(--paper-lift);
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 72, 'SOFT' 50;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--green);
+  }
+  .lettered.big {
+    font-size: 56px;
+  }
+  .f-text {
+    flex: 1 1 22rem;
+    min-width: 0;
+    max-width: 34rem;
+  }
+  .f-text .label {
+    margin-bottom: 14px;
+  }
+  .f-title {
+    margin-bottom: 6px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 48, 'SOFT' 40;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    font-size: clamp(30px, 3.6vw, 40px);
+    line-height: 1.08;
+  }
+  .f-meta {
+    margin-bottom: 22px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .f-line {
+    margin-bottom: 20px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.4;
+  }
+  .f-note {
+    font-size: 18px;
+    line-height: 1.65;
+  }
+  /* A plain ink link, not the pink one: the featured block already has the yellow highlight. */
+  .gr {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 4px;
+    font-size: 14.5px;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+  .divider {
+    margin: clamp(56px, 8vw, 88px) 0 clamp(16px, 3vw, 24px);
+  }
+  .shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
+    column-gap: 56px;
+  }
+  .book {
+    display: flex;
+    gap: 22px;
+    align-items: flex-start;
+    padding: 28px 0;
+    border-top: 1px solid var(--hair);
+  }
+  .b-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .b-title {
+    display: block;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.2;
+  }
+  .b-meta {
+    display: block;
+    margin: 2px 0 10px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .b-note {
+    display: block;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  @media (max-width: 480px) {
+    .book {
+      gap: 16px;
+    }
+    .b-cover {
+      width: 80px;
+    }
+  }
+</style>

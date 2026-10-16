@@ -2,17 +2,28 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import MapPlan from '../components/MapPlan.astro';
-import { notesByTended, recentlyTended, iso, fullDate, plural } from '../lib/garden';
+import { notesByTended, recentlyTended, iso, fullDate, plural, count } from '../lib/garden';
 import { plots } from '../site';
 
 const notes = await notesByTended();
 const quotes = await getCollection('quotes');
 const songs = await getCollection('songs');
+const books = await getCollection('books');
+const chapters = await getCollection('chapters');
 const projects = await getCollection('projects');
-const counts: Record<string, number> = { notes: notes.length, quotes: quotes.length, songs: songs.length, projects: projects.length };
+// The reverse bucket list only counts real entries: titles still in [square brackets] are placeholders.
+const done = (await getCollection('done')).filter((e) => !/\[[^\]]*\]/.test(e.data.title));
+const counts: Record<string, number> = {
+  notes: notes.length,
+  quotes: quotes.length,
+  songs: songs.length,
+  books: books.length,
+  done: done.length,
+  chapters: chapters.length,
+  projects: projects.length,
+};
 const fresh = notes.filter((n) => recentlyTended(n.data.tended)).length;
-const big = projects.filter((p) => p.data.kind === 'run').length;
-const small = projects.length - big;
+const kinds = (k: string) => projects.filter((p) => p.data.kind === k).length;
 
 // The line under each planted plot's name.
 const subs: Record<string, string> = {
@@ -20,11 +31,15 @@ const subs: Record<string, string> = {
   about: 'the shed',
   notes: fresh ? `${notes.length}, ${fresh} tended lately` : plural(notes.length, 'note'),
   quotes: `${quotes.length} in the pond`,
-  records: plural(songs.length, 'song'),
-  made: `${big} big, ${small} small`,
+  songs: plural(songs.length, 'song'),
+  made: `${kinds('run')} run, ${kinds('written')} written, ${kinds('small')} small`,
+  books: `${books.length} that moved me`,
+  done: `${done.length} ticked`,
+  thatha: 'a book, unfinished',
 };
 const lastTended = notes[0]?.data.tended;
 const isPlanted = (p: (typeof plots)[number]) => !p.collection || (counts[p.collection] ?? 0) > 0;
+const line = (s: string) => s.replace('{songs}', count(songs.length, 'song'));
 ---
 
 <Base title="The map" description="Everything on this site, drawn as one plot." width="map">
@@ -36,7 +51,14 @@ const isPlanted = (p: (typeof plots)[number]) => !p.collection || (counts[p.coll
   <section class="plan-wrap">
     <MapPlan counts={counts} fresh={fresh} subs={subs} />
     <p class="census">
-      {plural(notes.length, 'note')}, {plural(quotes.length, 'quote')}, {plural(songs.length, 'song')}, {plural(projects.length, 'thing')} made.
+      {[
+        plural(notes.length, 'note'),
+        plural(quotes.length, 'quote'),
+        plural(songs.length, 'song'),
+        plural(books.length, 'book'),
+        `${plural(done.length, 'thing')} done`,
+        `${plural(projects.length, 'thing')} made.`,
+      ].join(', ')}{' '}
       {lastTended && <>Last tended <time datetime={iso(lastTended)} data-rel>{fullDate(lastTended)}</time>.</>}
     </p>
   </section>
@@ -47,8 +69,8 @@ const isPlanted = (p: (typeof plots)[number]) => !p.collection || (counts[p.coll
       {
         plots.map((p) => (
           <li>
-            <span class="name">{isPlanted(p) ? <a class="kw-ul" href={p.href}>{p.key === 'home' ? 'Home' : p.label}</a> : p.label}</span>
-            <span class="muted">{isPlanted(p) ? p.list : `Later. ${p.list}`}</span>
+            <span class="name">{isPlanted(p) ? <a class="kw-ul" href={p.href}>{p.listLabel ?? p.label}</a> : p.listLabel ?? p.label}</span>
+            <span class="muted">{isPlanted(p) ? line(p.list) : `Later. ${line(p.list)}`}</span>
           </li>
         ))
       }
