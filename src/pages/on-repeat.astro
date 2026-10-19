@@ -22,12 +22,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 <Base
   title="On repeat"
-  description="The songs I keep going back to, and the memories stuck to each one."
+  description="Listening to songs is really one of my favourite pastimes. Here are some of my favourites."
   extraFonts={['VT323']}
 >
   <section class="page-top intro">
     <h1 class="h1">On repeat</h1>
-    <p class="lede">The songs I keep going back to, and the memories stuck to each one. Pick one, press play, stay a while.</p>
+    <p class="lede">Listening to songs is really one of my favourite pastimes. Here are some of my favourites.</p>
+    <p class="lede">Interact with this MP3 player to play songs.</p>
   </section>
 
   <section class="deck" data-player>
@@ -231,6 +232,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
 </script>
 
 <style>
+  .intro .lede + .lede {
+    margin-top: 12px;
+  }
   .intro {
     max-width: 40rem;
   }
