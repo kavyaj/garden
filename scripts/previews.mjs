@@ -1,7 +1,7 @@
 // Finds a 30-second preview for each song in src/content/songs.yaml using the iTunes Search API,
 // and caches it in src/content/.preview-cache.json so builds don't depend on the network.
 // Nothing is downloaded or hosted: the player streams Apple's preview URL after a click.
-// A song with no match is cached as null, and the player says "no preview".
+// If the original has no preview, another recording by the same artist (live, re-recorded) is used. A song with no match at all is cached as null, retried each build, and the player says "no preview".
 // Re-run with REFRESH_PREVIEWS=1 to look everything up again.
 import fs from 'node:fs';
 import { parseYaml } from '@astrojs/internal-helpers/yaml';
@@ -22,6 +22,8 @@ const bare = (s) => norm(s.replace(/\(.*?\)|\[.*?\]/g, ''));
 const storeTitle = (s) => norm(s.replace(/\((from|feat)[^)]*\)|\[.*?\]/gi, '').replace(/\s-\s/, ' '));
 const keyOf = (song) => `${song.title} · ${song.artist}`;
 const UNWANTED = /\b(live|demo|riff|rough mix|karaoke|instrumental|remix|cover|tribute|acoustic|unplugged|sped up|slowed|8d)\b/;
+// Second pass, when the original recording has no preview: another take by the same artist (live, unplugged, re-recorded) is fine.
+const NEVER = /\b(demo|riff|rough mix|karaoke|instrumental|remix|cover|tribute|sped up|slowed|8d)\b/;
 
 async function search(term, country) {
   const url = `https://itunes.apple.com/search?${new URLSearchParams({ term, entity: 'song', limit: '50', country })}`;
@@ -30,14 +32,15 @@ async function search(term, country) {
   return (await res.json()).results ?? [];
 }
 
-function best(song, results) {
+function best(song, results, relaxed = false) {
+  const unwanted = relaxed ? NEVER : UNWANTED;
   const want = bare(song.title);
   const full = norm(song.title);
   const artist = norm(song.artist.split(',')[0]);
   const scored = results
     .filter((r) => r.previewUrl && norm(r.artistName).includes(artist))
     .filter((r) => [want, full].includes(bare(r.trackName)) || storeTitle(r.trackName) === full || storeTitle(r.trackName).startsWith(`${want} `))
-    .filter((r) => !UNWANTED.test(norm(r.trackName)) || UNWANTED.test(full))
+    .filter((r) => !unwanted.test(norm(r.trackName)) || unwanted.test(full))
     .map((r) => ({ r, score: (storeTitle(r.trackName) === full ? 3 : 0) + (norm(r.trackName) === full ? 2 : 0) + (/\(/.test(r.trackName) ? 0 : 1) }))
     .sort((a, b) => b.score - a.score);
   return scored[0]?.r;
@@ -56,14 +59,19 @@ for (const song of songs) {
     const first = song.artist.split(',')[0];
     // Artist + title first, then title alone (the artist filter in best() still applies), then the artist's name with the title.
     const terms = [`${bare(song.title)} ${first}`, bare(song.title), `${first} ${song.title}`];
+    const seen = [];
     let hit;
     for (const term of terms) {
       for (const country of ['SG', 'US', 'IN']) {
-        hit = best(song, await search(term, country));
+        const results = await search(term, country);
+        seen.push(results);
+        hit = best(song, results);
         if (hit) break;
       }
       if (hit) break;
     }
+    // No preview of the original: settle for another recording of the same song by the same artist.
+    if (!hit) for (const results of seen) if ((hit = best(song, results, true))) break;
     cache[key] = hit ? { url: hit.previewUrl, track: hit.trackName, artist: hit.artistName } : null;
     looked++;
   } catch (e) {
