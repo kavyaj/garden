@@ -1,21 +1,26 @@
 ---
 // On repeat: a replica of the blue MP3 player Kavya had as a teenager, and her playlist beside it.
 // Spec: the design system's Mp3Player. Audio is Apple's 30-second preview (found at build time by
-// scripts/previews.mjs), played in an <audio> element only after a click. Nothing is hosted.
+// scripts/previews.mjs), played in an <audio> element only after a click. If Apple has none, a clip Kavya
+// put in public/previews/ is used instead.
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TendrilLink from '../components/TendrilLink.astro';
 import { site } from '../site';
 import cache from '../content/.preview-cache.json';
+import fs from 'node:fs';
 
 const previews = cache as Record<string, { url: string } | null>;
+// A clip Kavya added herself: public/previews/<title as a slug>.mp3, e.g. fuel.mp3. Used only when Apple has no preview.
+const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const ownClip = (title: string) => (fs.existsSync(`public/previews/${slug(title)}.mp3`) ? `/previews/${slug(title)}.mp3` : '');
 const songs = (await getCollection('songs'))
   .sort((a, b) => a.data.order - b.data.order)
   .map((s) => ({
     t: s.data.title,
     a: s.data.artist,
     n: s.data.note,
-    p: previews[`${s.data.title} · ${s.data.artist}`]?.url ?? '',
+    p: previews[`${s.data.title} · ${s.data.artist}`]?.url ?? ownClip(s.data.title),
     u: s.data.spotify ?? '',
   }));
 const pad = (n: number) => String(n).padStart(2, '0');
