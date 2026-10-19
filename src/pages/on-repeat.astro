@@ -16,6 +16,7 @@ const songs = (await getCollection('songs'))
     a: s.data.artist,
     n: s.data.note,
     p: previews[`${s.data.title} · ${s.data.artist}`]?.url ?? '',
+    u: s.data.spotify ?? '',
   }));
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
@@ -124,6 +125,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
                 </span>
               </button>
               {s.n && <p class="note" hidden>{s.n}</p>}
+              {!s.p && s.u && (
+                <p class="note full" hidden>
+                  No preview for this one. <a class="kw-ul" href={s.u}>Listen on Spotify</a>
+                </p>
+              )}
             </li>
           ))
         }
@@ -138,7 +144,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <script>
   // The player. Idle, the LCD is a clock. Picking a song (or play, prev, next) loads its 30-second preview
   // and plays it; there's no audio at all until someone clicks.
-  type Song = { t: string; a: string; n: string; p: string };
+  type Song = { t: string; a: string; n: string; p: string; u: string };
   const root = document.querySelector<HTMLElement>('[data-player]');
   if (root) {
     const songs: Song[] = JSON.parse(root.querySelector('[data-songs]')!.textContent || '[]');
@@ -181,8 +187,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         r.classList.toggle('sel', on);
         if (on) r.setAttribute('aria-current', 'true');
         else r.removeAttribute('aria-current');
-        const note = r.parentElement!.querySelector<HTMLElement>('.note');
-        if (note) note.hidden = !on;
+        r.parentElement!.querySelectorAll<HTMLElement>('.note').forEach((note) => (note.hidden = !on));
       });
       lcd();
     }
