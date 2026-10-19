@@ -24,7 +24,7 @@ const keyOf = (song) => `${song.title} · ${song.artist}`;
 const UNWANTED = /\b(live|demo|riff|rough mix|karaoke|instrumental|remix|cover|tribute|acoustic|unplugged|sped up|slowed|8d)\b/;
 
 async function search(term, country) {
-  const url = `https://itunes.apple.com/search?${new URLSearchParams({ term, entity: 'song', limit: '25', country })}`;
+  const url = `https://itunes.apple.com/search?${new URLSearchParams({ term, entity: 'song', limit: '50', country })}`;
   const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(`iTunes ${res.status}`);
   return (await res.json()).results ?? [];
@@ -36,7 +36,7 @@ function best(song, results) {
   const artist = norm(song.artist.split(',')[0]);
   const scored = results
     .filter((r) => r.previewUrl && norm(r.artistName).includes(artist))
-    .filter((r) => [want, full].includes(bare(r.trackName)) || storeTitle(r.trackName) === full)
+    .filter((r) => [want, full].includes(bare(r.trackName)) || storeTitle(r.trackName) === full || storeTitle(r.trackName).startsWith(`${want} `))
     .filter((r) => !UNWANTED.test(norm(r.trackName)) || UNWANTED.test(full))
     .map((r) => ({ r, score: (storeTitle(r.trackName) === full ? 3 : 0) + (norm(r.trackName) === full ? 2 : 0) + (/\(/.test(r.trackName) ? 0 : 1) }))
     .sort((a, b) => b.score - a.score);
@@ -50,11 +50,20 @@ let offline = false;
 
 for (const song of songs) {
   const key = keyOf(song);
-  if (key in cache || offline) continue;
+  // A miss (null) is retried on every build, so one bad lookup doesn't stick forever.
+  if ((cache[key] ?? null) !== null || offline) continue;
   try {
-    const term = `${bare(song.title)} ${song.artist.split(',')[0]}`;
-    let hit = best(song, await search(term, 'SG'));
-    if (!hit) hit = best(song, await search(term, 'US'));
+    const first = song.artist.split(',')[0];
+    // Artist + title first, then title alone (the artist filter in best() still applies), then the artist's name with the title.
+    const terms = [`${bare(song.title)} ${first}`, bare(song.title), `${first} ${song.title}`];
+    let hit;
+    for (const term of terms) {
+      for (const country of ['SG', 'US', 'IN']) {
+        hit = best(song, await search(term, country));
+        if (hit) break;
+      }
+      if (hit) break;
+    }
     cache[key] = hit ? { url: hit.previewUrl, track: hit.trackName, artist: hit.artistName } : null;
     looked++;
   } catch (e) {
