@@ -84,7 +84,7 @@ Pink and yellow never appear in the same component.
 
 - **Fraunces**: H1 (`opsz 144, SOFT 50, WONK 1`, weight 600), H2 (weight 600), titles in lists (23 to 24px, weight 500), quotes.
 - **DM Sans**: everything else. Nav, body (17px; articles 18.5px at 1.7), dates, labels, buttons, quote reasons.
-- **Shantell Sans**: exactly three kinds of place. One margin note per article at most, the caption under the gate on Home, "thanks for wandering in" in the footer. Never rotated, never in UI.
+- **Shantell Sans**: exactly four kinds of place. One margin note per article at most, the caption under the gate on Home, the tagline aside in the Home hero, "thanks for wandering in" in the footer. Never rotated, never in UI.
 
 ## Content model
 
@@ -177,7 +177,7 @@ Nothing is a hand-typed number. All of it is computed at build time.
 
 Every page: `SiteHeader`, the page's content, `Footer`. That's it. No scenes above or below.
 
-- **Home:** H1 "A garden I tend in public.", two lines about Kavya: "I build things that help people explain their careers better." and her tagline "Perpetually figuring it out. Annoyingly self-aware about it." (the second sentence highlighted), "This is where I put the thinking that doesn't fit on LinkedIn." On the right, the gate drawing (`GateIllustration`), which links to `/map`. Then the page's one tendril, Recently tended (4 notes, list), the featured quote large, then On repeat and Things I've made side by side, small.
+- **Home:** H1 "Everyone has a story to tell.", a subheading ("And this is mine. Hi, I'm Kavya. This is my little corner on the internet where I share and nurture ideas and projects that are close to my heart."), then her tagline "Perpetually figuring it out. Annoyingly self-aware about it." as an aside in Shantell Sans (the second sentence highlighted), because it's said under her breath. On the right, the gate drawing (`GateIllustration`), which links to `/map`. Then the page's one tendril, Recently tended (4 notes, list), the featured quote large, then On repeat and Things I've made side by side, small.
 - **Notes:** H1, one paragraph, the list by year, then a tendril trailing off next to "That's everything, for now."
 - **A note:** narrow editorial column (36rem), title, meta line, body, margin note on the right on wide screens (inline on phones) only if the note has one, "Mentioned in" only if something links here, All notes and Next. A quoted tweet is shown as a quiet card (name, handle, text, "On X" link and date), never as a screenshot.
 - **Experience (`/experience`):** H1 "Where I've been", Kavya's three intro paragraphs, then a vertical timeline (years left, a thin ink line with a dot per role; current roles have a filled green dot; the line fades to `hair` after the last role), Education, a tendril, "Featured in" (tendril links to the two Indie Founder episodes), and a closing link to Things I've made.
@@ -269,7 +269,7 @@ Never write a note, quote reason or record note on Kavya's behalf unless she ask
 - Bring back anything from the V1 removal list.
 - Add illustrations beyond the gate drawing, the map and the book's chapter vignettes. A vignette anywhere else needs Kavya's yes first.
 - Use cards for notes.
-- Use Shantell outside its three places.
+- Use Shantell outside its four places.
 - Mention `kavya.wiki` anywhere.
 - Put pink and yellow in one component.
 - Add a second big tendril to a page.
