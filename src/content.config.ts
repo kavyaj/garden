@@ -64,6 +64,8 @@ const songs = defineCollection({
     artist: z.string(),
     /** Kavya's words only. Empty shows nothing. */
     note: z.string().nullish().transform((v) => v ?? ''),
+    /** The track on Spotify. Offered only when there's no 30-second preview to play. */
+    spotify: z.string().url().optional(),
     added: z.coerce.date().optional(),
   }),
 });

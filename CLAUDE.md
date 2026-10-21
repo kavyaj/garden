@@ -84,7 +84,7 @@ Pink and yellow never appear in the same component.
 
 - **Fraunces**: H1 (`opsz 144, SOFT 50, WONK 1`, weight 600), H2 (weight 600), titles in lists (23 to 24px, weight 500), quotes.
 - **DM Sans**: everything else. Nav, body (17px; articles 18.5px at 1.7), dates, labels, buttons, quote reasons.
-- **Shantell Sans**: exactly three kinds of place. One margin note per article at most, the caption under the gate on Home, "thanks for wandering in" in the footer. Never rotated, never in UI.
+- **Shantell Sans**: exactly four kinds of place. One margin note per article at most, the caption under the gate on Home, the tagline aside in the Home hero, "thanks for wandering in" in the footer. Never rotated, never in UI.
 
 ## Content model
 
@@ -148,7 +148,7 @@ The Sanchi Honnamma quote and its "why" are Kavya's real ones. The other five ca
 15. Numb, Linkin Park
 16. Demons, Imagine Dragons
 
-Displayed titles drop Spotify's suffixes ("2013 Remaster", the film credit). When she adds a song to the playlist, add it to the end of the yaml. The player never hosts audio: the 30-second preview URL comes from the iTunes Search API at build time (match on title + first artist), cached to `src/content/.preview-cache.json` so builds don't depend on the network. If no preview is found, the song still shows and the play button says "no preview". "Open the whole playlist on Spotify" under the list is the link-out; `playlist_url` lives in `src/site.ts`.
+Displayed titles drop Spotify's suffixes ("2013 Remaster", the film credit). When she adds a song to the playlist, add it to the end of the yaml. The 30-second preview URL comes from the iTunes Search API at build time (match on title + first artist), cached to `src/content/.preview-cache.json` so builds don't depend on the network. The player uses a 30-second clip Kavya added herself, ahead of Apple's, at `public/previews/<title-slug>.mp3` (e.g. `fuel.mp3`, `niyat-e-shauq.mp3`); her call, her clips. Only if neither exists does the song say "no preview" (with a Spotify link if the song has a `spotify` field). "Open the whole playlist on Spotify" under the list is the link-out; `playlist_url` lives in `src/site.ts`.
 
 **Books:** `src/content/books.yaml` (title, author, cover, goodreads_url optional, first_read year, reread bool, note, line optional, featured: exactly one). Kavya's real list is in the file; the notes are her own words, so never edit or rewrite them. `line` is the underlined line, shown only on the featured book (The Annihilation of Caste). The meta line reads "Read 2022" or "First read 2007 · re-read". Covers are the publishers' own art, supplied by Kavya, in `public/covers/` as `<cover>-sm.webp` (160px wide, the list) and `<cover>-lg.webp` (360px, the featured book only). Use real `<img>` with `alt="Cover of <title>"`, explicit width, `loading="lazy"` below the fold. Covers keep square corners and the `hair` card border. If a cover file is missing, fall back to the lettered cover. "On Goodreads" is a plain ink underlined link (not the pink one, because the featured block already has the yellow highlight). Order on the page is the file order, featured book first.
 
@@ -177,12 +177,12 @@ Nothing is a hand-typed number. All of it is computed at build time.
 
 Every page: `SiteHeader`, the page's content, `Footer`. That's it. No scenes above or below.
 
-- **Home:** H1 "Everyone has a story to tell.", then Kavya's line "And this is mine. Hi, I'm Kavya. This is my little corner on the internet where I share and nurture ideas and projects that are close to my heart." (her words, don't edit), then the tagline as a small aside: "Perpetually figuring it out. Annoyingly self-aware about it." with the second sentence highlighted. On the right, the gate drawing (`GateIllustration`), which links to `/map`. Then the page's one tendril, Recently tended (4 notes, list), the featured quote large, then On repeat and Things I've made side by side, small.
+- **Home:** H1 "Everyone has a story to tell.", a subheading ("And this is mine. Hi, I'm Kavya. This is my little corner on the internet where I share and nurture ideas and projects that are close to my heart.", her words, don't edit), then her tagline "Perpetually figuring it out. Annoyingly self-aware about it." as an aside in Shantell Sans (the second sentence highlighted), because it's said under her breath. On the right, the gate drawing (`GateIllustration`), which links to `/map`. Then the page's one tendril, Recently tended (4 notes, list), the featured quote large, then On repeat and Things I've made side by side, small.
 - **Notes:** H1, one paragraph, the list by year, then a tendril trailing off next to "That's everything, for now."
 - **A note:** narrow editorial column (36rem), title, meta line, body, margin note on the right on wide screens (inline on phones) only if the note has one, "Mentioned in" only if something links here, All notes and Next. A quoted tweet is shown as a quiet card (name, handle, text, "On X" link and date), never as a screenshot.
 - **Experience (`/experience`):** H1 "Where I've been", Kavya's three intro paragraphs, then a vertical timeline (years left, a thin ink line with a dot per role; current roles have a filled green dot; the line fades to `hair` after the last role), Education, a tendril, "Featured in" (tendril links to the two Indie Founder episodes), and a closing link to Things I've made.
 - **Quotes:** H1, intro, the featured quote big with no card (the page's loud thing), a tendril, then `QuoteCard`s with "Why I keep it" in a native `<details>`.
-- **On repeat:** the MP3 player on the left (a replica of the blue one her parents gave her as a teenager), the song list on the right, then "The real one" story under the player. Intro: "The songs I keep going back to, and the memories stuck to each one. Pick one, press play, stay a while." See Interactions.
+- **On repeat:** the MP3 player on the left (a replica of the blue one her parents gave her as a teenager), the song list on the right, then "The real one" story under the player. Intro: "Listening to songs is really one of my favourite pastimes. Here are some of my favourites." then, as its own line, "Interact with this MP3 player to play songs." See Interactions.
 - **Books:** H1, intro, one featured book large with the underlined line, then the shelf with each book's cover (lettered cover when the file is missing). Notes are Kavya's; never write them.
 - **Reverse bucket list:** H1, intro, groups (Made, Learned, Went, Did anyway, Small) as plain lists with a green tick that redraws on hover, and a "still counts" line.
 - **The book:** cover with the photo of Kavya and her grandfather and the foreword, then the chapter list with Contents, then the timeline and words pages. Chapter column 42rem, 18.5px at 1.7, one illustration with a caption per chapter.
@@ -269,7 +269,7 @@ Never write a note, quote reason or record note on Kavya's behalf unless she ask
 - Bring back anything from the V1 removal list.
 - Add illustrations beyond the gate drawing, the map and the book's chapter vignettes. A vignette anywhere else needs Kavya's yes first.
 - Use cards for notes.
-- Use Shantell outside its three places.
+- Use Shantell outside its four places.
 - Mention `kavya.wiki` anywhere.
 - Put pink and yellow in one component.
 - Add a second big tendril to a page.

@@ -26,7 +26,10 @@ const [tag1, ...tagRest] = site.tagline.split(/(?<=\.)\s+/);
   <section class="hero">
     <div class="hero-text">
       <h1 class="h1 home-h1">Everyone has a story to tell.</h1>
-      <p class="big last">And this is mine. Hi, I'm Kavya. This is my little corner on the internet where I share and nurture ideas and projects that are close to my heart.</p>
+      <p class="big last">
+        And this is mine. Hi, I'm Kavya. This is my little corner on the internet where I share and nurture ideas and
+        projects that are close to my heart.
+      </p>
       <p class="aside">{tag1} <span class="hl">{tagRest.join(' ')}</span></p>
     </div>
     <GateIllustration />
@@ -121,7 +124,9 @@ const [tag1, ...tagRest] = site.tagline.split(/(?<=\.)\s+/);
   }
   .aside {
     max-width: 30em;
-    font-size: 15px;
+    font-family: var(--font-hand);
+    font-size: 20px;
+    line-height: 1.5;
     color: var(--muted);
   }
   .divider {

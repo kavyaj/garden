@@ -1,33 +1,40 @@
 ---
 // On repeat: a replica of the blue MP3 player Kavya had as a teenager, and her playlist beside it.
 // Spec: the design system's Mp3Player. Audio is Apple's 30-second preview (found at build time by
-// scripts/previews.mjs), played in an <audio> element only after a click. Nothing is hosted.
+// scripts/previews.mjs), played in an <audio> element only after a click. A clip Kavya put in
+// public/previews/ is used first.
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TendrilLink from '../components/TendrilLink.astro';
 import { site } from '../site';
 import cache from '../content/.preview-cache.json';
+import fs from 'node:fs';
 
 const previews = cache as Record<string, { url: string } | null>;
+// A clip Kavya added herself: public/previews/<title as a slug>.mp3, e.g. fuel.mp3. Used in preference to Apple's preview.
+const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const ownClip = (title: string) => (fs.existsSync(`public/previews/${slug(title)}.mp3`) ? `/previews/${slug(title)}.mp3` : '');
 const songs = (await getCollection('songs'))
   .sort((a, b) => a.data.order - b.data.order)
   .map((s) => ({
     t: s.data.title,
     a: s.data.artist,
     n: s.data.note,
-    p: previews[`${s.data.title} · ${s.data.artist}`]?.url ?? '',
+    p: ownClip(s.data.title) || (previews[`${s.data.title} · ${s.data.artist}`]?.url ?? ''),
+    u: s.data.spotify ?? '',
   }));
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <Base
   title="On repeat"
-  description="The songs I keep going back to, and the memories stuck to each one."
+  description="Listening to songs is really one of my favourite pastimes. Here are some of my favourites."
   extraFonts={['VT323']}
 >
   <section class="page-top intro">
     <h1 class="h1">On repeat</h1>
-    <p class="lede">The songs I keep going back to, and the memories stuck to each one. Pick one, press play, stay a while.</p>
+    <p class="lede">Listening to songs is really one of my favourite pastimes. Here are some of my favourites.</p>
+    <p class="lede">Interact with this MP3 player to play songs.</p>
   </section>
 
   <section class="deck" data-player>
@@ -87,20 +94,20 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <section class="story" aria-labelledby="story-h">
         <h2 class="h2" id="story-h">The real one</h2>
         <p>
-          This is a replica of the MP3 player my parents gave me when I was a teenager. Blue, about the size of a USB stick,
-          and the first thing I owned that felt completely mine.
+          This was my first ever MP3 player which my parents gifted to me when I was a teenager. It'll always have a special
+          place in my heart.
+        </p>
+        <p>This was, of course, during the pre-smartphone era.</p>
+        <p>
+          I took it everywhere with me: on car rides, at bedtime, and on school trips (where my best friend and I would share
+          the earphones and listened to songs on loop).
         </p>
         <p>
-          It went everywhere. Long car rides, forehead against the window. Bedtime, one earphone in, volume low enough that
-          nobody would knock. A school trip, where my best friend and I split the earphones, one each, and argued over what
-          came next.
+          It had about 32 MB of space. That's about ten songs, if you were mindful about your choices. So I found a hack. I'd
+          turn on the radio mode, wait for the RJ to announce a song I loved, and hit record the second it started. Radio
+          recordings took up less space than the real files, so a few more could squeeze in (Jugaad 🤷‍♀️).
         </p>
-        <p>
-          It had 32 MB of space. That's about ten songs, if you were careful. So I got sneaky. I'd keep the radio on, wait for
-          the RJ to announce a song I loved, and hit record the second it started. Radio recordings took up less space than
-          the real files, so a few more could squeeze in.
-        </p>
-        <p>Plenty of gadgets came and went after this one. This is the one that stayed.</p>
+        <p>Plenty of gadgets came and went after this one. But none have come close to the impact this one made on me.</p>
       </section>
     </div>
 
@@ -123,6 +130,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
                 </span>
               </button>
               {s.n && <p class="note" hidden>{s.n}</p>}
+              {!s.p && s.u && (
+                <p class="note full" hidden>
+                  No preview for this one. <a class="kw-ul" href={s.u}>Listen on Spotify</a>
+                </p>
+              )}
             </li>
           ))
         }
@@ -137,7 +149,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <script>
   // The player. Idle, the LCD is a clock. Picking a song (or play, prev, next) loads its 30-second preview
   // and plays it; there's no audio at all until someone clicks.
-  type Song = { t: string; a: string; n: string; p: string };
+  type Song = { t: string; a: string; n: string; p: string; u: string };
   const root = document.querySelector<HTMLElement>('[data-player]');
   if (root) {
     const songs: Song[] = JSON.parse(root.querySelector('[data-songs]')!.textContent || '[]');
@@ -180,8 +192,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         r.classList.toggle('sel', on);
         if (on) r.setAttribute('aria-current', 'true');
         else r.removeAttribute('aria-current');
-        const note = r.parentElement!.querySelector<HTMLElement>('.note');
-        if (note) note.hidden = !on;
+        r.parentElement!.querySelectorAll<HTMLElement>('.note').forEach((note) => (note.hidden = !on));
       });
       lcd();
     }
@@ -231,6 +242,9 @@ const pad = (n: number) => String(n).padStart(2, '0');
 </script>
 
 <style>
+  .intro .lede + .lede {
+    margin-top: 12px;
+  }
   .intro {
     max-width: 40rem;
   }
