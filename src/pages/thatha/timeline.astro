@@ -7,7 +7,7 @@ import { BOOK_TITLE } from '../../lib/thatha';
 const entries = (await getCollection('timeline')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<Base title="His timeline" description="Eighty years, mostly told through jobs and vehicles, because that's how he told them.">
+<Base ogImage="/brand/og-thatha.png" title="His timeline" description="Eighty years, mostly told through jobs and vehicles, because that's how he told them.">
   <section class="page-top wrap-tl">
     <p class="crumb"><a class="kw-ul" href="/thatha"><i>{BOOK_TITLE}</i></a> · Timeline</p>
     <h1 class="h1 title">His timeline</h1>

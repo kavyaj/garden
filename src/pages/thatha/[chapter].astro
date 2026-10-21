@@ -24,7 +24,7 @@ const drawing = drawings[`../../illustrations/${file}`];
 if (!drawing) throw new Error(`Chapter ${d.number}: no drawing at src/illustrations/${file}.`);
 ---
 
-<Base title={`${d.title}: chapter ${d.number}`} description={d.summary.replace(/\*/g, '')}>
+<Base ogImage="/brand/og-thatha.png" title={`${d.title}: chapter ${d.number}`} description={d.summary.replace(/\*/g, '')}>
   <article class="page-top chapter">
     <p class="crumb"><a class="kw-ul" href="/thatha"><i>{BOOK_TITLE}</i></a> · Chapter {d.number} of {total}</p>
     <h1 class="h1 title">{d.title}</h1>

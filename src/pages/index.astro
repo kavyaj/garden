@@ -19,16 +19,15 @@ const qOriginal = quote ? (quote.data.home?.original ?? quote.data.original) : '
 const qTranslation = quote ? (quote.data.home?.translation ?? quote.data.translation) : '';
 const deva = isDevanagari(qOriginal);
 // The tagline, with its second sentence highlighted.
-const [tag1, ...tagRest] = site.tagline.split(/(?<=.)s+/);
+const [tag1, ...tagRest] = site.tagline.split(/(?<=\.)\s+/);
 ---
 
-<Base description="Kavya Jahagirdar's digital garden: the thinking that doesn't fit on LinkedIn." devanagariText={deva ? qOriginal : undefined}>
+<Base description="Hi, I'm Kavya. This is my little corner on the internet where I share and nurture ideas and projects that are close to my heart." devanagariText={deva ? qOriginal : undefined}>
   <section class="hero">
     <div class="hero-text">
-      <h1 class="h1 home-h1">A garden I tend in public.</h1>
-      <p class="big">I build things that help people explain their careers better.</p>
-      <p class="big last">{tag1} <span class="hl">{tagRest.join(' ')}</span></p>
-      <p class="aside">This is where I put the thinking that doesn't fit on LinkedIn.</p>
+      <h1 class="h1 home-h1">Everyone has a story to tell.</h1>
+      <p class="big last">And this is mine. Hi, I'm Kavya. This is my little corner on the internet where I share and nurture ideas and projects that are close to my heart.</p>
+      <p class="aside">{tag1} <span class="hl">{tagRest.join(' ')}</span></p>
     </div>
     <GateIllustration />
   </section>

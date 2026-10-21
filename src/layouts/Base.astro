@@ -20,9 +20,11 @@ interface Props {
   kannada?: boolean;
   /** Extra Google Fonts families for one page, e.g. 'VT323' for the MP3 player's LCD. */
   extraFonts?: string[];
+  /** Share image under public/, 1200 x 630. Every page uses og-default.png unless it passes its own. */
+  ogImage?: string;
 }
-const { title, description = site.tagline, width = 'page', devanagari = false, devanagariText, kannada = false, extraFonts = [] } = Astro.props;
-const fullTitle = title ? `${title} · ${site.name}` : `${site.name}, a garden I tend in public`;
+const { title, description = site.tagline, width = 'page', devanagari = false, devanagariText, kannada = false, extraFonts = [], ogImage = '/brand/og-default.png' } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · Everyone has a story to tell`;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 
 const fonts =
@@ -47,8 +49,12 @@ const fonts =
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL('/brand/kj-mark-512.png', site.url).href} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={new URL(ogImage, site.url).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImage.includes('thatha') ? 'Kavya and her grandfather, beside the title Allide mane, illige bande summane' : "Everyone has a story to tell. Here's mine. You are welcome to explore. Beside it, a garden gate."} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={new URL(ogImage, site.url).href} />
     <link rel="icon" href="/brand/kj-mark-deep-green.svg" type="image/svg+xml" />
     <link rel="icon" href="/brand/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/brand/favicon-16.png" sizes="16x16" type="image/png" />
