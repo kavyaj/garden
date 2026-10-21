@@ -2,6 +2,7 @@
 // and caches it in src/content/.preview-cache.json so builds don't depend on the network.
 // Nothing is downloaded or hosted: the player streams Apple's preview URL after a click.
 // If the original has no preview, another recording by the same artist (live, re-recorded) is used. A song with no match at all is cached as null, retried each build, and the player says "no preview".
+// A song with its own clip in public/previews/ (see src/pages/on-repeat.astro) is never looked up: the clip always wins.
 // Re-run with REFRESH_PREVIEWS=1 to look everything up again.
 import fs from 'node:fs';
 import { parseYaml } from '@astrojs/internal-helpers/yaml';
@@ -21,6 +22,9 @@ const bare = (s) => norm(s.replace(/\(.*?\)|\[.*?\]/g, ''));
 /** A store title without its film credit: "Tere Paas Main - Female Version (From …)" → "tere paas main female version". */
 const storeTitle = (s) => norm(s.replace(/\((from|feat)[^)]*\)|\[.*?\]/gi, '').replace(/\s-\s/, ' '));
 const keyOf = (song) => `${song.title} · ${song.artist}`;
+/** Kavya's own clip, public/previews/<title as a slug>.mp3. Same slug as the player uses. */
+const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const ownClip = (song) => fs.existsSync(`public/previews/${slug(song.title)}.mp3`);
 const UNWANTED = /\b(live|demo|riff|rough mix|karaoke|instrumental|remix|cover|tribute|acoustic|unplugged|sped up|slowed|8d)\b/;
 // Second pass, when the original recording has no preview: another take by the same artist (live, unplugged, re-recorded) is fine.
 const NEVER = /\b(demo|riff|rough mix|karaoke|instrumental|remix|cover|tribute|sped up|slowed|8d)\b/;
@@ -54,7 +58,7 @@ let offline = false;
 for (const song of songs) {
   const key = keyOf(song);
   // A miss (null) is retried on every build, so one bad lookup doesn't stick forever.
-  if ((cache[key] ?? null) !== null || offline) continue;
+  if ((cache[key] ?? null) !== null || ownClip(song) || offline) continue;
   try {
     const first = song.artist.split(',')[0];
     // Artist + title first, then title alone (the artist filter in best() still applies), then the artist's name with the title.
@@ -84,5 +88,5 @@ for (const song of songs) {
 // Keep the cache to the songs that are still on the list.
 const keep = Object.fromEntries(songs.map((s) => [keyOf(s), cache[keyOf(s)] ?? null]).filter(([k]) => k in cache));
 if (looked || Object.keys(keep).length !== Object.keys(cache).length) fs.writeFileSync(CACHE, JSON.stringify(keep, null, 2) + '\n');
-const found = Object.values(keep).filter(Boolean).length;
+const found = songs.filter((s) => keep[keyOf(s)] || ownClip(s)).length;
 console.log(`previews: ${found} of ${songs.length} songs have a preview${looked ? ` (looked up ${looked})` : ''}`);
