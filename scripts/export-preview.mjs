@@ -1,5 +1,5 @@
 // Packs the built site (dist/) into one self-contained HTML file for sharing a preview:
-// exports/kavya-wiki-preview.html. Open it by double-clicking; it works offline except for
+// exports/kavya-garden-preview.html. Open it by double-clicking; it works offline except for
 // Google Fonts. Every page, stylesheet, scene layer and image is inside it.
 //
 // How: the file is a shell with one full-window iframe. Each page's HTML is stored as a string,
@@ -12,7 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const DIST = 'dist';
-const OUT = 'exports/kavya-wiki-preview.html';
+const OUT = 'exports/kavya-garden-preview.html';
 
 const walk = (dir) =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {

@@ -4,7 +4,7 @@ Kavya's digital garden: the place for the thinking that doesn't fit on LinkedIn.
 
 **The order of importance is Kavya, then what she thinks and makes, then the garden.** The garden is the site's physics (things get planted, tended, left alone, revisited), not its decoration. When in doubt, take something away.
 
-**The domain is `kavya.garden`.** The old `kavya.wiki` has been allowed to expire and is not coming back. Never write `kavya.wiki` anywhere in code, config, meta tags or copy. Canonical URL, OG URLs, sitemap and RSS all use `https://kavya.garden`. Put it in one place (`src/site.ts` as `url`) and read it from there. The design system (component `Mp3Player`) and mockups are called "Kavya Garden". The repo folder may still say `kavya-wiki`; that's just a folder name.
+**The domain is `kavya.garden`.** The old `kavya.wiki` has been allowed to expire and is not coming back. Never write `kavya.wiki` anywhere in code, config, meta tags or copy. Canonical URL, OG URLs, sitemap and RSS all use `https://kavya.garden`. Put it in one place (`src/site.ts` as `url`) and read it from there. The design system (component `Mp3Player`) and mockups are called "Kavya Garden".
 
 Read this whole file before changing anything. If this file and the design system disagree, the design system wins and this file gets fixed.
 
