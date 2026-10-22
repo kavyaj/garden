@@ -33,6 +33,7 @@ export const nav = [
   { label: 'Notes', href: '/notes' },
   { label: 'Quotes', href: '/quotes' },
   { label: 'On repeat', href: '/on-repeat' },
+  { label: 'Books', href: '/books' },
   { label: "Things I've made", href: '/made' },
   { label: 'About', href: '/about' },
 ];

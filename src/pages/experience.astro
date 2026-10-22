@@ -14,7 +14,7 @@ const place = xp.location ?? site.place;
 <Base title="Where I've been" description="Where I've worked, what I studied, and where I've talked about it.">
   <section class="page-top intro">
     <h1 class="h1">Where I've been</h1>
-    {xp.intro.map((p) => <p class="lede para">{p}</p>)}
+    {xp.intro.map((p) => <p class="lede para" set:html={p.replace(/\*(.+?)\*/g, '<em>$1</em>')} />)}
   </section>
 
   <section class="work" aria-labelledby="work-h">

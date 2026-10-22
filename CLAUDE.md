@@ -54,9 +54,9 @@ The V1 to V2 migration is done (commit "Migrate to V2: remove scenes, new tokens
 | `/map` | The garden from above | The map |
 | `/404` | "This one hasn't grown yet." with a tendril that stops short | none, build in the same style |
 
-Header nav, in this order and with these exact words: **Notes · Quotes · On repeat · Things I've made · About.** Interface words stay boring on purpose; the content gets to be surprising.
+Header nav, in this order and with these exact words: **Notes · Quotes · On repeat · Books · Things I've made · About.** (Kavya added Books to the header on 22 Oct 2026; the design system and mockups don't show it yet.) Interface words stay boring on purpose; the content gets to be surprising.
 
-Books, the reverse bucket list, `/experience` and `/why` are not in the header nav. Reach them from About ("More of me"), the footer and the map. The book is reached from About and Things I've made. Planned for later, shown as dotted plots on the map: Compost, Guestbook. Don't build these until Kavya asks.
+The reverse bucket list, `/experience` and `/why` are not in the header nav. Reach them from About ("More of me"), the footer and the map. The book is reached from About and Things I've made. Planned for later, shown as dotted plots on the map: Compost, Guestbook. Don't build these until Kavya asks.
 
 ## Tokens (V2)
 
