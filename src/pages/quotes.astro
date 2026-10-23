@@ -159,6 +159,18 @@ const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
     border-top: 1px solid var(--hair);
     font-size: 16.5px;
   }
+  @media (max-width: 480px) {
+    .poem {
+      padding: 24px 20px 16px;
+    }
+    .stanza {
+      font-size: 18.5px;
+    }
+    .stanza {
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
   .poem-why .label {
     display: block;
     margin-bottom: 4px;
