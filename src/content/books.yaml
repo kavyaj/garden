@@ -13,7 +13,7 @@
   note: "Words won't do justice to what this book means to me. It bridges the gap between what most of us are schooled to believe and what the reality is. It was published in the 1930s and it's still relevant now, which calls for introspection, not celebration. The change has to come from us."
   line: "If the fundamental rights are opposed by the community, no law, no parliament, no judiciary can guarantee them in the real sense of the word."
 
-- title: Harry Potter
+- title: Harry Potter Series
   author: J. K. Rowling
   cover: harry-potter
   first_read: 2007
@@ -23,6 +23,7 @@
 - title: Why I Am an Atheist
   author: Bhagat Singh
   cover: why-i-am-an-atheist
+  goodreads_url: https://www.goodreads.com/book/show/1389596.Why_I_Am_An_Atheist
   first_read: 2022
   reread: false
   note: "Resonated so much. He was around 22 when he wrote it, and I was amazed by how articulate he was. I feel fortunate to have gotten a glimpse of him in his own words."
@@ -38,6 +39,7 @@
 - title: Sleeping Like a Baby
   author: Himani Dalmia and Neha Bhatt
   cover: sleeping-like-a-baby
+  goodreads_url: https://www.goodreads.com/book/show/59763628
   first_read: 2023
   reread: false
   note: "Was a clueless mom and this book rescued me from the abyss."
@@ -60,6 +62,7 @@
 - title: Sherlock Holmes
   author: Arthur Conan Doyle
   cover: sherlock-holmes
+  goodreads_url: https://www.goodreads.com/book/show/245868058-the-complete-sherlock-holmes
   first_read: 2007
   reread: true
   note: "As a teenager, I felt like an adult when I read it."
