@@ -58,15 +58,12 @@ const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
       <section class="poems" aria-labelledby="poems-h">
         <h2 class="h2" id="poems-h">Poems</h2>
         {poems.map((p) => (
-          <article class="poem">
+          <article class="kw-card poem">
             <h3 class="poem-title">{p.data.title}</h3>
             {p.data.stanzas.map((st) => (
               <p class="stanza">
-                {st.split('\n').map((l, i) => (
-                  <>
-                    {i > 0 && <br />}
-                    {l}
-                  </>
+                {st.split('\n').map((l) => (
+                  <span class="line">{l}</span>
                 ))}
               </p>
             ))}
@@ -132,8 +129,11 @@ const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
     margin-top: clamp(72px, 10vw, 112px);
   }
   .poem {
-    max-width: 30rem;
+    max-width: 34rem;
     margin-top: 32px;
+    padding: 32px 32px 22px;
+    background: var(--paper-lift);
+    border: 1px solid var(--hair);
   }
   .poem-title {
     margin-bottom: 28px;
@@ -150,11 +150,26 @@ const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
     font-size: 21px;
     line-height: 1.5;
   }
+  .line {
+    display: block;
+  }
   .poem-why {
     margin-top: 36px;
     padding-top: 14px;
     border-top: 1px solid var(--hair);
     font-size: 16.5px;
+  }
+  @media (max-width: 480px) {
+    .poem {
+      padding: 24px 20px 16px;
+    }
+    .stanza {
+      font-size: 18.5px;
+    }
+    .line {
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
   }
   .poem-why .label {
     display: block;
