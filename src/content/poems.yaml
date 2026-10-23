@@ -1,0 +1,14 @@
+# Poems, shown under the quotes on /quotes. Each stanza is a string; \n breaks a line inside it.
+# why: Kavya's reason for keeping it, in her words, never for her.
+
+- title: Bricks of Us
+  stanzas:
+    - "You bring a brick, I bring one too,\nEach shaped by storms that we've been."
+    - "Some are smooth, some chipped and worn,\nStories carved where hearts were torn."
+    - "From separate walls, we take them down,\nNo need for thrones, no need for crowns."
+    - "We stack them high, side by side,\nA place where love and trust reside."
+    - "Not just mine, not only yours,\nBut something new, with open doors."
+    - "A home that stands through wind and rain,\nBuilt with hands that heal, not strain."
+    - "So bring your brick, I'll bring mine too,\nAnd we will build — both old and new."
+  why: It's a reflection of what a healthy relationship looks like.
+  added: 2026-10-23

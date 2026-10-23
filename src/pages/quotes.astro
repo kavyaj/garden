@@ -7,6 +7,7 @@ import { featuredQuote, isDevanagari } from '../lib/garden';
 
 const featured = await featuredQuote();
 const rest = (await getCollection('quotes')).filter((q) => !q.data.featured).sort((a, b) => b.data.added.getTime() - a.data.added.getTime());
+const poems = (await getCollection('poems')).sort((a, b) => a.data.order - b.data.order);
 const deva = featured ? isDevanagari(featured.data.original) : false;
 // Couplets read better on two lines: break after the first full stop (।).
 const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
@@ -49,6 +50,35 @@ const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
           ))}
         </section>
       </>
+    )
+  }
+
+  {
+    poems.length > 0 && (
+      <section class="poems" aria-labelledby="poems-h">
+        <h2 class="h2" id="poems-h">Poems</h2>
+        {poems.map((p) => (
+          <article class="poem">
+            <h3 class="poem-title">{p.data.title}</h3>
+            {p.data.stanzas.map((st) => (
+              <p class="stanza">
+                {st.split('\n').map((l, i) => (
+                  <>
+                    {i > 0 && <br />}
+                    {l}
+                  </>
+                ))}
+              </p>
+            ))}
+            {p.data.why && (
+              <p class="poem-why">
+                <span class="label">Why I keep it</span>
+                {p.data.why}
+              </p>
+            )}
+          </article>
+        ))}
+      </section>
     )
   }
 </Base>
@@ -97,5 +127,37 @@ const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
     gap: 20px;
     align-items: start;
+  }
+  .poems {
+    margin-top: clamp(72px, 10vw, 112px);
+  }
+  .poem {
+    max-width: 30rem;
+    margin-top: 32px;
+  }
+  .poem-title {
+    margin-bottom: 28px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 48, 'SOFT' 40;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .stanza {
+    margin-bottom: 22px;
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 24, 'SOFT' 40;
+    font-size: 21px;
+    line-height: 1.5;
+  }
+  .poem-why {
+    margin-top: 36px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hair);
+    font-size: 16.5px;
+  }
+  .poem-why .label {
+    display: block;
+    margin-bottom: 4px;
   }
 </style>
