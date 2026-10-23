@@ -58,7 +58,7 @@ const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
       <section class="poems" aria-labelledby="poems-h">
         <h2 class="h2" id="poems-h">Poems</h2>
         {poems.map((p) => (
-          <article class="poem">
+          <article class="kw-card poem">
             <h3 class="poem-title">{p.data.title}</h3>
             {p.data.stanzas.map((st) => (
               <p class="stanza">
@@ -132,8 +132,11 @@ const lines = featured ? featured.data.original.split(/(?<=।)\s+/) : [];
     margin-top: clamp(72px, 10vw, 112px);
   }
   .poem {
-    max-width: 30rem;
+    max-width: 34rem;
     margin-top: 32px;
+    padding: 32px 32px 22px;
+    background: var(--paper-lift);
+    border: 1px solid var(--hair);
   }
   .poem-title {
     margin-bottom: 28px;
