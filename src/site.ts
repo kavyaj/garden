@@ -1,7 +1,7 @@
 // Site settings. Everything else the site says about itself is counted from src/content/.
 
 export const site = {
-  name: 'Kavya Jahagirdar',
+  name: 'Kavya’s Garden',
   url: 'https://kavya.garden',
   tagline: 'Perpetually figuring it out. Annoyingly self-aware about it.',
   /** The garden's birthday. */
