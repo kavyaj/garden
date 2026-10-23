@@ -56,6 +56,18 @@ const quotes = defineCollection({
   }),
 });
 
+const poems = defineCollection({
+  loader: file('src/content/poems.yaml', { parser: listWithIds }),
+  schema: z.object({
+    order: z.number(),
+    title: z.string(),
+    /** Stanzas in order; a newline inside one breaks a line. */
+    stanzas: z.array(z.string()).min(1),
+    why: z.string().default(''),
+    added: z.coerce.date(),
+  }),
+});
+
 const songs = defineCollection({
   loader: file('src/content/songs.yaml', { parser: listWithIds }),
   schema: z.object({
@@ -180,4 +192,4 @@ const projects = defineCollection({
     }),
 });
 
-export const collections = { notes, quotes, songs, books, done, experience, chapters, timeline, words, projects };
+export const collections = { notes, quotes, poems, songs, books, done, experience, chapters, timeline, words, projects };
