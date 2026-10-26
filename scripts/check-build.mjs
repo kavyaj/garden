@@ -1,5 +1,6 @@
 // Runs after `astro build`. Fails the build on:
 //   - any internal link, image or asset that points at nothing
+//   - any link to a page without its trailing slash (GitHub Pages would 301 it, and Search Console flags that)
 //   - any page over budget: 150KB transferred (gzip) on first load, fonts excluded
 import fs from 'node:fs';
 import path from 'node:path';
@@ -36,6 +37,7 @@ function localRefs(text) {
 
 const pages = walk(DIST).filter((f) => f.endsWith('.html'));
 const broken = [];
+const slashless = [];
 const rows = [];
 
 for (const page of pages) {
@@ -49,6 +51,9 @@ for (const page of pages) {
     if (!file) {
       broken.push(`${path.relative(DIST, from)} → ${u}`);
       continue;
+    }
+    if (file.endsWith('index.html') && !u.split(/[?#]/)[0].endsWith('/') && !/http-equiv="refresh"/i.test(html)) {
+      slashless.push(`${path.relative(DIST, from)} → ${u}`);
     }
     // Links to other pages don't count toward this page's weight.
     if (file.endsWith('.html') || loads.has(file)) continue;
@@ -75,5 +80,9 @@ if (broken.length) {
   console.error(`\n${broken.length} broken internal link(s):`);
   for (const b of broken) console.error('  ' + b);
 }
-if (broken.length || over.length) process.exit(1);
-console.log('\nNo broken links. Every page under budget.');
+if (slashless.length) {
+  console.error(`\n${slashless.length} link(s) to a page without the trailing slash:`);
+  for (const s of slashless) console.error('  ' + s);
+}
+if (broken.length || slashless.length || over.length) process.exit(1);
+console.log('\nNo broken links, no redirecting links. Every page under budget.');

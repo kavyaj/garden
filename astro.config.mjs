@@ -5,5 +5,5 @@ export default defineConfig({
   output: 'static',
   build: { format: 'directory' },
   // V1 called About "The Gardener".
-  redirects: { '/gardener': '/about' },
+  redirects: { '/gardener': '/about/' },
 });

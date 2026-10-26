@@ -22,8 +22,10 @@ interface Props {
   extraFonts?: string[];
   /** Share image under public/, 1200 x 630. Every page uses og-default.png unless it passes its own. */
   ogImage?: string;
+  /** Keep this page out of search results, with no canonical URL (the 404). */
+  noindex?: boolean;
 }
-const { title, description = site.tagline, width = 'page', devanagari = false, devanagariText, kannada = false, extraFonts = [], ogImage = '/brand/og-default.png' } = Astro.props;
+const { title, description = site.tagline, width = 'page', devanagari = false, devanagariText, kannada = false, extraFonts = [], ogImage = '/brand/og-default.png', noindex = false } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · Everyone has a story to tell`;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 
@@ -44,11 +46,12 @@ const fonts =
     <script is:inline>document.documentElement.classList.add('js');</script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={new URL(ogImage, site.url).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />

@@ -17,9 +17,19 @@ export function openExternalInNewTab(html: string): string {
   });
 }
 
+// Every page is built as <path>/index.html, so GitHub Pages answers "/map" with a 301 to "/map/".
+// Links to pages get the slash here, so neither visitors nor Google ever go through that redirect.
+// Files (anything with a dot in its last segment) are left alone.
+export function addTrailingSlash(html: string): string {
+  return html.replace(/(<a\b[^>]*\shref=")(\/(?!\/)[^"#?]*)([#?][^"]*)?"/g, (m, before, url, rest = '') => {
+    if (url.endsWith('/') || /\.[^/]+$/.test(url)) return m;
+    return `${before}${url}/${rest}"`;
+  });
+}
+
 export const onRequest = defineMiddleware(async (_context, next) => {
   const response = await next();
   if (!response.headers.get('content-type')?.includes('text/html')) return response;
   const html = await response.text();
-  return new Response(openExternalInNewTab(html), { status: response.status, headers: response.headers });
+  return new Response(addTrailingSlash(openExternalInNewTab(html)), { status: response.status, headers: response.headers });
 });
