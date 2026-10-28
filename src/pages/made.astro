@@ -78,10 +78,13 @@ const small = projects.filter((p) => p.data.kind === 'small');
             <ProjectCard project={p} />
           ))}
         </div>
-        <p class="tip">
-          Everything here is free. If something saved you time or made you grin, a coffee helps me keep building.
-          <a class="kw-ul" href="https://ko-fi.com/kavyaj?ref=kavyagarden" target="_blank" rel="noopener">Buy me a coffee</a>
-        </p>
+        <div class="tip">
+          <div class="tip-text">
+            <p class="tip-title">Everything here is free.</p>
+            <p class="tip-line">If something saved you time or made you grin, a coffee helps me keep building.</p>
+          </div>
+          <a class="tip-btn" href="https://ko-fi.com/kavyaj?ref=kavyagarden" target="_blank" rel="noopener">Buy me a coffee</a>
+        </div>
       </section>
     )
   }
@@ -170,16 +173,42 @@ const small = projects.filter((p) => p.data.kind === 'small');
     gap: 20px;
   }
   .tip {
-    max-width: 40rem;
-    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 32px;
+    margin-top: 20px;
+    padding: 22px 28px;
+    background: var(--paper-lift);
+    border: 1px solid var(--hair);
+  }
+  .tip-text {
+    flex: 1 1 22rem;
+    max-width: 38rem;
+  }
+  .tip-title {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 36, 'SOFT' 40;
+    font-weight: 500;
+    font-size: 23px;
+    line-height: 1.2;
+  }
+  .tip-line {
+    margin-top: 4px;
     font-size: 16px;
     color: var(--muted);
   }
-  .tip a {
-    display: inline-block;
-    min-height: 44px;
-    padding-top: 10px;
-    margin-left: 6px;
-    color: var(--ink);
+  .tip-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 24px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
   }
 </style>
