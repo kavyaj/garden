@@ -78,6 +78,10 @@ const small = projects.filter((p) => p.data.kind === 'small');
             <ProjectCard project={p} />
           ))}
         </div>
+        <p class="tip">
+          Everything here is free. If something saved you time or made you grin, a coffee helps me keep building.
+          <a class="kw-ul" href="https://ko-fi.com/kavyaj?ref=kavyagarden" target="_blank" rel="noopener">Buy me a coffee</a>
+        </p>
       </section>
     )
   }
@@ -164,5 +168,18 @@ const small = projects.filter((p) => p.data.kind === 'small');
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
     gap: 20px;
+  }
+  .tip {
+    max-width: 40rem;
+    margin-top: 32px;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .tip a {
+    display: inline-block;
+    min-height: 44px;
+    padding-top: 10px;
+    margin-left: 6px;
+    color: var(--ink);
   }
 </style>
