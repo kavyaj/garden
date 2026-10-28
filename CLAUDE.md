@@ -29,7 +29,7 @@ The V1 to V2 migration is done (commit "Migrate to V2: remove scenes, new tokens
 - **No client framework.** Small vanilla JS only for: the MP3 player, relative dates, and starting the tendril draw when it scrolls into view.
 - **Code:** the GitHub repo `Garden`, which Kavya creates and pushes to herself. Never push, and never add or change a remote, unless she asks.
 - **Hosting:** GitHub Pages, built and deployed by `.github/workflows/deploy.yml` (the official Astro action) on every push to `main`. `public/CNAME` holds `kavya.garden`. No `base` in `astro.config.mjs`, because the site has its own domain. Output is a plain static folder. Custom domain `kavya.garden` (apex), with `www.kavya.garden` redirecting to the apex. HTTPS on. Add `robots.txt` and `sitemap.xml` for `kavya.garden`.
-- **Referral tags:** links out to Kavya's own products (StoryCV, Resumey.Pro) carry `?ref=kavyagarden`.
+- **Referral tags:** links out to Kavya's own products (StoryCV, Resumey.Pro, Poke & See) carry `?ref=kavyagarden`.
 - **Fonts** (Google Fonts): Fraunces, DM Sans, Shantell Sans, Tiro Devanagari Hindi on pages that show Devanagari (Home, Quotes), and Tiro Kannada on pages that show Kannada (Quotes). Original-script quotes always use the Tiro face for their script, with `lang` set (`hi`, `sa`, `kn`). Preload Fraunces.
 
 ## Routes

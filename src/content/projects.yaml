@@ -51,6 +51,13 @@
   added: 2026-10-08
 
 - kind: small
+  title: Poke & See
+  url: https://pokeandsee.com/?ref=kavyagarden
+  blurb: "Tiny science toys. Poke something, see what happens, then go try it for real."
+  image: ./images/made/poke-and-see.jpg
+  added: 2026-10-28
+
+- kind: small
   title: The Coach's Playbook
   url: https://kavyaj.github.io/bft-bw-flipbook/
   blurb: "The whiteboards from my BFT Beauty World classes, one board per class, saved before they got wiped."
