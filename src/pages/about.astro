@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Tendril from '../components/Tendril.astro';
-import portrait from '../assets/portrait-face.webp';
+import portrait from '../assets/portrait.webp';
 import { site } from '../site';
 ---
 
@@ -12,8 +12,7 @@ import { site } from '../site';
       <h1 class="h1">The gardener</h1>
       <p>
         I came across an idea from Plotinus that I found very relatable. He said finding yourself is like a sculptor
-        working on a block of marble.
-        <span class="hl">You chip away everything that isn’t you, and what’s left is the real you.</span> It was there
+        working on a block of marble. <span class="hl">You chip away everything that isn’t you, and what’s left is the real you.</span> It was there
         all along.
       </p>
       <p>
@@ -44,9 +43,9 @@ import { site } from '../site';
       <Image
         src={portrait}
         alt="Kavya smiling, in a pink floral dress, with plants behind her in black and white"
-        width={520}
-        widths={[260, 520]}
-        sizes="260px"
+        width={680}
+        widths={[340, 680]}
+        sizes="340px"
         format="webp"
         quality={80}
         loading="eager"
@@ -108,16 +107,14 @@ import { site } from '../site';
     margin-top: 20px;
   }
   .portrait {
-    flex: 1 1 220px;
-    max-width: 260px;
+    flex: 1 1 260px;
+    max-width: 340px;
   }
   .portrait :global(img) {
     display: block;
     border-radius: 10px;
     width: 100%;
     height: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
   }
   .divider {
     margin: clamp(72px, 10vw, 112px) 0 clamp(40px, 6vw, 56px);
